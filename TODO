@@ -1,0 +1,4 @@
+* Compute geometries, rather than using so many fixed values.
+* Add menus
+* Add Xft support
+
