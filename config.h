@@ -10,9 +10,9 @@
 
 #define MENU "dmenu_run -b"
 #define TERM "urxvt&"
-#define BROWSER "firefox&"
-#define PACKAGER "pkgbrowser&"
+#define BROWSER "qupzilla&"
 #define EDITOR "urxvt -e vim&"
+//#define EDITOR "gvim&"
 #define MIXER "urxvt -e alsamixer&"
 
 #define DEFAULTF "/tmp/xstatus"

@@ -20,12 +20,10 @@ static Window create_window()
 		.background_pixel = pixel(d, PANEL_BG)
 	};
 #define CFP CopyFromParent
-	Window w = XCreateWindow(d, DefaultRootWindow(d), 0,
-				 DisplayHeight(d, 0) - HEIGHT - BORDER,
-				 DisplayWidth(d, 0),
-				 HEIGHT, BORDER,
-				 CFP, CFP, CFP,
-				 CWOverrideRedirect | CWBackPixel, &a);
+	const Window w = XCreateWindow(d, DefaultRootWindow(d), 0,
+		DisplayHeight(d, 0) - HEIGHT - BORDER, DisplayWidth(d, 0),
+		HEIGHT, BORDER, CFP, CFP, CFP, CWOverrideRedirect 
+		| CWBackPixel, &a);
 	XSelectInput(d, w, ExposureMask);
 	XMapWindow(d, w);
 
@@ -101,8 +99,29 @@ setup_buttons(const Window w, const GC gc)
 	BTN("Menu", MENU);
 	BTN("Terminal", TERM);
 	BTN("Editor", EDITOR);
-	BTN("Browser", BROWSER);
+	char *browser=getenv("BROWSER");
+	BTN("Browser", browser?browser:BROWSER);
 	BTN("Mixer", MIXER);
+}
+
+static Button * find_button(const Window w)
+{
+	for(uint8_t i=0; i<NBTN; i++)
+		  if(btns[i]->w == w)
+			    return btns[i];
+	return NULL; // not_found
+}
+
+static void do_cb(Button * restrict b)
+{
+	b->cb(b);
+}
+
+static void iter_buttons(const Window ewin, void (*func)(Button * restrict))
+{
+	Button * restrict b = find_button(ewin);
+	if(b)
+		  func(b);
 }
 
 __attribute__((noreturn))
@@ -113,18 +132,10 @@ static void event_loop(const Window w, const GC gc, const char *filename)
 	if (XNextEventTimed(d, &e)) {
 		switch (e.type) {
 		case Expose:
-			for(uint8_t i=0; i<NBTN; i++)
-				  if(btns[i]->w==e.xexpose.window) {
-					draw_Button(btns[i]);
-					break;
-				  }
+			iter_buttons(e.xexpose.window, &draw_Button);
 			break;
 		case ButtonPress:
-			for(uint8_t i=0; i<NBTN; i++)
-				  if(btns[i]->w==e.xbutton.window) {
-					btns[i]->cb(btns[i]);
-					break;
-				  }
+			iter_buttons(e.xbutton.window, &do_cb);
 			break;
 		default:
 #ifdef DEBUG
