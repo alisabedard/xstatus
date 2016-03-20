@@ -82,7 +82,7 @@ static void update(Display * d, const Window w, const GC gc,
 	const uint16_t x = xstatus_row_x + BUTTON_SPACE;
 	xstatus_status_w = string_width(rsz) + x;
 	XDrawString(d, w, gc, xstatus_row_x + BUTTON_SPACE, font_y(), buf,
-		rsz);
+		rsz-1); // -1 to remove end terminator.  
 	fclose(f);
 	LOG("buf is %lu\n", strlen(buf));
 	draw_battery(d, w);
