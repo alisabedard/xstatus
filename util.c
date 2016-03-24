@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,6 +39,8 @@ unsigned long pixel(Display * restrict d, const char * restrict color)
 
 GC colorgc(Display * restrict d, const Window w, const char * restrict color)
 {
+	assert(xstatus_font);
+	assert(xstatus_font->fid);
 	XGCValues gv = {.foreground = pixel(d, color),
 		.font = xstatus_font->fid
 	};

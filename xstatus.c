@@ -155,6 +155,12 @@ int main(int argc, char ** argv)
 	d = get_display();
 	trap();
 	xstatus_font=XLoadQueryFont(d, FONT);
+	if(!xstatus_font)
+		xstatus_font=XLoadQueryFont(d, "fixed");
+	if(!xstatus_font) {
+		fputs("Failed to load any font", stderr);
+		exit(1);
+	}
 	const Window w = create_window(d);
 	GC gc=colorgc(d, w, PANEL_FG);
 	GC bgc=colorgc(d, w, BUTTON_FG);
