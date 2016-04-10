@@ -29,7 +29,7 @@ static void draw_percent(Display * restrict d, const Window w,
 	const GC gc, const uint16_t x, const uint16_t width,
 	const uint8_t pct)
 {
-	uint8_t sl=5;
+	uint8_t sl=5; // 3 for value, 1 for \%, 1 for \0
 	char str_pct[sl];
 	sl=snprintf(str_pct, sl, "%d%%", pct);
 	const uint16_t center = x+(width>>1);

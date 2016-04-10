@@ -8,7 +8,7 @@ PREFIX=/usr
 prog=xstatus
 srcs=${prog}.c battery.c util.c button.c
 objs=${srcs:.c=.o}
-installdir=${DESTDIR}/${PREFIX}
+installdir=${DESTDIR}${PREFIX}
 
 all: ${prog}
 
