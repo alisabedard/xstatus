@@ -9,6 +9,7 @@
 #include "battery.h"
 #include "button.h"
 #include "config.h"
+#include "log.h"
 #include "util.h"
 #include "xstatus.h"
 
@@ -44,27 +45,6 @@ static void draw_time(Display * restrict d, const Window w, const GC gc)
 
 uint16_t xstatus_status_w;
 
-__attribute__((noreturn))
-void xstatus_exit(const uint8_t code)
-{
-	XCloseDisplay(d);
-	exit(code);
-}
-
-__attribute__((noreturn))
-static void handler(int sig __attribute__((unused)), 
-	siginfo_t * restrict i __attribute__((unused)), 
-	void * restrict d __attribute__((unused)))
-{
-	xstatus_exit(0);
-}
-
-static void trap()
-{
-	static struct sigaction act = { .sa_sigaction=handler };
-	sigaction(SIGINT, &act, NULL);
-}
-
 __attribute__ ((hot))
 static void update(Display * d, const Window w, const GC gc, 
 	const char *filename)
@@ -72,18 +52,14 @@ static void update(Display * d, const Window w, const GC gc,
 	XClearWindow(d, w);
 	draw_time(d, w, gc);
 	FILE *f = fopen(filename, "a+");
-	if (!f) {
-		WARN("Cannot open %s\n", filename);
-		xstatus_exit(1);
-	}
-	char buf[60];
+	if (!f) ERROR("Cannot open %s\n", filename);
+	char buf[80];
 	// File must end in a newline or extra space.  
 	const size_t rsz = fread(&buf, 1, sizeof buf, f);
-	const uint16_t x = xstatus_row_x + BUTTON_SPACE;
-	xstatus_status_w = string_width(rsz) + x;
+	fclose(f);
+	xstatus_status_w = string_width(rsz) + xstatus_row_x + BUTTON_SPACE;
 	XDrawString(d, w, gc, xstatus_row_x + BUTTON_SPACE, font_y(), buf,
 		rsz-1); // -1 to remove end terminator.  
-	fclose(f);
 	LOG("buf is %lu\n", strlen(buf));
 	draw_battery(d, w);
 }
@@ -99,8 +75,10 @@ setup_buttons(const Window w, const GC gc)
 	BTN("Menu", MENU);
 	BTN("Terminal", TERM);
 	BTN("Editor", EDITOR);
-	char *browser=getenv("BROWSER");
-	BTN("Browser", browser?browser:BROWSER);
+	{
+		char *browser=getenv("BROWSER");
+		BTN("Browser", browser?browser:BROWSER);
+	}
 	BTN("Mixer", MIXER);
 }
 
@@ -138,10 +116,7 @@ static void event_loop(const Window w, const GC gc, const char *filename)
 			iter_buttons(e.xbutton.window, &do_cb);
 			break;
 		default:
-#ifdef DEBUG
-			fprintf(stderr, "event: %d\n", e.type);
-#endif//DEBUG
-			goto eventl;
+			LOG(stderr, "event: %d\n", e.type);
 		}
 	}
 	update(d, w, gc, filename);
@@ -153,14 +128,10 @@ XFontStruct *xstatus_font;
 int main(int argc, char ** argv)
 {
 	d = get_display();
-	trap();
 	xstatus_font=XLoadQueryFont(d, FONT);
 	if(!xstatus_font)
 		xstatus_font=XLoadQueryFont(d, "fixed");
-	if(!xstatus_font) {
-		fputs("Failed to load any font", stderr);
-		exit(1);
-	}
+	if(!xstatus_font) ERROR("Failed to load font");
 	const Window w = create_window(d);
 	GC gc=colorgc(d, w, PANEL_FG);
 	GC bgc=colorgc(d, w, BUTTON_FG);

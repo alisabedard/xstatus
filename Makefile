@@ -1,6 +1,6 @@
 #CFLAGS+=-O0
 #CFLAGS+=-ggdb 
-CFLAGS+=-Wall -W 
+CFLAGS+=-Wall -W
 CFLAGS+=-std=c11
 CFLAGS+=-D_XOPEN_SOURCE=700
 LDFLAGS+=-lX11

@@ -1,4 +1,5 @@
 #!/bin/sh
+DELAY=5
 load="/proc/loadavg"
 temp="/sys/devices/virtual/thermal/thermal_zone0/temp"
 bat="/sys/class/power_supply/BAT0/capacity"
@@ -19,5 +20,5 @@ trap exit INT QUIT TERM HUP
 trap "rm -f $tmp" EXIT
 while true; do
 	echo "`get_load` | `get_temp`C | `get_bat`%" > $tmp
-	sleep 5
+	sleep $DELAY
 done

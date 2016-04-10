@@ -28,9 +28,9 @@
 #define BUTTON_FG "darkgreen"
 #define PANEL_BG "black"
 #define PANEL_FG "green3"
-#define BAT_AC	"green"
-#define BAT_BAT "yellow"
-#define BAT_CRIT "red"
+#define GOOD	"green"
+#define DEGRADED "yellow"
+#define CRITICAL "red"
 #define CRIT_PCT 11
 
 #define BATSYSFILE "/sys/class/power_supply/BAT0/capacity"

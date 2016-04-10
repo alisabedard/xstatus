@@ -1,10 +1,8 @@
 #include <assert.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
-#include <X11/Xlib.h>
 #include "config.h"
+#include "log.h"
 #include "xstatus.h"
 #include "util.h"
 
@@ -23,14 +21,11 @@ uint16_t string_width(const size_t sz)
 Display * get_display()
 {
 	Display *d = XOpenDisplay(NULL);
-	if (!d) {
-		fputs("Cannot open DISPLAY\n", stderr);
-		exit(1);
-	}
+	if (!d) ERROR("Cannot open DISPLAY\n");
 	return d;
 }
 
-unsigned long pixel(Display * restrict d, const char * restrict color)
+uint32_t pixel(Display * restrict d, const char * restrict color)
 {
 	XColor c, nc;
 	XAllocNamedColor(d, DefaultColormap(d, 0), color, &c, &nc);
@@ -42,12 +37,12 @@ GC colorgc(Display * restrict d, const Window w, const char * restrict color)
 	assert(xstatus_font);
 	assert(xstatus_font->fid);
 	XGCValues gv = {.foreground = pixel(d, color),
-		.font = xstatus_font->fid
+		.font = xstatus_font->fid,
 	};
 	return XCreateGC(d, w, GCForeground | GCFont, &gv);
 }
 
-int sysval(const char *filename)
+uint32_t sysval(const char *filename)
 {
 	FILE *f = fopen(filename, "r");
 	if(!f) {
@@ -55,8 +50,10 @@ int sysval(const char *filename)
 		return 0;
 	}
 	char buf[4];
-	fread(&buf, 1, 4, f);
+	size_t sz = fread(&buf, 1, 4, f);
 	fclose(f);
+	if(!sz)
+		  return 0;
 	return atoi(buf);
 }
 

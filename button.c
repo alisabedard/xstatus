@@ -5,6 +5,7 @@
 #include <X11/Xlib.h>
 #include "button.h"
 #include "config.h"
+#include "log.h"
 #include "util.h"
 #include "xstatus.h"
 
@@ -27,14 +28,14 @@ Button * new_Button(Display * restrict d, const Window parent, const GC gc,
 	b->d=d;
 	b->parent=parent;
 	b->gc=gc;
-	b->g.x=xstatus_row_x;
+	b->g.x=(short int)xstatus_row_x;
 	b->g.y=0;
 	b->g.width=string_width(strlen(label));
 	b->g.height= HEIGHT - 2 * BORDER; 
 	b->w = XCreateSimpleWindow(d, parent, xstatus_row_x, b->g.y, b->g.width, 
 		HEIGHT - 2 * BORDER, BORDER, pixel(d, BUTTON_BORDER),
 		pixel(d, BUTTON_BG));
-	xstatus_row_x += b->g.width + BUTTON_SPACE;
+	xstatus_row_x += (int)b->g.width + BUTTON_SPACE;
 	XSelectInput(d, b->w, ExposureMask | ButtonPressMask);
 	XMapWindow(d, b->w);
 	return b;

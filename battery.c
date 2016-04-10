@@ -1,19 +1,28 @@
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <X11/Xlib.h>
 #include "config.h"
+#include "log.h"
 #include "xstatus.h"
 #include "util.h"
 
-static GC bat_bat_gc, bat_ac_gc, bat_crit_gc;
+static GC bat_bat_gc, bat_ac_gc, bat_crit_gc, invert_gc, bg_gc;
 static void setup_gcs(Display *d, Window w)
 {
 	if(bat_bat_gc) return;
-	bat_bat_gc=colorgc(d, w, BAT_BAT);
-	bat_ac_gc=colorgc(d, w, BAT_AC);
-	bat_crit_gc=colorgc(d, w, BAT_CRIT);
+	bat_bat_gc=colorgc(d, w, DEGRADED);
+	bat_ac_gc=colorgc(d, w, GOOD);
+	bat_crit_gc=colorgc(d, w, CRITICAL);
+	XGCValues i = {.function=GXinvert, .font=xstatus_font->fid};
+	invert_gc=XCreateGC(d, w, GCFont | GCFunction, &i);
+	bg_gc=colorgc(d, w, PANEL_BG);
+}
+
+static uint8_t get_percent(void)
+{
+	uint8_t pct=sysval(BATSYSFILE);
+	if(pct>100) {
+		pct=100;
+	}
+	LOG("Percent: %d\n", pct);
+	return pct;
 }
 
 void draw_battery(Display *d, const Window w)
@@ -22,20 +31,25 @@ void draw_battery(Display *d, const Window w)
 	GC gc=bat_bat_gc;
 	const bool on_ac=sysval(ACSYSFILE);
 	if(on_ac) gc=bat_ac_gc;
-	int pct=sysval(BATSYSFILE);
-#ifdef DEBUG
-	printf("Percent: %d\n", pct);
-#endif//DEBUG
+	const uint8_t pct = get_percent();
 	if(!on_ac && pct < CRIT_PCT)
 		  gc=bat_crit_gc;
-	const uint16_t x = xstatus_status_w;
-	const uint16_t width = xstatus_clock_x-x-BUTTON_SPACE;
+	const uint16_t x = xstatus_status_w,
+	      width = xstatus_clock_x-x-BUTTON_SPACE;
 	XDrawRectangle(d, w, gc, x, 4, width, 10);
-	if(pct>100) pct=100;
-	const float p=width*pct/100;
-#ifdef DEBUG
-	printf("p: %f\n", p);
-#endif//DEBUG:
-	XFillRectangle(d, w, gc, x, 5, p, 9);
+	{
+		const float filled = width * pct / 100;
+		LOG("filled: %f\n", filled);
+		XFillRectangle(d, w, gc, x, 5, filled, 9);
+	}
+	{
+		uint8_t sl=5;
+		char str_pct[sl];
+		sl=snprintf(str_pct, sl, "%d%%", pct);
+		const uint16_t center = x+(width>>1);
+		XFillRectangle(d, w, bg_gc, center-PAD, 0,
+			string_width(sl), HEIGHT);
+		XDrawString(d, w, gc, center, font_y(), str_pct, sl);
+	}
 }
 
