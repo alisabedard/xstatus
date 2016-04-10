@@ -25,6 +25,19 @@ static uint8_t get_percent(void)
 	return pct;
 }
 
+static void draw_percent(Display * restrict d, const Window w,
+	const GC gc, const uint16_t x, const uint16_t width,
+	const uint8_t pct)
+{
+	uint8_t sl=5;
+	char str_pct[sl];
+	sl=snprintf(str_pct, sl, "%d%%", pct);
+	const uint16_t center = x+(width>>1);
+	XFillRectangle(d, w, bg_gc, center-PAD, 0,
+		string_width(sl), HEIGHT);
+	XDrawString(d, w, gc, center, font_y(), str_pct, sl);
+}
+
 void draw_battery(Display *d, const Window w)
 {
 	setup_gcs(d, w);
@@ -42,14 +55,6 @@ void draw_battery(Display *d, const Window w)
 		LOG("filled: %f\n", filled);
 		XFillRectangle(d, w, gc, x, 5, filled, 9);
 	}
-	{
-		uint8_t sl=5;
-		char str_pct[sl];
-		sl=snprintf(str_pct, sl, "%d%%", pct);
-		const uint16_t center = x+(width>>1);
-		XFillRectangle(d, w, bg_gc, center-PAD, 0,
-			string_width(sl), HEIGHT);
-		XDrawString(d, w, gc, center, font_y(), str_pct, sl);
-	}
+	draw_percent(d, w, gc, x, width, pct);
 }
 
