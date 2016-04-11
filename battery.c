@@ -38,6 +38,14 @@ static void draw_percent(Display * restrict d, const Window w,
 	XDrawString(d, w, gc, center, font_y(), str_pct, sl);
 }
 
+static void fill(Display * restrict d, const Window w, const GC gc,
+	const uint16_t x, const uint16_t width, const uint8_t pct)
+{
+	const float filled = width * pct / 100;
+	LOG("filled: %f\n", filled);
+	XFillRectangle(d, w, gc, x, 5, filled, 9);
+}
+
 void draw_battery(Display *d, const Window w)
 {
 	setup_gcs(d, w);
@@ -50,11 +58,7 @@ void draw_battery(Display *d, const Window w)
 	const uint16_t x = xstatus_status_w,
 	      width = xstatus_clock_x-x-BUTTON_SPACE;
 	XDrawRectangle(d, w, gc, x, 4, width, 10);
-	{
-		const float filled = width * pct / 100;
-		LOG("filled: %f\n", filled);
-		XFillRectangle(d, w, gc, x, 5, filled, 9);
-	}
+	fill(d, w, gc, x, width, pct);
 	draw_percent(d, w, gc, x, width, pct);
 }
 
