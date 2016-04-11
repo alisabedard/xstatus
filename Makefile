@@ -7,7 +7,7 @@ CFLAGS+=-D_XOPEN_SOURCE=700
 LDFLAGS+=-lX11
 PREFIX=/usr
 prog=xstatus
-srcs=${prog}.c battery.c util.c button.c
+srcs=${prog}.c battery.c clock.c util.c button.c
 objs=${srcs:.c=.o}
 installdir=${DESTDIR}${PREFIX}
 

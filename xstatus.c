@@ -8,6 +8,7 @@
 #include <X11/Xlib.h>
 #include "battery.h"
 #include "button.h"
+#include "clock.h"
 #include "config.h"
 #include "log.h"
 #include "util.h"
@@ -30,19 +31,6 @@ static Window create_window()
 
 	return w;
 }
-
-uint16_t xstatus_clock_x;
-
-__attribute__((hot))
-static void draw_time(Display * restrict d, const Window w, const GC gc)
-{
-	time_t t=time(NULL);
-	char buf[30];
-	size_t sz = strftime(buf, sizeof buf, TIMEFMT, localtime(&t));
-	xstatus_clock_x = DisplayWidth(d, 0) - string_width(sz);
-	XDrawString(d, w, gc, xstatus_clock_x, font_y(), buf, sz);
-}
-
 uint16_t xstatus_status_w;
 
 __attribute__ ((hot))
@@ -50,7 +38,7 @@ static void update(Display * d, const Window w, const GC gc,
 	const char *filename)
 {
 	XClearWindow(d, w);
-	draw_time(d, w, gc);
+	draw_clock(d, w, gc);
 	FILE *f = fopen(filename, "a+");
 	if (!f) ERROR("Cannot open %s\n", filename);
 	char buf[80];
