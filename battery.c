@@ -3,15 +3,13 @@
 #include "xstatus.h"
 #include "util.h"
 
-static GC bat_bat_gc, bat_ac_gc, bat_crit_gc, invert_gc, bg_gc;
+static GC bat_bat_gc, bat_ac_gc, bat_crit_gc, bg_gc;
 static void setup_gcs(Display *d, Window w)
 {
 	if(bat_bat_gc) return;
 	bat_bat_gc=colorgc(d, w, DEGRADED);
 	bat_ac_gc=colorgc(d, w, GOOD);
 	bat_crit_gc=colorgc(d, w, CRITICAL);
-	XGCValues i = {.function=GXinvert, .font=xstatus_font->fid};
-	invert_gc=XCreateGC(d, w, GCFont | GCFunction, &i);
 	bg_gc=colorgc(d, w, PANEL_BG);
 }
 
@@ -29,7 +27,7 @@ static void draw_percent(Display * restrict d, const Window w,
 	const GC gc, const uint16_t x, const uint16_t width,
 	const uint8_t pct)
 {
-	uint8_t sl=5; // 3 for value, 1 for \%, 1 for \0
+	uint8_t sl=5; // 3 for value + 1 for \% + 1 for \0
 	char str_pct[sl];
 	sl=snprintf(str_pct, sl, "%d%%", pct);
 	const uint16_t center = x+(width>>1);
