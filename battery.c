@@ -1,4 +1,5 @@
 #include "config.h"
+#include "clock.h"
 #include "log.h"
 #include "xstatus.h"
 #include "util.h"

@@ -5,6 +5,8 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 
+typedef uint32_t Pixel;
+
 uint16_t font_y(void);
 
 uint16_t string_width(const size_t sz);
@@ -17,6 +19,6 @@ uint32_t sysval(const char *filename);
 
 bool XNextEventTimed(Display * restrict dsp, XEvent * restrict event_return);
 
-uint32_t pixel(Display * restrict d, const char * restrict color);
+Pixel pixel(Display * restrict d, const char * restrict color);
 
 #endif//XS_UTIL_H

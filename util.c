@@ -25,7 +25,7 @@ Display * get_display()
 	return d;
 }
 
-uint32_t pixel(Display * restrict d, const char * restrict color)
+Pixel pixel(Display * restrict d, const char * restrict color)
 {
 	XColor c, nc;
 	XAllocNamedColor(d, DefaultColormap(d, 0), color, &c, &nc);

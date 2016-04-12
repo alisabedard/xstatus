@@ -1,10 +1,6 @@
-#include <signal.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <stdint.h>
-#include <time.h>
 #include <X11/Xlib.h>
 #include "battery.h"
 #include "button.h"
@@ -73,7 +69,7 @@ setup_buttons(const Window w, const GC gc)
 static Button * find_button(const Window w)
 {
 	for(uint8_t i=0; i<NBTN; i++)
-		  if(btns[i]->w == w)
+		  if(btns[i]->widget.window == w)
 			    return btns[i];
 	return NULL; // not_found
 }

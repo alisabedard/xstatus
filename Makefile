@@ -1,4 +1,4 @@
-#CFLAGS+=-O0
+#CFLAGS=-O0
 #CFLAGS+=-ggdb
 #CFLAGS=-Os
 CFLAGS+=-Wall -W
@@ -7,7 +7,7 @@ CFLAGS+=-D_XOPEN_SOURCE=700
 LDFLAGS+=-lX11
 PREFIX=/usr
 prog=xstatus
-srcs=${prog}.c battery.c clock.c util.c button.c
+srcs=${prog}.c battery.c clock.c util.c button.c widget.c
 objs=${srcs:.c=.o}
 installdir=${DESTDIR}${PREFIX}
 

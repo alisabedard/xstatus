@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,32 +26,42 @@ Button * new_Button(Display * restrict d, const Window parent, const GC gc,
 	b->label=label;
 	b->cb=cb;
 	b->cb_data=cb_data;
-	b->d=d;
-	b->parent=parent;
-	b->gc=gc;
-	b->g.x=(short int)xstatus_row_x;
-	b->g.y=0;
-	b->g.width=string_width(strlen(label));
-	b->g.height= HEIGHT - 2 * BORDER; 
-	b->w = XCreateSimpleWindow(d, parent, xstatus_row_x, b->g.y, b->g.width, 
-		HEIGHT - 2 * BORDER, BORDER, pixel(d, BUTTON_BORDER),
-		pixel(d, BUTTON_BG));
-	xstatus_row_x += (int)b->g.width + BUTTON_SPACE;
-	XSelectInput(d, b->w, ExposureMask | ButtonPressMask);
-	XMapWindow(d, b->w);
+	//b->widget.d=d;
+//	b->widget.parent_window=parent;
+	b->widget.gc=gc;
+	/*
+	XRectangle * g = &b->widget.geometry;
+	g->x=(short int)xstatus_row_x;
+	g->y=0;
+	g->width=string_width(strlen(label));
+	g->height= HEIGHT - 2 * BORDER; */
+	XRectangle g = { xstatus_row_x, 0, 
+		string_width(strlen(label)), HEIGHT-2*BORDER};
+	create_widget(&b->widget, d, parent, &g, BORDER,
+		pixel(d, BUTTON_BORDER), pixel(d, BUTTON_BG), gc);
+	/*
+	b->widget.window = XCreateSimpleWindow(d, parent, xstatus_row_x,
+		g->y, g->width, HEIGHT - 2 * BORDER, BORDER, 
+		pixel(d, BUTTON_BORDER), pixel(d, BUTTON_BG));*/
+	xstatus_row_x += g.width + BUTTON_SPACE;
+	XSelectInput(d, b->widget.window, ExposureMask | ButtonPressMask);
+	draw_Button(b);
 	return b;
 }
 
 Button * cmd_Button(Display * restrict d, const Window w, const GC gc,
 	char * restrict label, char * restrict cmd)
 {
-	return new_Button(d, w, gc, label, &system_cb, cmd);
+	return new_Button(d, w, gc, label,
+		&system_cb, cmd);
 }
 
 void draw_Button(Button * restrict b)
 {
-	XClearWindow(b->d, b->w);
-	XDrawString(b->d, b->w, b->gc, PAD, font_y(), b->label, 
-		strlen(b->label));
+	assert(b->widget.d);
+	assert(b->widget.window);
+	XClearWindow(b->widget.d, b->widget.window);
+	XDrawString(b->widget.d, b->widget.window, b->widget.gc, PAD,
+		font_y(), b->label, strlen(b->label));
 }
 
