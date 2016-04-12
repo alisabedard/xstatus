@@ -26,23 +26,10 @@ Button * new_Button(Display * restrict d, const Window parent, const GC gc,
 	b->label=label;
 	b->cb=cb;
 	b->cb_data=cb_data;
-	//b->widget.d=d;
-//	b->widget.parent_window=parent;
-	b->widget.gc=gc;
-	/*
-	XRectangle * g = &b->widget.geometry;
-	g->x=(short int)xstatus_row_x;
-	g->y=0;
-	g->width=string_width(strlen(label));
-	g->height= HEIGHT - 2 * BORDER; */
 	XRectangle g = { xstatus_row_x, 0, 
 		string_width(strlen(label)), HEIGHT-2*BORDER};
 	create_widget(&b->widget, d, parent, &g, BORDER,
 		pixel(d, BUTTON_BORDER), pixel(d, BUTTON_BG), gc);
-	/*
-	b->widget.window = XCreateSimpleWindow(d, parent, xstatus_row_x,
-		g->y, g->width, HEIGHT - 2 * BORDER, BORDER, 
-		pixel(d, BUTTON_BORDER), pixel(d, BUTTON_BG));*/
 	xstatus_row_x += g.width + BUTTON_SPACE;
 	XSelectInput(d, b->widget.window, ExposureMask | ButtonPressMask);
 	draw_Button(b);
