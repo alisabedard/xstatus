@@ -13,8 +13,11 @@ class Status
 	def self.get_bat
 		open($bat).read.rstrip 
 	end
+#	def self.format
+#		"#{self.get_load} | #{self.get_temp}C | #{self.get_bat}%"
+#	end
 	def self.format
-		"#{self.get_load} | #{self.get_temp}C | #{self.get_bat}%"
+		"#{self.get_load} | #{self.get_temp}C"
 	end
 end
 
