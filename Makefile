@@ -4,7 +4,8 @@
 CFLAGS+=-Wall -W
 CFLAGS+=-std=c11
 CFLAGS+=-D_XOPEN_SOURCE=700
-LDFLAGS+=-lX11
+CFLAGS+=-I/usr/X11R7/include
+LDFLAGS+=-L/usr/X11R7/lib -lX11 -Wl,-R/usr/X11R7/lib
 PREFIX=/usr
 prog=xstatus
 srcs=${prog}.c battery.c clock.c util.c button.c widget.c
