@@ -11,10 +11,19 @@
 #include "util.h"
 #include "xstatus.h"
 
-static Display * d;
-static Battery bat;
+/* FIXME: Work to eliminate these globals.  */
 
-static Window create_window()
+XFontStruct *xstatus_font;
+uint16_t xstatus_status_w;
+
+// Static environment structure, used as a namespace.  
+static struct {
+	Battery bat;
+#define NBTN 5
+	Button * btns [NBTN];
+} xstatus;
+
+static Window create_window(Display * d)
 {
 	XSetWindowAttributes a = {.override_redirect = True,
 		.background_pixel = pixel(d, PANEL_BG)
@@ -29,7 +38,6 @@ static Window create_window()
 
 	return w;
 }
-uint16_t xstatus_status_w;
 
 __attribute__ ((hot))
 static void update(Display * d, const Window w, const GC gc, 
@@ -47,17 +55,15 @@ static void update(Display * d, const Window w, const GC gc,
 	XDrawString(d, w, gc, xstatus_row_x + BUTTON_SPACE, font_y(), buf,
 		rsz-1); // -1 to remove end terminator.  
 	LOG("buf is %lu\n", strlen(buf));
-	bat.draw(&bat);
+	xstatus.bat.draw(&xstatus.bat);
 }
 
-#define NBTN 5
-static Button * btns[NBTN];
 
 static void
-setup_buttons(const Window w, const GC gc)
+setup_buttons(Display * restrict d, const Window w, const GC gc)
 {
 	uint8_t n=0;
-#define BTN(l, c) btns[n++]=cmd_Button(d, w, gc, l, c)
+#define BTN(l, c) xstatus.btns[n++]=cmd_Button(d, w, gc, l, c)
 	BTN("Menu", MENU);
 	BTN("Terminal", TERM);
 	BTN("Editor", EDITOR);
@@ -71,8 +77,8 @@ setup_buttons(const Window w, const GC gc)
 static Button * find_button(const Window w)
 {
 	for(uint8_t i=0; i<NBTN; i++)
-		  if(btns[i]->widget.window == w)
-			    return btns[i];
+		  if(xstatus.btns[i]->widget.window == w)
+			    return xstatus.btns[i];
 	return NULL; // not_found
 }
 
@@ -89,7 +95,8 @@ static void iter_buttons(const Window ewin, void (*func)(Button * restrict))
 }
 
 __attribute__((noreturn))
-static void event_loop(const Window w, const GC gc, const char *filename)
+static void event_loop(Display * restrict d, const Window w,
+	const GC gc, const char *filename)
 {
 	XEvent e;
  eventl:
@@ -109,11 +116,9 @@ static void event_loop(const Window w, const GC gc, const char *filename)
 	goto eventl;
 }
 
-XFontStruct *xstatus_font;
-
 int main(int argc, char ** argv)
 {
-	d = get_display();
+	Display * d = get_display();
 	xstatus_font=XLoadQueryFont(d, FONT);
 	if(!xstatus_font)
 		xstatus_font=XLoadQueryFont(d, "fixed");
@@ -121,8 +126,8 @@ int main(int argc, char ** argv)
 	const Window w = create_window(d);
 	GC gc=colorgc(d, w, PANEL_FG);
 	GC bgc=colorgc(d, w, BUTTON_FG);
-	setup_buttons(w, bgc);
+	setup_buttons(d, w, bgc);
 	const char *filename = argc > 1 ? argv[2] : DEFAULTF;
-	setup_battery(&bat, d, w);
-	event_loop(w, gc, filename);
+	setup_battery(&xstatus.bat, d, w);
+	event_loop(d, w, gc, filename);
 }
