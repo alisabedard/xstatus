@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <X11/Xlib.h>
 #include "battery.h"
 #include "button.h"
@@ -11,6 +12,7 @@
 #include "xstatus.h"
 
 static Display * d;
+static Battery bat;
 
 static Window create_window()
 {
@@ -45,7 +47,7 @@ static void update(Display * d, const Window w, const GC gc,
 	XDrawString(d, w, gc, xstatus_row_x + BUTTON_SPACE, font_y(), buf,
 		rsz-1); // -1 to remove end terminator.  
 	LOG("buf is %lu\n", strlen(buf));
-	draw_battery(d, w);
+	bat.draw(&bat);
 }
 
 #define NBTN 5
@@ -100,7 +102,7 @@ static void event_loop(const Window w, const GC gc, const char *filename)
 			iter_buttons(e.xbutton.window, &do_cb);
 			break;
 		default:
-			LOG(stderr, "event: %d\n", e.type);
+			LOG("event: %d\n", e.type);
 		}
 	}
 	update(d, w, gc, filename);
@@ -121,5 +123,6 @@ int main(int argc, char ** argv)
 	GC bgc=colorgc(d, w, BUTTON_FG);
 	setup_buttons(w, bgc);
 	const char *filename = argc > 1 ? argv[2] : DEFAULTF;
+	setup_battery(&bat, d, w);
 	event_loop(w, gc, filename);
 }

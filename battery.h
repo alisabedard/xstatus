@@ -1,8 +1,19 @@
 #ifndef BATTERY_H
 #define BATTERY_H
 
-extern GC bat_bat_gc, bat_ac_gc, bat_crit_gc;
+#include <X11/Xlib.h>
+#include "widget.h"
 
-void draw_battery(Display *d, const Window w);
+typedef struct Battery {
+	uint8_t pct;
+	struct {
+		GC ac, bat, crit, bg;
+	} gc;
+	Widget widget;
+	void (*draw)(struct Battery *);
+} Battery;
+
+void setup_battery(Battery * b, Display * restrict d,
+	const Window parent);
 
 #endif//!BATTERY_H
