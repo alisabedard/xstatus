@@ -51,7 +51,7 @@ static void setup_geometry(Battery * restrict b)
 	g->x = xstatus_status_w;
 	g->height = HEIGHT-PAD;
 	g->y = PAD/2;
-	g->width = xstatus_clock_x - g->x - BUTTON_SPACE;
+	g->width = xstatus_clock_x - g->x - PAD;
 	LOG("setup_geometry(): %dx%d+%d+%d\n",
 		g->width, g->height, g->x, g->y);
 }

@@ -22,7 +22,6 @@
 #define DELAY 1
 #define BORDER 1
 #define PAD 4
-#define BUTTON_SPACE 6
 #define BUTTON_BORDER "grey25"
 #define BUTTON_BG "grey2"
 #define BUTTON_FG "darkgreen"
