@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -15,6 +16,7 @@
 
 static struct {
 	uint16_t end;
+	char * filename;
 	XFontStruct * font;
 	Button * head_button;
 	Battery bat;
@@ -56,14 +58,11 @@ static Button *last_btn(void)
 	return i;
 }
 
-__attribute__ ((hot))
-static void update(Display * d, const Window w, const GC gc, 
-	const char *filename)
+static void poll_status(Display * restrict d, const Window w, const GC gc)
 {
-	XClearWindow(d, w);
-	draw_clock(d, w, gc);
-	FILE * f = fopen(filename, "a+");
-	if (!f) ERROR("Cannot open %s\n", filename);
+	assert(xstatus.filename);
+	FILE * f = fopen(xstatus.filename, "a+");
+	if (!f) ERROR("Cannot open %s\n", xstatus.filename);
 	char buf[80];
 	// File must end in a newline or extra space.  
 	const size_t rsz = fread(&buf, 1, sizeof buf, f);
@@ -75,6 +74,15 @@ static void update(Display * d, const Window w, const GC gc,
 	XDrawString(d, w, gc, bx + PAD, font_y(), buf,
 		rsz-1); // -1 to remove end terminator.  
 	LOG("buf is %lu\n", strlen(buf));
+}
+
+__attribute__ ((hot))
+static void update(Display * d, const Window w, const GC gc)
+{
+	XClearWindow(d, w);
+	draw_clock(d, w, gc);
+	poll_status(d, w, gc);
+	// Depends on x values set in clock and status
 	xstatus.bat.draw(&xstatus.bat);
 }
 
@@ -130,7 +138,7 @@ static void iter_buttons(const Window ewin, void (*func)(Button * restrict))
 
 __attribute__((noreturn))
 static void event_loop(Display * restrict d, const Window w,
-	const GC gc, const char *filename)
+	const GC gc)
 {
 	XEvent e;
  eventl:
@@ -146,7 +154,7 @@ static void event_loop(Display * restrict d, const Window w,
 			LOG("event: %d\n", e.type);
 		}
 	}
-	update(d, w, gc, filename);
+	update(d, w, gc);
 	goto eventl;
 }
 
@@ -167,7 +175,7 @@ int main(int argc, char ** argv)
 	GC gc=colorgc(d, w, PANEL_FG);
 	GC bgc=colorgc(d, w, BUTTON_FG);
 	setup_buttons(d, w, bgc);
-	const char *filename = argc > 1 ? argv[2] : DEFAULTF;
+	xstatus.filename = argc > 1 ? argv[2] : DEFAULTF;
 	setup_battery(&xstatus.bat, d, w);
-	event_loop(d, w, gc, filename);
+	event_loop(d, w, gc);
 }

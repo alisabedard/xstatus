@@ -28,7 +28,7 @@ static void draw_percent(Battery * restrict b)
 	char str_pct[sl];
 	sl=snprintf(str_pct, sl, "%d%%", b->pct);
 	const Widget * w = &b->widget;
-	const uint16_t center = w->geometry.x +(w->geometry.width>>1);
+	const uint16_t center = w->geometry.x + (w->geometry.width>>1);
 	XFillRectangle(w->d, w->window, b->gc.bg, center-PAD, 0,
 		string_width(sl), HEIGHT);
 	XDrawString(w->d, w->window, b->widget.gc, center,
@@ -62,8 +62,9 @@ static GC get_gc(Battery * restrict b)
 {
 	GC gc=b->gc.bat;
 	const bool on_ac=sysval(ACSYSFILE);
-	if(on_ac) gc=b->gc.ac;
-	if(!on_ac && b->pct < CRIT_PCT)
+	if(on_ac) 
+		  gc=b->gc.ac;
+	else if(b->pct < CRIT_PCT)
 		  gc=b->gc.crit;
 	b->widget.gc=gc;
 	return gc;
