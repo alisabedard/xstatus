@@ -13,14 +13,22 @@
 
 /* FIXME: Work to eliminate these globals.  */
 
-XFontStruct *xstatus_font;
-//static uint16_t xstatus_row_x;
-uint16_t xstatus_status_w;
-
 static struct {
+	uint16_t end;
+	XFontStruct * font;
 	Button * head_button;
 	Battery bat;
 } xstatus;
+
+uint16_t xstatus_get_end(void)
+{
+	return xstatus.end;
+}
+
+const XFontStruct * xstatus_get_font(void)
+{
+	return xstatus.font;
+}
 
 static Window create_window(Display * d)
 {
@@ -63,7 +71,7 @@ static void update(Display * d, const Window w, const GC gc,
 	Button * b = last_btn();
 	XRectangle * g = &b->widget.geometry;
 	const uint16_t bx = g->x + g->width + PAD;
-	xstatus_status_w = string_width(rsz) + bx + PAD;
+	xstatus.end = string_width(rsz) + bx + PAD;
 	XDrawString(d, w, gc, bx + PAD, font_y(), buf,
 		rsz-1); // -1 to remove end terminator.  
 	LOG("buf is %lu\n", strlen(buf));
@@ -144,10 +152,10 @@ static void event_loop(Display * restrict d, const Window w,
 
 static void setup_font(Display * restrict d)
 {
-	xstatus_font=XLoadQueryFont(d, FONT);
-	if(!xstatus_font)
-		xstatus_font=XLoadQueryFont(d, "fixed");
-	if(!xstatus_font)
+	xstatus.font=XLoadQueryFont(d, FONT);
+	if(!xstatus.font)
+		xstatus.font=XLoadQueryFont(d, "fixed");
+	if(!xstatus.font)
 		ERROR("Failed to load font");
 }
 

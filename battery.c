@@ -48,7 +48,7 @@ static void fill(Battery * restrict b)
 static void setup_geometry(Battery * restrict b)
 {
 	XRectangle * g = &b->widget.geometry;
-	g->x = xstatus_status_w;
+	g->x = xstatus_get_end();
 	g->height = HEIGHT-PAD;
 	g->y = PAD/2;
 	g->width = xstatus_clock_x - g->x - PAD;

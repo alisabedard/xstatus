@@ -8,14 +8,14 @@
 
 uint16_t font_y(void)
 {
-	const XFontStruct * restrict f = xstatus_font;
+	const XFontStruct * restrict f = xstatus_get_font();
 	return f->ascent+f->descent;
 }
 
 uint16_t string_width(const size_t sz)
 {
-	const uint8_t w = xstatus_font->max_bounds.width;
-	return (sz+1)*w;
+	const XFontStruct * restrict f = xstatus_get_font();
+	return (sz+1)*f->max_bounds.width;
 }
 
 Display * get_display()
@@ -34,11 +34,8 @@ Pixel pixel(Display * restrict d, const char * restrict color)
 
 GC colorgc(Display * restrict d, const Window w, const char * restrict color)
 {
-	assert(xstatus_font);
-	assert(xstatus_font->fid);
-	XGCValues gv = {.foreground = pixel(d, color),
-		.font = xstatus_font->fid,
-	};
+	const XFontStruct * restrict f = xstatus_get_font();
+	XGCValues gv = {.foreground = pixel(d, color), .font = f->fid};
 	return XCreateGC(d, w, GCForeground | GCFont, &gv);
 }
 
