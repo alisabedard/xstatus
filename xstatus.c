@@ -7,12 +7,11 @@
 #include "battery.h"
 #include "button.h"
 #include "clock.h"
+#include "class.h"
 #include "config.h"
 #include "log.h"
 #include "util.h"
 #include "xstatus.h"
-
-/* FIXME: Work to eliminate these globals.  */
 
 static struct {
 	uint16_t end;
@@ -83,14 +82,21 @@ static void update(Display * d, const Window w, const GC gc)
 	draw_clock(d, w, gc);
 	poll_status(d, w, gc);
 	// Depends on x values set in clock and status
-	xstatus.bat.draw(&xstatus.bat);
+	$(&xstatus.bat, draw);
+}
+
+static void system_cb(Button * b)
+{
+	const char *cmd = b->cb_data;
+	if (system(cmd))
+		WARN("Cannot execute %s\n", cmd);
 }
 
 static uint16_t btn(Display * restrict d, const Window w, const GC gc,
 	const uint16_t x, char * restrict label, char * restrict cmd)
 {
 	Button * i = last_btn();
-	Button * b = cmd_Button(d, w, gc, x, label, cmd);
+	Button * b = new_Button(d, w, gc, x, label, system_cb, cmd);
 	if(!i)
 		  xstatus.head_button=b;
 	else
@@ -124,11 +130,6 @@ static Button * find_button(const Window w)
 	return NULL;
 }
 
-static void do_cb(Button * restrict b)
-{
-	b->cb(b);
-}
-
 static void iter_buttons(const Window ewin, void (*func)(Button * restrict))
 {
 	Button * restrict b = find_button(ewin);
@@ -145,10 +146,10 @@ static void event_loop(Display * restrict d, const Window w,
 	if (XNextEventTimed(d, &e)) {
 		switch (e.type) {
 		case Expose:
-			iter_buttons(e.xexpose.window, &draw_Button);
+			iter_buttons(e.xexpose.window, xstatus.head_button->draw);
 			break;
 		case ButtonPress:
-			iter_buttons(e.xbutton.window, &do_cb);
+			iter_buttons(e.xbutton.window, xstatus.head_button->cb);
 			break;
 		default:
 			LOG("event: %d\n", e.type);
