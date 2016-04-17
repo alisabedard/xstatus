@@ -14,6 +14,7 @@
 #define EDITOR "urxvt -e vim&"
 //#define EDITOR "gvim&"
 #define MIXER "urxvt -e alsamixer&"
+#define LOCK "slock"
 
 #define DEFAULTF "/tmp/xstatus"
 

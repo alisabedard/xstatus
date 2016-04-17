@@ -13,6 +13,7 @@
 #include "util.h"
 #include "xstatus.h"
 
+// Application state struct
 static struct {
 	uint16_t end;
 	char * filename;
@@ -62,9 +63,10 @@ static void poll_status(Display * restrict d, const Window w, const GC gc)
 	assert(xstatus.filename);
 	FILE * f = fopen(xstatus.filename, "a+");
 	if (!f) ERROR("Cannot open %s\n", xstatus.filename);
-	char buf[80];
+	static const uint8_t sz=80;
+	char buf[sz];
 	// File must end in a newline or extra space.  
-	const size_t rsz = fread(&buf, 1, sizeof buf, f);
+	const size_t rsz = fread(&buf, 1, sz, f);
 	fclose(f);
 	Button * b = last_btn();
 	XRectangle * g = &b->widget.geometry;
@@ -117,6 +119,7 @@ static uint16_t setup_buttons(Display * restrict d, const Window w, const GC gc)
 		BTN("Browser", browser?browser:BROWSER);
 	}
 	BTN("Mixer", MIXER);
+	BTN("Lock", LOCK);
 	Button * i = last_btn();
 	XRectangle * g = &i->widget.geometry;
 	return g->x+g->width;
