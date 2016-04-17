@@ -1,8 +1,14 @@
 #CFLAGS=-O0
 #CFLAGS+=-DDEBUG -ggdb
+
+#CFLAGS+=-DUSE_LOAD # Uncomment to draw load average
+CFLAGS+=-DUSE_FILE # Uncomment to read status file
+
 CFLAGS+=-Wall -W
 CFLAGS+=-std=c11
 CFLAGS+=-D_XOPEN_SOURCE=700
+CFLAGS+=-D_BSD_SOURCE
+CFLAGS+=-D_DEFAULT_SOURCE
 CFLAGS+=-I/usr/X11R7/include
 LDFLAGS+=-L/usr/X11R7/lib -lX11 -Wl,-R/usr/X11R7/lib
 PREFIX=/usr

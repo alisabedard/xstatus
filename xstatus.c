@@ -58,7 +58,30 @@ static Button *last_btn(void)
 	return i;
 }
 
-static void poll_status(Display * restrict d, const Window w, const GC gc)
+#ifdef DRAW_LOAD
+// Returns x offset for next item
+static uint16_t draw_load(Display * restrict d, const Window w, const GC gc,
+	const uint16_t x)
+{
+	double l[1];
+	getloadavg(l, 1);
+	static const uint16_t sz=6;
+	char buf[sz];
+	snprintf(buf, sz, "%.2f", l[0]);
+	XDrawString(d, w, gc, x+PAD+1, font_y(), buf, strlen(buf));
+	return string_width(sz-2) + x ;
+}
+#endif//DRAW_LOAD
+
+static uint16_t get_button_end(void)
+{
+	Button * b = last_btn();
+	XRectangle * restrict g = &b->widget.geometry;
+	return g->x + g->width;
+}
+
+static uint16_t poll_status_file(Display * restrict d, const Window w, 
+	const GC gc, const uint16_t x)
 {
 	assert(xstatus.filename);
 	FILE * f = fopen(xstatus.filename, "a+");
@@ -66,15 +89,22 @@ static void poll_status(Display * restrict d, const Window w, const GC gc)
 	static const uint8_t sz=80;
 	char buf[sz];
 	// File must end in a newline or extra space.  
-	const size_t rsz = fread(&buf, 1, sz, f);
+	// -1 to remove end terminator.  
+	const size_t rsz = fread(&buf, 1, sz, f) - 1;
 	fclose(f);
-	Button * b = last_btn();
-	XRectangle * g = &b->widget.geometry;
-	const uint16_t bx = g->x + g->width + PAD;
-	xstatus.end = string_width(rsz) + bx + PAD;
-	XDrawString(d, w, gc, bx + PAD, font_y(), buf,
-		rsz-1); // -1 to remove end terminator.  
+	XDrawString(d, w, gc, x+PAD, font_y(), buf, rsz); 
 	LOG("buf is %lu\n", strlen(buf));
+
+	return string_width(rsz) + x;
+}
+
+static void poll_status(Display * restrict d, const Window w, const GC gc)
+{
+	uint16_t x = get_button_end() + PAD;
+#ifdef USE_LOAD
+	x = draw_load(d, w, gc, x);
+#endif
+	xstatus.end = poll_status_file(d, w, gc, x);
 }
 
 __attribute__ ((hot))

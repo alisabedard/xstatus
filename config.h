@@ -2,8 +2,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-//#define FONT "-*-lucida-*-r-*-*-14-*-*-*-*-*-*-*"
-//#define FONT "fixed"
 #define FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
 // Adjust the height for the selected font:
 #define HEIGHT 18
@@ -12,7 +10,6 @@
 #define TERM "urxvt&"
 #define BROWSER "qupzilla&"
 #define EDITOR "urxvt -e vim&"
-//#define EDITOR "gvim&"
 #define MIXER "urxvt -e alsamixer&"
 #define LOCK "slock"
 
