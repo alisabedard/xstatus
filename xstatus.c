@@ -12,6 +12,7 @@
 #include "log.h"
 #include "util.h"
 #include "xstatus.h"
+#include "xdata.h"
 
 // Application state struct
 static struct {
@@ -58,7 +59,7 @@ static Button *last_btn(void)
 	return i;
 }
 
-#ifdef DRAW_LOAD
+#ifdef USE_LOAD
 // Returns x offset for next item
 static uint16_t draw_load(Display * restrict d, const Window w, const GC gc,
 	const uint16_t x)
@@ -71,7 +72,7 @@ static uint16_t draw_load(Display * restrict d, const Window w, const GC gc,
 	XDrawString(d, w, gc, x+PAD+1, font_y(), buf, strlen(buf));
 	return string_width(sz-2) + x ;
 }
-#endif//DRAW_LOAD
+#endif//USE_LOAD
 
 static uint16_t get_button_end(void)
 {
@@ -80,22 +81,23 @@ static uint16_t get_button_end(void)
 	return g->x + g->width;
 }
 
-static uint16_t poll_status_file(Display * restrict d, const Window w, 
-	const GC gc, const uint16_t x)
-{
-	assert(xstatus.filename);
-	FILE * f = fopen(xstatus.filename, "a+");
-	if (!f) ERROR("Cannot open %s\n", xstatus.filename);
-	static const uint8_t sz=80;
-	char buf[sz];
-	// File must end in a newline or extra space.  
-	// -1 to remove end terminator.  
-	const size_t rsz = fread(&buf, 1, sz, f) - 1;
-	fclose(f);
-	XDrawString(d, w, gc, x+PAD, font_y(), buf, rsz); 
-	LOG("buf is %lu\n", strlen(buf));
+static const uint8_t status_buf_sz = 80;
 
-	return string_width(rsz) + x;
+static size_t poll_status_file(const char * restrict filename, char *buf)
+{
+	FILE * restrict f = fopen(filename, "a+");
+	size_t s = fread(buf, 1, status_buf_sz, f);
+	fclose(f);
+	return s;
+}	
+
+static uint16_t draw_status_file(Display * restrict d, const Window w,
+	const GC gc, const uint16_t x_offset)
+{
+	char buf[status_buf_sz];
+	const size_t s = poll_status_file(xstatus.filename, buf) - 1;
+	XDrawString(d, w, gc, x_offset + PAD, font_y(), buf, s); 
+	return string_width(s) + x_offset;
 }
 
 static void poll_status(Display * restrict d, const Window w, const GC gc)
@@ -104,7 +106,7 @@ static void poll_status(Display * restrict d, const Window w, const GC gc)
 #ifdef USE_LOAD
 	x = draw_load(d, w, gc, x);
 #endif
-	xstatus.end = poll_status_file(d, w, gc, x);
+	xstatus.end = draw_status_file(d, w, gc, x);
 }
 
 __attribute__ ((hot))
