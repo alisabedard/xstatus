@@ -11,7 +11,7 @@ typedef struct Battery {
 		uint16_t begin, end;
 	} x;
 	struct {
-		GC ac, bat, crit, fg;
+		GC ac, bat, crit, bg;
 	} gc;
 	Widget widget;
 	void (*draw)(struct Battery *);

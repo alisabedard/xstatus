@@ -11,6 +11,7 @@ static void setup_gcs(Battery * restrict b)
 	b->gc.ac=colorgc(X, GOOD);
 	b->gc.bat=colorgc(X, DEGRADED);
 	b->gc.crit=colorgc(X, CRITICAL);
+	b->gc.bg=colorgc(X, PANEL_BG);
 }
 
 static uint8_t get_percent(void)
@@ -27,7 +28,7 @@ static void draw_percent(Battery * restrict b, const GC gc)
 	sl=snprintf(str_pct, sl, "%d%%", b->pct);
 	const Widget * w = &b->widget;
 	const uint16_t center = w->geometry.x + (w->geometry.width>>1);
-	XFillRectangle(w->X->d, w->window, gc, center-PAD, 0,
+	XFillRectangle(w->X->d, w->window, b->gc.bg, center-PAD, 0,
 		string_width(w->X->font, sl), HEIGHT);
 	XDrawString(w->X->d, w->window, gc, center,
 		font_y(w->X->font), str_pct, sl);
