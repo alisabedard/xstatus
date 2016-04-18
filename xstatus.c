@@ -23,14 +23,12 @@ static struct {
 
 static Window create_window(Display * d)
 {
-	XSetWindowAttributes a = {.override_redirect = True,
-		.background_pixel = pixel(d, PANEL_BG)
-	};
 #define CFP CopyFromParent
 	const Window w = XCreateWindow(d, DefaultRootWindow(d), 0,
 		DisplayHeight(d, 0) - HEIGHT - BORDER, DisplayWidth(d, 0),
 		HEIGHT, BORDER, CFP, CFP, CFP, CWOverrideRedirect 
-		| CWBackPixel, &a);
+		| CWBackPixel, &(XSetWindowAttributes){.override_redirect=True,
+		.background_pixel = pixel(d, PANEL_BG)});
 	XSelectInput(d, w, ExposureMask);
 	XMapWindow(d, w);
 
