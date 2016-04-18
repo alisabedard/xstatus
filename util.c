@@ -51,15 +51,16 @@ uint32_t sysval(const char *filename)
 	return atoi(buf);
 }
 
-bool XNextEventTimed(Display * dsp, XEvent * event_return)
+bool XNextEventTimed(Display * dsp, XEvent * event_return,
+	const uint8_t delay)
 {
-	struct timeval tv = { DELAY, 0 };
 	if (!XPending(dsp)) {
 		int fd = ConnectionNumber(dsp);
 		fd_set readset;
 		FD_ZERO(&readset);
 		FD_SET(fd, &readset);
-		if (!select(fd + 1, &readset, NULL, NULL, &tv))
+		if (!select(fd + 1, &readset, NULL, NULL, 
+			&(struct timeval){.tv_sec=delay}))
 			return false;
 		else
 			goto xnext;
