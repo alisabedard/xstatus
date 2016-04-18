@@ -9,7 +9,7 @@ void setup_Widget(Widget * w, XData * restrict X, XRectangle * restrict geometry
 {
 	memcpy(&w->geometry, geometry, sizeof(XRectangle));
 	w->window=XCreateSimpleWindow(X->d, X->w, geometry->x, geometry->y,
-		geometry->width, geometry->height, 0, bg, bg);
+		geometry->width, geometry->height, 0, 0, bg);
 	XMapWindow(X->d, w->window);
 	w->X=X;
 }

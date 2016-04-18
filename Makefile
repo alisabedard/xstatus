@@ -1,9 +1,9 @@
 #CFLAGS=-O0
 #CFLAGS+=-DDEBUG
 CFLAGS+=-ggdb
-
-CFLAGS+=-DUSE_LOAD # Uncomment to draw load average
-CFLAGS+=-DUSE_FILE # Uncomment to read status file
+#CFLAGS+=-Werror 
+#CFLAGS=-Os
+#CC=clang
 
 CFLAGS+=-Wall -W
 CFLAGS+=-std=c11
@@ -14,7 +14,7 @@ CFLAGS+=-I/usr/X11R7/include
 LDFLAGS+=-L/usr/X11R7/lib -lX11 -Wl,-R/usr/X11R7/lib
 PREFIX=/usr
 prog=xstatus
-srcs=${prog}.c battery.c clock.c util.c button.c widget.c
+srcs=${prog}.c battery.c clock.c util.c button.c widget.c main.c
 objs=${srcs:.c=.o}
 installdir=${DESTDIR}${PREFIX}
 

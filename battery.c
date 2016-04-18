@@ -48,8 +48,8 @@ static void setup_geometry(Battery * restrict b)
 {
 	XRectangle * g = &b->widget.geometry;
 	g->x = b->x.begin;
-	g->height = HEIGHT-PAD;
-	g->y = PAD/2;
+	g->height = HEIGHT/2;
+	g->y = HEIGHT/4;
 	g->width = b->x.end - g->x - PAD;
 	LOG("setup_geometry(): %dx%d+%d+%d\n",
 		g->width, g->height, g->x, g->y);

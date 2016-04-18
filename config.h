@@ -17,12 +17,10 @@
 
 #define TIMEFMT "%a %d %b %T"
 
-#define DELAY 1
 #define BORDER 1
 #define PAD 4
-#define BUTTON_BORDER "grey25"
-#define BUTTON_BG "grey2"
-#define BUTTON_FG "darkgreen"
+#define BUTTON_BG "grey5"
+#define BUTTON_FG "green4"
 #define PANEL_BG "black"
 #define PANEL_FG "green3"
 #define GOOD	"green"

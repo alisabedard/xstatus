@@ -47,7 +47,6 @@ static Button *last_btn(void)
 	return i;
 }
 
-#ifdef USE_LOAD
 // Returns x offset for next item
 static uint16_t draw_load(XData * restrict X, const uint16_t offset)
 {
@@ -60,7 +59,6 @@ static uint16_t draw_load(XData * restrict X, const uint16_t offset)
 		buf, strlen(buf));
 	return string_width(X->font, sz-2) + offset;
 }
-#endif//USE_LOAD
 
 static uint16_t get_button_end(void)
 {
@@ -91,9 +89,7 @@ static uint16_t draw_status_file(XData * restrict X, const uint16_t x_offset)
 static uint16_t poll_status(XData * restrict X)
 {
 	uint16_t offset = get_button_end() + PAD;
-#ifdef USE_LOAD
 	offset = draw_load(X, offset);
-#endif
 	offset = draw_status_file(X, offset);
 	return offset;
 }
@@ -126,7 +122,7 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 		  xstatus.head_button=b;
 	else
 		  i->next=b;
-	return offset + b->widget.geometry.width;
+	return offset + b->widget.geometry.width + PAD;
 }
 
 /* Returns x offset after all buttons added.  */
@@ -161,11 +157,11 @@ static void iter_buttons(const Window ewin, void (*func)(Button * restrict))
 }
 
 __attribute__((noreturn))
-static void event_loop(XData * restrict X)
+static void event_loop(XData * restrict X, const uint8_t delay)
 {
 	XEvent e;
  eventl:
-	if (XNextEventTimed(X->d, &e)) {
+	if (XNextEventTimed(X->d, &e, delay)) {
 		switch (e.type) {
 		case Expose:
 			iter_buttons(e.xexpose.window, xstatus.head_button->draw);
@@ -198,13 +194,14 @@ static void setup_xdata(XData * X)
 	X->gc = colorgc(X, PANEL_FG);
 }
 
-int main(int argc, char ** argv)
+void run_xstatus(char * restrict filename, const uint8_t delay)
 {
 	XData X;
 	setup_xdata(&X);
 	setup_buttons(&(XData){.d=X.d,.w=X.w,.font=X.font,
 		.gc=colorgc(&X,BUTTON_FG)});
 	setup_battery(&xstatus.bat, &X);
-	xstatus.filename = argc > 1 ? argv[2] : DEFAULTF;
-	event_loop(&X);
+	xstatus.filename = filename;
+	event_loop(&X, delay);
 }
+

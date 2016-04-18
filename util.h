@@ -19,7 +19,8 @@ Display * get_display();
 
 uint32_t sysval(const char *filename);
 
-bool XNextEventTimed(Display * restrict dsp, XEvent * restrict event_return);
+bool XNextEventTimed(Display * restrict dsp, XEvent * restrict event_return,
+	const uint8_t delay);
 
 Pixel pixel(Display * restrict d, const char * restrict color);
 
