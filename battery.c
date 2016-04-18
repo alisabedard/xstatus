@@ -7,12 +7,10 @@
 
 static void setup_gcs(Battery * restrict b)
 {
-	Display * restrict d = b->widget.d;
-	const Window w = b->widget.window;
-	b->gc.ac=colorgc(d, w, GOOD);
-	b->gc.bat=colorgc(d, w, DEGRADED);
-	b->gc.crit=colorgc(d, w, CRITICAL);
-	b->gc.bg=colorgc(d, w, PANEL_BG);
+	XData * X = b->widget.X;
+	b->gc.ac=colorgc(X, GOOD);
+	b->gc.bat=colorgc(X, DEGRADED);
+	b->gc.crit=colorgc(X, CRITICAL);
 }
 
 static uint8_t get_percent(void)
@@ -22,25 +20,25 @@ static uint8_t get_percent(void)
 	return pct>100?100:pct;
 }
 
-static void draw_percent(Battery * restrict b)
+static void draw_percent(Battery * restrict b, const GC gc)
 {
 	uint8_t sl=5; // 3 for value + 1 for \% + 1 for \0
 	char str_pct[sl];
 	sl=snprintf(str_pct, sl, "%d%%", b->pct);
 	const Widget * w = &b->widget;
 	const uint16_t center = w->geometry.x + (w->geometry.width>>1);
-	XFillRectangle(w->d, w->window, b->gc.bg, center-PAD, 0,
-		string_width(sl), HEIGHT);
-	XDrawString(w->d, w->window, b->widget.gc, center,
-		font_y(), str_pct, sl);
+	XFillRectangle(w->X->d, w->window, gc, center-PAD, 0,
+		string_width(w->X->font, sl), HEIGHT);
+	XDrawString(w->X->d, w->window, gc, center,
+		font_y(w->X->font), str_pct, sl);
 }
 
-static void fill(Battery * restrict b)
+static void fill(Battery * restrict b, const GC gc)
 {
 	const Widget * restrict w = &b->widget;
 	const float filled = w->geometry.width * b->pct / 100;
 	LOG("filled: %f\n", filled);
-	XFillRectangle(w->d, w->window, w->gc, w->geometry.x,
+	XFillRectangle(w->X->d, w->window, gc, w->geometry.x,
 		w->geometry.y, filled, w->geometry.height);
 }
 
@@ -48,10 +46,10 @@ static void fill(Battery * restrict b)
 static void setup_geometry(Battery * restrict b)
 {
 	XRectangle * g = &b->widget.geometry;
-	g->x = xstatus_get_end();
+	g->x = b->x.begin;
 	g->height = HEIGHT-PAD;
 	g->y = PAD/2;
-	g->width = xstatus_clock_x - g->x - PAD;
+	g->width = b->x.end - g->x - PAD;
 	LOG("setup_geometry(): %dx%d+%d+%d\n",
 		g->width, g->height, g->x, g->y);
 }
@@ -66,7 +64,6 @@ static GC get_gc(Battery * restrict b)
 		  gc=b->gc.ac;
 	else if(b->pct < CRIT_PCT)
 		  gc=b->gc.crit;
-	b->widget.gc=gc;
 	return gc;
 }
 
@@ -76,19 +73,19 @@ static void draw(Battery * restrict b)
 	GC gc = get_gc(b);
 	setup_geometry(b);
 	Widget * w = &b->widget;
-	XDrawRectangle(w->d, w->window, gc,
+	XDrawRectangle(w->X->d, w->window, gc,
 		w->geometry.x, w->geometry.y,
 		w->geometry.width, w->geometry.height);
-	fill(b);
-	draw_percent(b);
+	fill(b, gc);
+	draw_percent(b, gc);
 }
 
-void setup_battery(Battery * b, Display * restrict d, const Window parent)
+void setup_battery(Battery * restrict b, XData * restrict X)
 {
-	b->widget.d=d;
+	b->widget.X=X;
 	/* Battery is a "gadget", so the parent and the Battery window are one
  	 * and the same.  */
-	b->widget.window=b->widget.parent_window=parent;
+	b->widget.window=X->w;
 	setup_gcs(b);
 	b->draw=&draw;
 }

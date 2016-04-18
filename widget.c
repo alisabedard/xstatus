@@ -4,19 +4,13 @@
 #include "widget.h"
 #include "util.h"
 
-void create_widget(Widget * restrict w, Display * restrict d, 
-	const Window parent, XRectangle *geometry, const uint8_t border_width, 
-	const Pixel border_color, const Pixel background_color,
-	const GC gc)
+void setup_Widget(Widget * w, XData * restrict X, XRectangle * restrict geometry,
+	const Pixel bg)
 {
-	w->parent_window=parent;
-	w->d=d;
-	w->gc=gc;
 	memcpy(&w->geometry, geometry, sizeof(XRectangle));
-	w->window=XCreateSimpleWindow(d, parent, geometry->x, geometry->y,
-		geometry->width, geometry->height, border_width,
-		border_color, background_color);
-	assert(w->window);
-	XMapWindow(d, w->window);
+	w->window=XCreateSimpleWindow(X->d, X->w, geometry->x, geometry->y,
+		geometry->width, geometry->height, 0, bg, bg);
+	XMapWindow(X->d, w->window);
+	w->X=X;
 }
 

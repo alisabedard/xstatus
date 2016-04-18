@@ -16,22 +16,10 @@
 
 // Application state struct
 static struct {
-	uint16_t end;
 	char * filename;
-	XFontStruct * font;
 	Button * head_button;
 	Battery bat;
 } xstatus;
-
-uint16_t xstatus_get_end(void)
-{
-	return xstatus.end;
-}
-
-const XFontStruct * xstatus_get_font(void)
-{
-	return xstatus.font;
-}
 
 static Window create_window(Display * d)
 {
@@ -61,16 +49,16 @@ static Button *last_btn(void)
 
 #ifdef USE_LOAD
 // Returns x offset for next item
-static uint16_t draw_load(Display * restrict d, const Window w, const GC gc,
-	const uint16_t x)
+static uint16_t draw_load(XData * restrict X, const uint16_t offset)
 {
 	double l[1];
 	getloadavg(l, 1);
 	static const uint16_t sz=6;
 	char buf[sz];
 	snprintf(buf, sz, "%.2f", l[0]);
-	XDrawString(d, w, gc, x+PAD+1, font_y(), buf, strlen(buf));
-	return string_width(sz-2) + x ;
+	XDrawString(X->d, X->w, X->gc, offset+PAD+1, font_y(X->font), 
+		buf, strlen(buf));
+	return string_width(X->font, sz-2) + offset;
 }
 #endif//USE_LOAD
 
@@ -91,30 +79,31 @@ static size_t poll_status_file(const char * restrict filename, char *buf)
 	return s;
 }	
 
-static uint16_t draw_status_file(Display * restrict d, const Window w,
-	const GC gc, const uint16_t x_offset)
+static uint16_t draw_status_file(XData * restrict X, const uint16_t x_offset)
 {
 	char buf[status_buf_sz];
 	const size_t s = poll_status_file(xstatus.filename, buf) - 1;
-	XDrawString(d, w, gc, x_offset + PAD, font_y(), buf, s); 
-	return string_width(s) + x_offset;
+	XDrawString(X->d, X->w, X->gc, x_offset + PAD,
+		font_y(X->font), buf, s); 
+	return string_width(X->font, s) + x_offset;
 }
 
-static void poll_status(Display * restrict d, const Window w, const GC gc)
+static uint16_t poll_status(XData * restrict X)
 {
-	uint16_t x = get_button_end() + PAD;
+	uint16_t offset = get_button_end() + PAD;
 #ifdef USE_LOAD
-	x = draw_load(d, w, gc, x);
+	offset = draw_load(X, offset);
 #endif
-	xstatus.end = draw_status_file(d, w, gc, x);
+	offset = draw_status_file(X, offset);
+	return offset;
 }
 
 __attribute__ ((hot))
-static void update(Display * d, const Window w, const GC gc)
+static void update(XData * restrict X)
 {
-	XClearWindow(d, w);
-	draw_clock(d, w, gc);
-	poll_status(d, w, gc);
+	XClearWindow(X->d, X->w);
+	xstatus.bat.x.begin=poll_status(X);
+	xstatus.bat.x.end=draw_clock(X);
 	// Depends on x values set in clock and status
 	$(&xstatus.bat, draw);
 }
@@ -126,35 +115,34 @@ static void system_cb(Button * b)
 		WARN("Cannot execute %s\n", cmd);
 }
 
-static uint16_t btn(Display * restrict d, const Window w, const GC gc,
-	const uint16_t x, char * restrict label, char * restrict cmd)
+static uint16_t btn(XData * restrict X, const uint16_t offset,
+	char * restrict label, char * restrict cmd)
 {
 	Button * i = last_btn();
-	Button * b = new_Button(d, w, gc, x, label, system_cb, cmd);
+	Button * b = new_Button(X, &(XRectangle){.x=offset,
+		.width=string_width(X->font, strlen(label)), .height=HEIGHT},
+		label, system_cb, cmd);	
 	if(!i)
 		  xstatus.head_button=b;
 	else
 		  i->next=b;
-	return x+b->widget.geometry.width;
+	return offset + b->widget.geometry.width;
 }
 
 /* Returns x offset after all buttons added.  */
-static uint16_t setup_buttons(Display * restrict d, const Window w, const GC gc)
+static uint16_t setup_buttons(XData * restrict X)
 {
-	uint16_t x=0;
-#define BTN(l, c) x=btn(d, w, gc, x, l, c)
-	BTN("Menu", MENU);
-	BTN("Terminal", TERM);
-	BTN("Editor", EDITOR);
+	uint16_t off = 0;
+	off=btn(X, off, "Menu", MENU);
+	off=btn(X, off, "Terminal", TERM);
+	off=btn(X, off, "Editor", EDITOR);
 	{
 		char *browser=getenv("BROWSER");
-		BTN("Browser", browser?browser:BROWSER);
+		off=btn(X, off, "Browser", browser?browser:BROWSER);
 	}
-	BTN("Mixer", MIXER);
-	BTN("Lock", LOCK);
-	Button * i = last_btn();
-	XRectangle * g = &i->widget.geometry;
-	return g->x+g->width;
+	off=btn(X, off, "Mixer", MIXER);
+	off=btn(X, off, "Lock", LOCK);
+	return off;
 }
 
 static Button * find_button(const Window w)
@@ -173,12 +161,11 @@ static void iter_buttons(const Window ewin, void (*func)(Button * restrict))
 }
 
 __attribute__((noreturn))
-static void event_loop(Display * restrict d, const Window w,
-	const GC gc)
+static void event_loop(XData * restrict X)
 {
 	XEvent e;
  eventl:
-	if (XNextEventTimed(d, &e)) {
+	if (XNextEventTimed(X->d, &e)) {
 		switch (e.type) {
 		case Expose:
 			iter_buttons(e.xexpose.window, xstatus.head_button->draw);
@@ -190,28 +177,34 @@ static void event_loop(Display * restrict d, const Window w,
 			LOG("event: %d\n", e.type);
 		}
 	}
-	update(d, w, gc);
+	update(X);
 	goto eventl;
 }
 
-static void setup_font(Display * restrict d)
+static void setup_font(XData * restrict X)
 {
-	xstatus.font=XLoadQueryFont(d, FONT);
-	if(!xstatus.font)
-		xstatus.font=XLoadQueryFont(d, "fixed");
-	if(!xstatus.font)
+	X->font=XLoadQueryFont(X->d, FONT);
+	if(!X->font)
+		X->font=XLoadQueryFont(X->d, "fixed");
+	if(!X->font)
 		ERROR("Failed to load font");
+}
+
+static void setup_xdata(XData * X)
+{
+	X->d = get_display();
+	X->w = create_window(X->d);
+	setup_font(X); // font needed for gc
+	X->gc = colorgc(X, PANEL_FG);
 }
 
 int main(int argc, char ** argv)
 {
-	Display * d = get_display();
-	setup_font(d);
-	const Window w = create_window(d);
-	GC gc=colorgc(d, w, PANEL_FG);
-	GC bgc=colorgc(d, w, BUTTON_FG);
-	setup_buttons(d, w, bgc);
+	XData X;
+	setup_xdata(&X);
+	setup_buttons(&(XData){.d=X.d,.w=X.w,.font=X.font,
+		.gc=colorgc(&X,BUTTON_FG)});
+	setup_battery(&xstatus.bat, &X);
 	xstatus.filename = argc > 1 ? argv[2] : DEFAULTF;
-	setup_battery(&xstatus.bat, d, w);
-	event_loop(d, w, gc);
+	event_loop(&X);
 }

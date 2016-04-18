@@ -4,17 +4,15 @@
 #include <stdint.h>
 #include <X11/Xlib.h>
 #include "util.h"
+#include "xdata.h"
 
 typedef struct Widget {
-	Display *d;
-	Window window, parent_window;
-	GC gc;
+	Window window;
+	XData * X; // X->w is the parent window.  
 	XRectangle geometry;
 } Widget;
 
-void create_widget(Widget * restrict w, Display * restrict d, 
-	const Window parent, XRectangle *geometry, const uint8_t border_width, 
-	const Pixel border_color, const Pixel background_color,
-	const GC gc);
+void setup_Widget(Widget * w, XData * restrict X,
+	XRectangle * restrict geometry, const Pixel bg);
 
 #endif//!XS_WIDGET_H

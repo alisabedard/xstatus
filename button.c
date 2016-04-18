@@ -10,30 +10,38 @@
 #include "util.h"
 #include "xstatus.h"
 
-void draw_Button(Button * restrict b)
+static void draw_Button(Button * restrict b)
 {
-	assert(b->widget.d);
-	assert(b->widget.window);
-	XClearWindow(b->widget.d, b->widget.window);
-	XDrawString(b->widget.d, b->widget.window, b->widget.gc, PAD,
-		font_y(), b->label, strlen(b->label));
+	Widget * w = &b->widget;
+	Display * restrict d = w->X->d;
+	const Window win = w->window;
+
+	XClearWindow(d, win);
+	XDrawString(d, win, w->X->gc, PAD, font_y(w->X->font),
+		b->label, strlen(b->label));
 }
 
-Button * new_Button(Display * restrict d, const Window parent, const GC gc,
-	const uint16_t x, char * restrict label, void (*cb)(Button *),
-	void *cb_data)
-{
-	Button * restrict b = malloc(sizeof(Button));
+void setup_Button(Button * restrict b, XData * restrict X,
+	XRectangle * restrict g, char * restrict label, 
+	void (*cb)(Button *), void *cb_data)
+{	
 	b->label=label;
 	b->cb=cb;
 	b->draw=&draw_Button;
 	b->cb_data=cb_data;
 	b->next=NULL;
-	XRectangle g = { x, 0, string_width(strlen(label)), HEIGHT-2*BORDER};
-	create_widget(&b->widget, d, parent, &g, BORDER,
-		pixel(d, BUTTON_BORDER), pixel(d, BUTTON_BG), gc);
-	XSelectInput(d, b->widget.window, ExposureMask | ButtonPressMask);
+	Widget * w = &b->widget;
+	setup_Widget(&b->widget, X, g, pixel(X->d, BUTTON_BG));
+	memcpy(&w->geometry, g, sizeof(XRectangle));
+	XSelectInput(X->d, w->window, ExposureMask | ButtonPressMask);
 	draw_Button(b);
+}
+
+Button * new_Button(XData * restrict X, XRectangle * restrict geometry,
+	char * restrict label, void (*cb)(Button *), void *cb_data)
+{
+	Button * restrict b = malloc(sizeof(Button));
+	setup_Button(b, X, geometry, label, cb, cb_data);
 	return b;
 }
 

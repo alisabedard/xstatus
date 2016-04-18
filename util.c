@@ -3,18 +3,16 @@
 #include <sys/select.h>
 #include "config.h"
 #include "log.h"
-#include "xstatus.h"
 #include "util.h"
+#include "xdata.h"
 
-uint16_t font_y(void)
+uint16_t font_y(XFontStruct * restrict f)
 {
-	const XFontStruct * restrict f = xstatus_get_font();
 	return f->ascent+f->descent;
 }
 
-uint16_t string_width(const size_t sz)
+uint16_t string_width(XFontStruct * restrict f, const size_t sz)
 {
-	const XFontStruct * restrict f = xstatus_get_font();
 	return (sz+1)*f->max_bounds.width;
 }
 
@@ -32,11 +30,10 @@ Pixel pixel(Display * restrict d, const char * restrict color)
 	return c.pixel;
 }
 
-GC colorgc(Display * restrict d, const Window w, const char * restrict color)
+GC colorgc(XData * restrict X, const char * restrict color)
 {
-	const XFontStruct * restrict f = xstatus_get_font();
-	XGCValues gv = {.foreground = pixel(d, color), .font = f->fid};
-	return XCreateGC(d, w, GCForeground | GCFont, &gv);
+	XGCValues gv = {.foreground = pixel(X->d, color), .font = X->font->fid};
+	return XCreateGC(X->d, X->w, GCForeground | GCFont, &gv);
 }
 
 uint32_t sysval(const char *filename)

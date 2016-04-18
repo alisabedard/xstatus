@@ -2,10 +2,8 @@
 #define XS_CLOCK_H
 
 #include <stdint.h>
-#include <X11/Xlib.h>
+#include "xdata.h"
 
-extern uint16_t xstatus_clock_x;
-
-void draw_clock(Display * restrict d, const Window w, const GC gc);
+uint16_t draw_clock(XData * restrict X);
 
 #endif//!XS_CLOCK_H

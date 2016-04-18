@@ -3,17 +3,20 @@
 
 #include <X11/Xlib.h>
 #include "widget.h"
+#include "xdata.h"
 
 typedef struct Battery {
 	uint8_t pct;
 	struct {
-		GC ac, bat, crit, bg;
+		uint16_t begin, end;
+	} x;
+	struct {
+		GC ac, bat, crit, fg;
 	} gc;
 	Widget widget;
 	void (*draw)(struct Battery *);
 } Battery;
 
-void setup_battery(Battery * b, Display * restrict d,
-	const Window parent);
+void setup_battery(Battery * restrict b, XData * restrict X);
 
 #endif//!BATTERY_H

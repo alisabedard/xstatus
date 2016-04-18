@@ -1,5 +1,6 @@
 #CFLAGS=-O0
-#CFLAGS+=-DDEBUG -ggdb
+#CFLAGS+=-DDEBUG
+CFLAGS+=-ggdb
 
 CFLAGS+=-DUSE_LOAD # Uncomment to draw load average
 CFLAGS+=-DUSE_FILE # Uncomment to read status file

@@ -2,16 +2,18 @@
 #define XS_UTIL_H
 
 #include <stdbool.h>
-#include <X11/Xlib.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <X11/Xlib.h>
+#include "xdata.h"
 
 typedef uint32_t Pixel;
 
-uint16_t font_y(void);
+uint16_t font_y(XFontStruct * restrict f);
 
-uint16_t string_width(const size_t sz);
+uint16_t string_width(XFontStruct * restrict f, const size_t sz);
 
-GC colorgc(Display * restrict d, const Window w, const char * restrict color);
+GC colorgc(XData * restrict X, const char * restrict color);
 
 Display * get_display();
 

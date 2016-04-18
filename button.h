@@ -13,8 +13,11 @@ typedef struct Button {
 	Widget widget;
 } Button;
 
-Button * new_Button(Display * restrict d, const Window parent, const GC gc,
-	const uint16_t x, char * restrict label, void (*cb)(Button *),
-	void * restrict cb_data);
+void setup_Button(Button * restrict b, XData * restrict X, 
+	XRectangle * restrict g, char * restrict label, 
+	void (*cb)(Button *), void *cb_data);
+
+Button * new_Button(XData * restrict X, XRectangle * restrict g,
+	char * restrict label, void (*cb)(Button *), void *cb_data);
 
 #endif//_BUTTON_H
