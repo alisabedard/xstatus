@@ -11,8 +11,6 @@ typedef uint32_t Pixel;
 
 uint16_t font_y(XFontStruct * restrict f);
 
-uint16_t string_width(XFontStruct * restrict f, const size_t sz);
-
 GC colorgc(XData * restrict X, const char * restrict color);
 
 Display * get_display();

@@ -29,7 +29,7 @@ static void draw_percent(Battery * restrict b, const GC gc)
 	const Widget * w = &b->widget;
 	const uint16_t center = w->geometry.x + (w->geometry.width>>1);
 	XFillRectangle(w->X->d, w->window, b->gc.bg, center-PAD, 0,
-		string_width(w->X->font, sl), HEIGHT);
+		XTextWidth(w->X->font, str_pct, sl)+(PAD<<1), HEIGHT);
 	XDrawString(w->X->d, w->window, gc, center,
 		font_y(w->X->font), str_pct, sl);
 }

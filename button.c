@@ -22,9 +22,9 @@ static void draw_Button(Button * restrict b)
 }
 
 void setup_Button(Button * restrict b, XData * restrict X,
-	XRectangle * restrict g, char * restrict label, 
+	XRectangle * restrict g, char * restrict label,
 	void (*cb)(Button *), void *cb_data)
-{	
+{
 	b->label=label;
 	b->cb=cb;
 	b->draw=&draw_Button;

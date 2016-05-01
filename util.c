@@ -11,11 +11,6 @@ uint16_t font_y(XFontStruct * restrict f)
 	return f->ascent+f->descent;
 }
 
-uint16_t string_width(XFontStruct * restrict f, const size_t sz)
-{
-	return (sz+1)*f->max_bounds.width;
-}
-
 Display * get_display()
 {
 	Display *d = XOpenDisplay(NULL);
@@ -25,8 +20,8 @@ Display * get_display()
 
 Pixel pixel(Display * restrict d, const char * restrict color)
 {
-	XColor c, nc;
-	XAllocNamedColor(d, DefaultColormap(d, 0), color, &c, &nc);
+	XColor c;
+	XAllocNamedColor(d, DefaultColormap(d, 0), color, &c, &(XColor){});
 	return c.pixel;
 }
 

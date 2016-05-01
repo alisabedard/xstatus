@@ -26,7 +26,7 @@ static Window create_window(Display * d)
 #define CFP CopyFromParent
 	const Window w = XCreateWindow(d, DefaultRootWindow(d), 0,
 		DisplayHeight(d, 0) - HEIGHT - BORDER, DisplayWidth(d, 0),
-		HEIGHT, BORDER, CFP, CFP, CFP, CWOverrideRedirect 
+		HEIGHT, BORDER, CFP, CFP, CFP, CWOverrideRedirect
 		| CWBackPixel, &(XSetWindowAttributes){.override_redirect=True,
 		.background_pixel = pixel(d, PANEL_BG)});
 	XSelectInput(d, w, ExposureMask);
@@ -53,9 +53,9 @@ static uint16_t draw_load(XData * restrict X, const uint16_t offset)
 	static const uint16_t sz=6;
 	char buf[sz];
 	snprintf(buf, sz, "%.2f", l[0]);
-	XDrawString(X->d, X->w, X->gc, offset+PAD+1, font_y(X->font), 
+	XDrawString(X->d, X->w, X->gc, offset+PAD+1, font_y(X->font),
 		buf, strlen(buf));
-	return string_width(X->font, sz-2) + offset;
+	return XTextWidth(X->font, buf, strlen(buf)) + offset + PAD;
 }
 
 static uint16_t get_button_end(void)
@@ -73,15 +73,15 @@ static size_t poll_status_file(const char * restrict filename, char *buf)
 	size_t s = fread(buf, 1, status_buf_sz, f);
 	fclose(f);
 	return s;
-}	
+}
 
 static uint16_t draw_status_file(XData * restrict X, const uint16_t x_offset)
 {
 	char buf[status_buf_sz];
 	const size_t s = poll_status_file(xstatus.filename, buf) - 1;
 	XDrawString(X->d, X->w, X->gc, x_offset + PAD,
-		font_y(X->font), buf, s); 
-	return string_width(X->font, s) + x_offset;
+		font_y(X->font), buf, s);
+	return XTextWidth(X->font, buf, s) + x_offset + (PAD<<1);
 }
 
 static uint16_t poll_status(XData * restrict X)
@@ -114,8 +114,8 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 {
 	Button * i = last_btn();
 	Button * b = new_Button(X, &(XRectangle){.x=offset,
-		.width=string_width(X->font, strlen(label)), .height=HEIGHT},
-		label, system_cb, cmd);	
+		.width=XTextWidth(X->font, label, strlen(label))+(PAD<<1),
+		.height=HEIGHT}, label, system_cb, cmd);
 	if(!i)
 		  xstatus.head_button=b;
 	else
@@ -162,10 +162,12 @@ static void event_loop(XData * restrict X, const uint8_t delay)
 	if (XNextEventTimed(X->d, &e, delay)) {
 		switch (e.type) {
 		case Expose:
-			iter_buttons(e.xexpose.window, xstatus.head_button->draw);
+			iter_buttons(e.xexpose.window,
+				xstatus.head_button->draw);
 			break;
 		case ButtonPress:
-			iter_buttons(e.xbutton.window, xstatus.head_button->cb);
+			iter_buttons(e.xbutton.window,
+				xstatus.head_button->cb);
 			break;
 		default:
 			LOG("event: %d\n", e.type);
