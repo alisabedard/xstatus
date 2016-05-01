@@ -79,9 +79,9 @@ static uint16_t draw_status_file(XData * restrict X, const uint16_t x_offset)
 {
 	char buf[status_buf_sz];
 	const size_t s = poll_status_file(xstatus.filename, buf) - 1;
-	XDrawString(X->d, X->w, X->gc, x_offset + PAD,
+	XDrawString(X->d, X->w, X->gc, x_offset + (PAD<<1),
 		font_y(X->font), buf, s);
-	return XTextWidth(X->font, buf, s) + x_offset + (PAD<<1);
+	return XTextWidth(X->font, buf, s) + x_offset + (PAD<<2);
 }
 
 static uint16_t poll_status(XData * restrict X)
