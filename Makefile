@@ -1,8 +1,8 @@
 #CFLAGS=-O0
 #CFLAGS+=-DDEBUG
-CFLAGS+=-ggdb
+#CFLAGS+=-ggdb
 #CFLAGS+=-Werror 
-#CFLAGS=-Os
+CFLAGS=-Os
 #CC=clang
 
 CFLAGS+=-Wall -W
@@ -19,6 +19,7 @@ objs=${srcs:.c=.o}
 installdir=${DESTDIR}${PREFIX}
 
 all: ${prog}
+	ls -l ${prog} >> sz.log; tail sz.log
 
 *.h:
 	make clean

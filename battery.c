@@ -60,8 +60,7 @@ static void setup_geometry(Battery * restrict b)
 static GC get_gc(Battery * restrict b)
 {
 	GC gc=b->gc.bat;
-	const bool on_ac=sysval(ACSYSFILE);
-	if(on_ac) 
+	if(sysval(ACSYSFILE))
 		  gc=b->gc.ac;
 	else if(b->pct < CRIT_PCT)
 		  gc=b->gc.crit;

@@ -12,12 +12,10 @@
 
 static void draw_Button(Button * restrict b)
 {
-	Widget * w = &b->widget;
-	Display * restrict d = w->X->d;
-	const Window win = w->window;
+	const Widget * restrict w = &b->widget;
 
-	XClearWindow(d, win);
-	XDrawString(d, win, w->X->gc, PAD, font_y(w->X->font),
+	XClearWindow(w->X->d, w->window);
+	XDrawString(w->X->d, w->window, w->X->gc, PAD, font_y(w->X->font),
 		b->label, strlen(b->label));
 }
 
