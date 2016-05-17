@@ -2,6 +2,7 @@
 #define XS_LOG_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define WARN(...) fprintf(stderr, __VA_ARGS__)
 #define ERROR(...) {WARN(__VA_ARGS__); exit(1);}

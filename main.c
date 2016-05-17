@@ -28,7 +28,7 @@ int main(int argc , char ** argv)
 			break;
 		case 'h':
 		default:
-			fputs(helptext, stderr);
+			fprintf(stdout, "%s", helptext);
 			exit(0);
 		}
 	}

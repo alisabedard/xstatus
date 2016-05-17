@@ -1,18 +1,19 @@
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <X11/Xlib.h>
+#include "xstatus.h"
+
 #include "battery.h"
 #include "button.h"
-#include "clock.h"
 #include "class.h"
+#include "clock.h"
 #include "config.h"
+#include "load.h"
 #include "log.h"
+#include "status_file.h"
+#include "temperature.h"
 #include "util.h"
 #include "xstatus.h"
 #include "xdata.h"
+
+#include <string.h>
 
 // Application state struct
 static struct {
@@ -38,24 +39,10 @@ static Window create_window(Display * d)
 static Button *last_btn(void)
 {
 	Button * i = xstatus.head_button;
-	if(!i)
-		  return NULL;
-	while(i->next)
-		  i=i->next;
+	if(i)
+		while(i->next)
+		  	i=i->next;
 	return i;
-}
-
-// Returns x offset for next item
-static uint16_t draw_load(XData * restrict X, const uint16_t offset)
-{
-	double l[1];
-	getloadavg(l, 1);
-	static const uint16_t sz=6;
-	char buf[sz];
-	snprintf(buf, sz, "%.2f", l[0]);
-	XDrawString(X->d, X->w, X->gc, offset+PAD+1, font_y(X->font),
-		buf, strlen(buf));
-	return XTextWidth(X->font, buf, strlen(buf)) + offset + PAD;
 }
 
 static uint16_t get_button_end(void)
@@ -65,30 +52,12 @@ static uint16_t get_button_end(void)
 	return g->x + g->width;
 }
 
-static const uint8_t status_buf_sz = 80;
-
-static size_t poll_status_file(const char * restrict filename, char *buf)
-{
-	FILE * restrict f = fopen(filename, "a+");
-	size_t s = fread(buf, 1, status_buf_sz, f);
-	fclose(f);
-	return s;
-}
-
-static uint16_t draw_status_file(XData * restrict X, const uint16_t x_offset)
-{
-	char buf[status_buf_sz];
-	const size_t s = poll_status_file(xstatus.filename, buf) - 1;
-	XDrawString(X->d, X->w, X->gc, x_offset + (PAD<<1),
-		font_y(X->font), buf, s);
-	return XTextWidth(X->font, buf, s) + x_offset + (PAD<<2);
-}
-
 static uint16_t poll_status(XData * restrict X)
 {
 	uint16_t offset = get_button_end() + PAD;
 	offset = draw_load(X, offset);
-	offset = draw_status_file(X, offset);
+	offset = draw_temp(X, offset);
+	offset = draw_status_file(X, offset, xstatus.filename);
 	return offset;
 }
 

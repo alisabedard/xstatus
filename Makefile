@@ -2,10 +2,10 @@
 #CFLAGS+=-DDEBUG
 #CFLAGS+=-ggdb
 #CFLAGS+=-Werror 
-CFLAGS=-Os
+#CFLAGS=-Os
 #CC=clang
 
-CFLAGS+=-Wall -W
+CFLAGS+=-Wall -Wextra
 CFLAGS+=-std=c11
 CFLAGS+=-D_XOPEN_SOURCE=700
 CFLAGS+=-D_BSD_SOURCE
@@ -15,6 +15,7 @@ LDFLAGS+=-L/usr/X11R7/lib -lX11 -Wl,-R/usr/X11R7/lib
 PREFIX=/usr
 prog=xstatus
 srcs=${prog}.c battery.c clock.c util.c button.c widget.c main.c
+srcs+=load.c temperature.c status_file.c
 objs=${srcs:.c=.o}
 installdir=${DESTDIR}${PREFIX}
 

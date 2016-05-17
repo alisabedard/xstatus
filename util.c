@@ -38,8 +38,8 @@ uint32_t sysval(const char *filename)
 		WARN("Cannot open %s\n", filename);
 		return 0;
 	}
-	char buf[4];
-	size_t sz = fread(&buf, 1, 4, f);
+	char buf[6];
+	size_t sz = fread(&buf, 1, 6, f);
 	fclose(f);
 	if(!sz)
 		  return 0;

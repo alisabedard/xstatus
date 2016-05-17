@@ -30,5 +30,6 @@
 
 #define BATSYSFILE "/sys/class/power_supply/BAT0/capacity"
 #define ACSYSFILE "/sys/class/power_supply/AC/online"
+#define TEMPSYSFILE "/sys/devices/virtual/thermal/thermal_zone0/temp"
 
 #endif//CONFIG_H
