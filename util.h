@@ -15,7 +15,11 @@ GC colorgc(XData * restrict X, const char * restrict color);
 
 Display * get_display();
 
+#if defined(USE_BATTERY) || defined(USE_TEMP)
 uint32_t sysval(const char *filename);
+#else
+#define sysval(f)
+#endif
 
 bool XNextEventTimed(Display * restrict dsp, XEvent * restrict event_return,
 	const uint8_t delay);

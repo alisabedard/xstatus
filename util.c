@@ -31,6 +31,7 @@ GC colorgc(XData * restrict X, const char * restrict color)
 	return XCreateGC(X->d, X->w, GCForeground | GCFont, &gv);
 }
 
+#if defined(USE_BATTERY) || defined(USE_TEMP)
 uint32_t sysval(const char *filename)
 {
 	FILE *f = fopen(filename, "r");
@@ -45,6 +46,7 @@ uint32_t sysval(const char *filename)
 		  return 0;
 	return atoi(buf);
 }
+#endif//USE_BATTERY||USE_TEMP
 
 bool XNextEventTimed(Display * dsp, XEvent * event_return,
 	const uint8_t delay)

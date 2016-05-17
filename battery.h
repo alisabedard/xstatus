@@ -1,6 +1,7 @@
 #ifndef BATTERY_H
 #define BATTERY_H
 
+#ifdef USE_BATTERY
 #include <X11/Xlib.h>
 #include "widget.h"
 #include "xdata.h"
@@ -18,5 +19,9 @@ typedef struct Battery {
 } Battery;
 
 void setup_battery(Battery * restrict b, XData * restrict X);
+
+#else//!USE_BATTERY
+#define setup_battery(b, X)
+#endif//USE_BATTERY
 
 #endif//!BATTERY_H
