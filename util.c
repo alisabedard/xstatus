@@ -21,14 +21,17 @@ Display * get_display()
 Pixel pixel(Display * restrict d, const char * restrict color)
 {
 	XColor c;
-	XAllocNamedColor(d, DefaultColormap(d, 0), color, &c, &(XColor){});
+	XAllocNamedColor(d, DefaultColormap(d, 0), color,
+		&c, &(XColor){});
 	return c.pixel;
 }
 
 GC colorgc(XData * restrict X, const char * restrict color)
 {
-	XGCValues gv = {.foreground = pixel(X->d, color), .font = X->font->fid};
-	return XCreateGC(X->d, X->w, GCForeground | GCFont, &gv);
+	XGCValues gv = {.foreground = pixel(X->d, color),
+		.font = X->font->fid};
+	return XCreateGC(X->d, X->w,
+		GCForeground | GCFont, &gv);
 }
 
 #if defined(USE_BATTERY) || defined(USE_TEMP)
@@ -56,7 +59,7 @@ bool XNextEventTimed(Display * dsp, XEvent * event_return,
 		fd_set readset;
 		FD_ZERO(&readset);
 		FD_SET(fd, &readset);
-		if (!select(fd + 1, &readset, NULL, NULL, 
+		if (!select(fd + 1, &readset, NULL, NULL,
 			&(struct timeval){.tv_sec=delay}))
 			return false;
 		else
