@@ -27,9 +27,11 @@ static void draw_percent(Battery * restrict b, const GC gc)
 	char str_pct[sl];
 	sl=snprintf(str_pct, sl, "%d%%", b->pct);
 	const Widget * w = &b->widget;
-	const uint16_t center = w->geometry.x + (w->geometry.width>>1);
-	XFillRectangle(w->X->d, w->window, b->gc.bg, center-PAD, 0,
-		XTextWidth(w->X->font, str_pct, sl)+(PAD<<1), HEIGHT);
+	const uint16_t center = w->geometry.x
+		+ (w->geometry.width>>1);
+	XFillRectangle(w->X->d, w->window, b->gc.bg,
+		center-PAD, 0, XTextWidth(w->X->font,
+		str_pct, sl)+(PAD<<1), HEIGHT);
 	XDrawString(w->X->d, w->window, gc, center,
 		font_y(w->X->font), str_pct, sl);
 }
@@ -55,16 +57,12 @@ static void setup_geometry(Battery * restrict b)
 		g->width, g->height, g->x, g->y);
 }
 
-/* Selects a gc to use based on ac/battery status, assigns it to b->widget.gc
- * and returns it.  */
+/* Selects a gc to use based on ac/battery status,
+   assigns it to b->widget.gc and returns it.  */
 static GC get_gc(Battery * restrict b)
 {
-	GC gc=b->gc.bat;
-	if(sysval(ACSYSFILE))
-		  gc=b->gc.ac;
-	else if(b->pct < CRIT_PCT)
-		  gc=b->gc.crit;
-	return gc;
+	return sysval(ACSYSFILE) ? b->gc.ac : b->pct
+		< CRIT_PCT ? b->gc.crit : b->gc.bat;
 }
 
 static void draw(Battery * restrict b)
@@ -83,8 +81,8 @@ static void draw(Battery * restrict b)
 void setup_battery(Battery * restrict b, XData * restrict X)
 {
 	b->widget.X=X;
-	/* Battery is a "gadget", so the parent and the Battery window are one
- 	 * and the same.  */
+	/* Battery is a "gadget", so the parent and the
+	   Battery window are identical.  */
 	b->widget.window=X->w;
 	setup_gcs(b);
 	b->draw=&draw;
