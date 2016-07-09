@@ -5,15 +5,18 @@
 #include "xstatus.h"
 
 static const char * helptext =
-"DESCRIPTION:  Simple X toolbar for minimalistic window managers.\n"
+"DESCRIPTION:  Simple X toolbar for minimalistic"
+" window managers.\n"
 "USAGE: xstatus [-d DELAY][-f FILE][-h]\n"
-"\t-d DELAY     Set delay between status updates, in seconds.\n"
-"\t-f FILE      Set FILE to be continuously polled and displayed.\n"
+"\t-d DELAY     Set delay between status updates,"
+" in seconds.\n"
+"\t-f FILE      Set FILE to be continuously polled and"
+" displayed.\n"
 "\t-h           Print this usage information.  \n"
 "Copyright 2016, Jeffrey E. Bedard <jefbed@gmail.com>\n"
 "Project page:  https://github.com/jefbed/xstatus\n";
 
-int main(int argc , char ** argv)
+int main(int argc, char ** argv)
 {
 	char *filename=DEFAULTF;
 	uint8_t delay=1;

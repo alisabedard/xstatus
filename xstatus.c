@@ -16,7 +16,8 @@
 #include <string.h>
 
 // Application state struct
-#if defined(USE_STATUS) || defined(USE_BUTTONS) || defined(USE_BATTERY)
+#if defined(USE_STATUS) || defined(USE_BUTTONS)\
+	|| defined(USE_BATTERY)
 static struct {
 #ifdef USE_STATUS
 	char * filename;
@@ -33,11 +34,13 @@ static struct {
 static Window create_window(Display * d)
 {
 #define CFP CopyFromParent
-	const Window w = XCreateWindow(d, DefaultRootWindow(d), 0,
-		DisplayHeight(d, 0) - HEIGHT - BORDER, DisplayWidth(d, 0),
-		HEIGHT, BORDER, CFP, CFP, CFP, CWOverrideRedirect
-		| CWBackPixel, &(XSetWindowAttributes){.override_redirect=True,
-		.background_pixel = pixel(d, PANEL_BG)});
+	const Window w = XCreateWindow(d, DefaultRootWindow(d),
+		0, DisplayHeight(d, 0) - HEIGHT - BORDER,
+		DisplayWidth(d, 0), HEIGHT, BORDER, CFP,
+		CFP, CFP, CWOverrideRedirect
+		| CWBackPixel, &(XSetWindowAttributes){
+		.override_redirect=True, .background_pixel
+		= pixel(d, PANEL_BG)});
 	XSelectInput(d, w, ExposureMask);
 	XMapWindow(d, w);
 
@@ -50,7 +53,7 @@ static Button *last_btn(void)
 	Button * i = xstatus.head_button;
 	if(i)
 		while(i->next)
-		  	i=i->next;
+			i=i->next;
 	return i;
 }
 
@@ -64,8 +67,8 @@ static uint16_t get_button_end(void)
 #define get_button_end() 0
 #endif//USE_BUTTONS
 
-#if defined(USE_LOAD) || defined(USE_BUTTON) || defined(USE_TEMP)\
-	|| defined(USE_STATUS)
+#if defined(USE_LOAD) || defined(USE_BUTTON)\
+	|| defined(USE_TEMP) || defined(USE_STATUS)
 static uint16_t poll_status(XData * restrict X)
 {
 	uint16_t offset = get_button_end() + PAD;
@@ -112,12 +115,10 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 {
 	Button * i = last_btn();
 	Button * b = new_Button(X, &(XRectangle){.x=offset,
-		.width=XTextWidth(X->font, label, strlen(label))+(PAD<<1),
+		.width=XTextWidth(X->font, label,
+			strlen(label))+(PAD<<1),
 		.height=HEIGHT}, label, system_cb, cmd);
-	if(!i)
-		  xstatus.head_button=b;
-	else
-		  i->next=b;
+	*(i ? &xstatus.head_button : &i->next) = b;
 	return offset + b->widget.geometry.width + PAD;
 }
 
