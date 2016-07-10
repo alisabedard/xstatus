@@ -14,6 +14,7 @@
 #include "xdata.h"
 
 #include <string.h>
+#include <X11/Xlib-xcb.h>
 
 // Application state struct
 #if defined(USE_STATUS) || defined(USE_BUTTONS)\
@@ -28,23 +29,28 @@ static struct {
 #ifdef USE_BATTERY
 	Battery bat;
 #endif//USE_BATTERY
+	xcb_rectangle_t geometry;
 } xstatus;
 #endif//USE_STATUS||USE_BUTTONS||USE_BATTERY
 
-static Window create_window(Display * d)
+static void create_window(XData * restrict X)
 {
-#define CFP CopyFromParent
-	const Window w = XCreateWindow(d, DefaultRootWindow(d),
-		0, DisplayHeight(d, 0) - HEIGHT - BORDER,
-		DisplayWidth(d, 0), HEIGHT, BORDER, CFP,
-		CFP, CFP, CWOverrideRedirect
-		| CWBackPixel, &(XSetWindowAttributes){
-		.override_redirect=True, .background_pixel
-		= pixel(d, PANEL_BG)});
-	XSelectInput(d, w, ExposureMask);
-	XMapWindow(d, w);
-
-	return w;
+	X->w = xcb_generate_id(X->xcb);
+	X->sz = (xcb_rectangle_t) { .y
+		= X->screen->height_in_pixels - HEIGHT
+			- BORDER, .width
+			= X->screen->width_in_pixels,
+			.height = HEIGHT};
+	xcb_create_window(X->xcb, X->screen->root_depth,
+		X->w, X->screen->root, X->sz.x, X->sz.y,
+		X->sz.width, X->sz.height, BORDER,
+		XCB_WINDOW_CLASS_COPY_FROM_PARENT,
+		X->screen->root_visual, XCB_CW_BACK_PIXEL
+		| XCB_CW_OVERRIDE_REDIRECT
+		| XCB_CW_EVENT_MASK, (uint32_t[]){
+		pixel(X, PANEL_BG), true,
+		XCB_EVENT_MASK_EXPOSURE});
+	xcb_map_window(X->xcb, X->w);
 }
 
 #ifdef USE_BUTTONS
@@ -118,7 +124,7 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 		.width=XTextWidth(X->font, label,
 			strlen(label))+(PAD<<1),
 		.height=HEIGHT}, label, system_cb, cmd);
-	*(i ? &xstatus.head_button : &i->next) = b;
+	*(i ? &i->next : &xstatus.head_button) = b;
 	return offset + b->widget.geometry.width + PAD;
 }
 
@@ -131,7 +137,8 @@ static uint16_t setup_buttons(XData * restrict X)
 	off=btn(X, off, "Editor", EDITOR);
 	{
 		char *browser=getenv("BROWSER");
-		off=btn(X, off, "Browser", browser?browser:BROWSER);
+		off=btn(X, off, "Browser",
+			browser?browser:BROWSER);
 	}
 	off=btn(X, off, "Mixer", MIXER);
 	off=btn(X, off, "Lock", LOCK);
@@ -146,7 +153,8 @@ static Button * find_button(const Window w)
 	return NULL;
 }
 
-static void iter_buttons(const Window ewin, void (*func)(Button * restrict))
+static void iter_buttons(const Window ewin,
+	void (*func)(Button * restrict))
 {
 	Button * restrict b = find_button(ewin);
 	if(b)
@@ -191,7 +199,10 @@ static void setup_font(XData * restrict X)
 static void setup_xdata(XData * X)
 {
 	X->d = get_display();
-	X->w = create_window(X->d);
+	X->xcb = XGetXCBConnection(X->d);
+	X->screen = xcb_setup_roots_iterator(
+		xcb_get_setup(X->xcb)).data;
+	create_window(X);
 	setup_font(X); // font needed for gc
 	X->gc = colorgc(X, PANEL_FG);
 }
@@ -207,8 +218,9 @@ void run_xstatus(
 	XData X;
 	setup_xdata(&X);
 #ifdef USE_BUTTONS
-	setup_buttons(&(XData){.d=X.d,.w=X.w,.font=X.font,
-		.gc=colorgc(&X,BUTTON_FG)});
+	XData BX = X;
+	BX.gc = colorgc(&BX, BUTTON_FG);
+	setup_buttons(&BX);
 #endif//USE_BUTTONS
 	setup_battery(&xstatus.bat, &X);
 #ifdef USE_STATUS

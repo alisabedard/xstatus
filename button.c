@@ -15,7 +15,8 @@ static void draw_Button(Button * restrict b)
 	const Widget * restrict w = &b->widget;
 
 	XClearWindow(w->X->d, w->window);
-	XDrawString(w->X->d, w->window, w->X->gc, PAD, font_y(w->X->font),
+	XDrawString(w->X->d, w->window, w->X->gc, PAD,
+		font_y(w->X->font),
 		b->label, strlen(b->label));
 }
 
@@ -29,14 +30,17 @@ void setup_Button(Button * restrict b, XData * restrict X,
 	b->cb_data=cb_data;
 	b->next=NULL;
 	Widget * w = &b->widget;
-	setup_Widget(&b->widget, X, g, pixel(X->d, BUTTON_BG));
+	setup_Widget(&b->widget, X, g, pixel(X, BUTTON_BG));
 	memcpy(&w->geometry, g, sizeof(XRectangle));
-	XSelectInput(X->d, w->window, ExposureMask | ButtonPressMask);
+	XSelectInput(X->d, w->window, ExposureMask
+		| ButtonPressMask);
 	draw_Button(b);
 }
 
-Button * new_Button(XData * restrict X, XRectangle * restrict geometry,
-	char * restrict label, void (*cb)(Button *), void *cb_data)
+Button * new_Button(XData * restrict X,
+	XRectangle * restrict geometry,
+	char * restrict label, void (*cb)(Button *),
+	void *cb_data)
 {
 	Button * restrict b = malloc(sizeof(Button));
 	setup_Button(b, X, geometry, label, cb, cb_data);

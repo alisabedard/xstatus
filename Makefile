@@ -1,4 +1,4 @@
-CFLAGS=-Os
+#CFLAGS=-Os
 #CFLAGS+=-DDEBUG
 #CFLAGS+=-ggdb
 #CFLAGS+=-Werror 
@@ -11,7 +11,11 @@ CFLAGS+=-D_XOPEN_SOURCE=700
 CFLAGS+=-D_BSD_SOURCE
 CFLAGS+=-D_DEFAULT_SOURCE
 CFLAGS+=-I/usr/X11R7/include
-LDFLAGS+=-L/usr/X11R7/lib -lX11 -Wl,-R/usr/X11R7/lib
+# For NetBSD build:
+LDFLAGS+=-L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib
+LDFLAGS+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
+# Libs:
+LDFLAGS+=-lX11 -lX11-xcb -lxcb
 PREFIX=/usr
 prog=xstatus
 objs=${prog}.o util.o widget.o main.o

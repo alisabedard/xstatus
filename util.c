@@ -1,10 +1,20 @@
+// Copyright 2016, Jeffrey E. Bedard
+#include "util.h"
+
+#include "log.h"
+
+#include <stdlib.h>
+#include <string.h>
+#if 0
 #include <assert.h>
+
 #include <stdlib.h>
 #include <sys/select.h>
 #include "config.h"
 #include "log.h"
 #include "util.h"
 #include "xdata.h"
+#endif
 
 uint16_t font_y(XFontStruct * restrict f)
 {
@@ -18,17 +28,24 @@ Display * get_display()
 	return d;
 }
 
-Pixel pixel(Display * restrict d, const char * restrict color)
+Pixel pixel(XData * restrict X, const char * restrict color)
 {
-	XColor c;
-	XAllocNamedColor(d, DefaultColormap(d, 0), color,
-		&c, &(XColor){});
-	return c.pixel;
+	xcb_alloc_named_color_cookie_t c
+		= xcb_alloc_named_color(X->xcb,
+			X->screen->default_colormap,
+			strlen(color), color);
+	xcb_generic_error_t * e;
+	xcb_alloc_named_color_reply_t * r
+		= xcb_alloc_named_color_reply(X->xcb,
+			c, &e);
+	Pixel p = r->pixel;
+	free(r);
+	return p;
 }
 
 GC colorgc(XData * restrict X, const char * restrict color)
 {
-	XGCValues gv = {.foreground = pixel(X->d, color),
+	XGCValues gv = {.foreground = pixel(X, color),
 		.font = X->font->fid};
 	return XCreateGC(X->d, X->w,
 		GCForeground | GCFont, &gv);
