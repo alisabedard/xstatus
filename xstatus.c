@@ -66,7 +66,7 @@ static Button *last_btn(void)
 static uint16_t get_button_end(void)
 {
 	Button * b = last_btn();
-	XRectangle * restrict g = &b->widget.geometry;
+	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	return g->x + g->width;
 }
 #else//!USE_BUTTONS
@@ -96,6 +96,7 @@ static uint16_t poll_status(XData * restrict X)
 __attribute__ ((hot))
 static void update(XData * restrict X)
 {
+	// xcb_clear_area generates flicker
 	XClearWindow(X->d, X->w);
 #ifdef USE_BATTERY
 	xstatus.bat.x.begin=poll_status(X);
@@ -120,8 +121,8 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 	char * restrict label, char * restrict cmd)
 {
 	Button * i = last_btn();
-	Button * b = new_Button(X, &(XRectangle){.x=offset,
-		.width=XTextWidth(X->font, label,
+	Button * b = new_Button(X, &(xcb_rectangle_t){
+		.x=offset, .width=XTextWidth(X->font, label,
 			strlen(label))+(PAD<<1),
 		.height=HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;

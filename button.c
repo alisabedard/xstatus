@@ -21,7 +21,7 @@ static void draw_Button(Button * restrict b)
 }
 
 void setup_Button(Button * restrict b, XData * restrict X,
-	XRectangle * restrict g, char * restrict label,
+	xcb_rectangle_t * restrict g, char * restrict label,
 	void (*cb)(Button *), void *cb_data)
 {
 	b->label=label;
@@ -38,7 +38,7 @@ void setup_Button(Button * restrict b, XData * restrict X,
 }
 
 Button * new_Button(XData * restrict X,
-	XRectangle * restrict geometry,
+	xcb_rectangle_t * restrict geometry,
 	char * restrict label, void (*cb)(Button *),
 	void *cb_data)
 {

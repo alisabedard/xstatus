@@ -48,7 +48,7 @@ static void fill(Battery * restrict b, const GC gc)
 /* Compute gadget geometry based on available space.  */
 static void setup_geometry(Battery * restrict b)
 {
-	XRectangle * g = &b->widget.geometry;
+	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	g->x = b->x.begin;
 	g->height = HEIGHT/2;
 	g->y = HEIGHT/4;

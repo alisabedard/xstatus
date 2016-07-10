@@ -7,12 +7,12 @@
 #include "xdata.h"
 
 typedef struct Widget {
-	Window window;
-	XData * X; // X->w is the parent window.  
-	XRectangle geometry;
+	XData * X; // X->w is the parent window.
+	xcb_rectangle_t geometry;
+	xcb_window_t window;
 } Widget;
 
 void setup_Widget(Widget * w, XData * restrict X,
-	XRectangle * restrict geometry, const Pixel bg);
+	xcb_rectangle_t * restrict geometry, const Pixel bg);
 
 #endif//!XS_WIDGET_H
