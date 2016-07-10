@@ -8,10 +8,12 @@ typedef struct XData {
 	xcb_connection_t * xcb;
 	xcb_screen_t * screen;
 	Display * d;
-	XFontStruct * font;
 	GC gc;
 	xcb_window_t w;
 	xcb_rectangle_t sz;
+	xcb_font_t font;
+	uint8_t font_width;
+	uint8_t font_height;
 } XData;
 
 #endif//!XS_XDATA_H

@@ -1,3 +1,5 @@
+// Copyright 2016, Jeffrey E. Bedard
+
 #include "xstatus.h"
 
 #include "battery.h"
@@ -122,8 +124,8 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 {
 	Button * i = last_btn();
 	Button * b = new_Button(X, &(xcb_rectangle_t){
-		.x=offset, .width=XTextWidth(X->font, label,
-			strlen(label))+(PAD<<1),
+		.x=offset, .width = X->font_width
+		* strlen(label)+(PAD<<1),
 		.height=HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;
 	return offset + b->widget.geometry.width + PAD;
@@ -188,13 +190,34 @@ static void event_loop(XData * restrict X, const uint8_t delay)
 	goto eventl;
 }
 
+static bool open_font(XData * restrict X, const char * fn)
+{
+	xcb_void_cookie_t c;
+	xcb_query_font_cookie_t fc;
+	xcb_query_font_reply_t * r;
+	xcb_charinfo_t * ci;
+	xcb_generic_error_t * e;
+	c = xcb_open_font_checked(X->xcb, X->font,
+		strlen(fn), fn);
+	fc = xcb_query_font(X->xcb, X->font);
+	if ((e = xcb_request_check(X->xcb, c))) {
+		WARN("Failed to load font: %s\n", fn);
+		return false;
+	}
+	r = xcb_query_font_reply(X->xcb, fc, NULL);
+	ci = &r->max_bounds;
+	X->font_width = ci->character_width;
+	X->font_height = ci->ascent + ci->descent;
+	free(r);
+	return true;
+}
+
 static void setup_font(XData * restrict X)
 {
-	X->font=XLoadQueryFont(X->d, FONT);
-	if(!X->font)
-		X->font=XLoadQueryFont(X->d, "fixed");
-	if(!X->font)
-		ERROR("Failed to load font");
+	X->font = xcb_generate_id(X->xcb);
+	if (!open_font(X, FONT)) // default
+		  if (!open_font(X, "fixed")) // fallback
+			    ERROR("Could not load any font");
 }
 
 static void setup_xdata(XData * X)

@@ -9,8 +9,6 @@
 
 typedef uint32_t Pixel;
 
-uint16_t font_y(XFontStruct * restrict f);
-
 GC colorgc(XData * restrict X, const char * restrict color);
 
 Display * get_display();

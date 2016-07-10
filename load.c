@@ -14,8 +14,8 @@ uint16_t draw_load(XData * restrict X, const uint16_t offset)
 	static const uint16_t sz=6;
 	char buf[sz];
 	snprintf(buf, sz, "%.2f", l[0]);
-	XDrawString(X->d, X->w, X->gc, offset+PAD+1, font_y(X->font),
-		buf, strlen(buf));
-	return XTextWidth(X->font, buf, strlen(buf)) + offset + (PAD<<1);
+	XDrawString(X->d, X->w, X->gc, offset+PAD+1,
+		X->font_height, buf, strlen(buf));
+	return X->font_width * strlen(buf) + offset + (PAD<<1);
 }
 

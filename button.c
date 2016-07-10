@@ -16,8 +16,7 @@ static void draw_Button(Button * restrict b)
 
 	XClearWindow(w->X->d, w->window);
 	XDrawString(w->X->d, w->window, w->X->gc, PAD,
-		font_y(w->X->font),
-		b->label, strlen(b->label));
+		w->X->font_height, b->label, strlen(b->label));
 }
 
 void setup_Button(Button * restrict b, XData * restrict X,

@@ -1,25 +1,11 @@
 // Copyright 2016, Jeffrey E. Bedard
+
 #include "util.h"
 
 #include "log.h"
 
 #include <stdlib.h>
 #include <string.h>
-#if 0
-#include <assert.h>
-
-#include <stdlib.h>
-#include <sys/select.h>
-#include "config.h"
-#include "log.h"
-#include "util.h"
-#include "xdata.h"
-#endif
-
-uint16_t font_y(XFontStruct * restrict f)
-{
-	return f->ascent+f->descent;
-}
 
 Display * get_display()
 {
@@ -46,7 +32,7 @@ Pixel pixel(XData * restrict X, const char * restrict color)
 GC colorgc(XData * restrict X, const char * restrict color)
 {
 	XGCValues gv = {.foreground = pixel(X, color),
-		.font = X->font->fid};
+		.font = X->font};
 	return XCreateGC(X->d, X->w,
 		GCForeground | GCFont, &gv);
 }
