@@ -202,6 +202,7 @@ static bool open_font(XData * restrict X, const char * fn)
 	fc = xcb_query_font(X->xcb, X->font);
 	if ((e = xcb_request_check(X->xcb, c))) {
 		WARN("Failed to load font: %s\n", fn);
+		free(e);
 		return false;
 	}
 	r = xcb_query_font_reply(X->xcb, fc, NULL);

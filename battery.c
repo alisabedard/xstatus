@@ -1,3 +1,5 @@
+// Copyright 2016, Jeffrey E. Bedard
+
 #include "battery.h"
 #include "config.h"
 #include "clock.h"
