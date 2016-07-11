@@ -19,6 +19,7 @@
 
 #define BORDER 1
 #define PAD 4
+#define BIGPAD 8
 #define BUTTON_BG "grey5"
 #define BUTTON_FG "green4"
 #define PANEL_BG "black"

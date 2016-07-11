@@ -37,6 +37,16 @@ GC colorgc(XData * restrict X, const char * restrict color)
 		GCForeground | GCFont, &gv);
 }
 
+xcb_gc_t xcbgc(XData * restrict X, const char * restrict
+	color)
+{
+	xcb_gc_t gc = xcb_generate_id(X->xcb);
+	xcb_create_gc(X->xcb, gc, X->w, XCB_GC_FOREGROUND
+		| XCB_GC_FONT, (uint32_t[]){pixel(X, color),
+		X->font});
+	return gc;
+}
+
 #if defined(USE_BATTERY) || defined(USE_TEMP)
 uint32_t sysval(const char *filename)
 {

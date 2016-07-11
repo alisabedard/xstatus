@@ -9,7 +9,15 @@
 
 typedef uint32_t Pixel;
 
+typedef struct {
+	void * e;
+	xcb_gc_t gc;
+} FakeGC;
+
 GC colorgc(XData * restrict X, const char * restrict color);
+
+xcb_gc_t xcbgc(XData * restrict X, const char * restrict
+	color);
 
 Display * get_display();
 

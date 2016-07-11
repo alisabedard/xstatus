@@ -10,10 +10,14 @@
 static void setup_gcs(Battery * restrict b)
 {
 	XData * X = b->widget.X;
-	b->gc.ac=colorgc(X, GOOD);
-	b->gc.bat=colorgc(X, DEGRADED);
-	b->gc.crit=colorgc(X, CRITICAL);
-	b->gc.bg=colorgc(X, PANEL_BG);
+	b->gc.ac = xcbgc(X, GOOD);
+	b->gc.bat = xcbgc(X, DEGRADED);
+	b->gc.crit = xcbgc(X, CRITICAL);
+	b->gc.bg = xcbgc(X, PANEL_BG);
+	XGCValues v = {.foreground = X->screen->white_pixel,
+		.font = X->font};
+	b->gc.xlib = XCreateGC(X->d, X->w,
+		GCForeground | GCFont, &v);
 }
 
 static uint8_t get_percent(void)
@@ -23,7 +27,10 @@ static uint8_t get_percent(void)
 	return pct>100?100:pct;
 }
 
-static void draw_percent(Battery * restrict b, const GC gc)
+#if 0
+static void draw_percent(Battery * restrict b, const xcb_gc_t gc)
+#endif
+static void draw_percent(Battery * restrict b)
 {
 	uint8_t sl=5; // 3 for value + 1 for \% + 1 for \0
 	char str_pct[sl];
@@ -31,20 +38,28 @@ static void draw_percent(Battery * restrict b, const GC gc)
 	const Widget * w = &b->widget;
 	const uint16_t center = w->geometry.x
 		+ (w->geometry.width>>1);
-	XFillRectangle(w->X->d, w->window, b->gc.bg,
-		center-PAD, 0, w->X->font_width * sl + PAD + PAD,
-		HEIGHT);
-	XDrawString(w->X->d, w->window, gc, center,
+	XData * X = w->X;
+	xcb_poly_fill_rectangle(X->xcb, w->window, b->gc.bg, 1,
+		&(xcb_rectangle_t){.x = center - PAD,
+		.width = X->font_width * sl + BIGPAD,
+		.height = HEIGHT});
+	// FIXME: Generates BadLength
+#if 0
+	xcb_poly_text_8(X->xcb, w->window, gc, center,
+		X->font_height, sl, (uint8_t*)str_pct);
+#endif
+	XDrawString(w->X->d, w->window, b->gc.xlib, center,
 		w->X->font_height, str_pct, sl);
 }
 
-static void fill(Battery * restrict b, const GC gc)
+static void fill(Battery * restrict b, const xcb_gc_t gc)
 {
 	const Widget * restrict w = &b->widget;
 	const float filled = w->geometry.width * b->pct / 100;
-	LOG("filled: %f\n", filled);
-	XFillRectangle(w->X->d, w->window, gc, w->geometry.x,
-		w->geometry.y, filled, w->geometry.height);
+	xcb_rectangle_t r = w->geometry;
+	r.width = filled;
+	LOG("r.width: %d", r.width);
+	xcb_poly_fill_rectangle(w->X->xcb, w->window, gc, 1, &r);
 }
 
 /* Compute gadget geometry based on available space.  */
@@ -61,7 +76,7 @@ static void setup_geometry(Battery * restrict b)
 
 /* Selects a gc to use based on ac/battery status,
    assigns it to b->widget.gc and returns it.  */
-static GC get_gc(Battery * restrict b)
+static xcb_gc_t get_gc(Battery * restrict b)
 {
 	return sysval(ACSYSFILE) ? b->gc.ac : b->pct
 		< CRIT_PCT ? b->gc.crit : b->gc.bat;
@@ -70,14 +85,18 @@ static GC get_gc(Battery * restrict b)
 static void draw(Battery * restrict b)
 {
 	b->pct = get_percent();
-	GC gc = get_gc(b);
+	xcb_gc_t gc = get_gc(b);
 	setup_geometry(b);
 	Widget * w = &b->widget;
-	XDrawRectangle(w->X->d, w->window, gc,
-		w->geometry.x, w->geometry.y,
-		w->geometry.width, w->geometry.height);
+	xcb_poly_rectangle(w->X->xcb, w->window, gc, 1,
+		&w->geometry);
 	fill(b, gc);
+	draw_percent(b);
+#if 0
 	draw_percent(b, gc);
+	XFillRectangle(w->X->d, w->window, gc, w->geometry.x,
+		w->geometry.y, filled, w->geometry.height);
+#endif
 }
 
 void setup_battery(Battery * restrict b, XData * restrict X)

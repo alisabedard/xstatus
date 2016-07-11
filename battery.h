@@ -1,3 +1,5 @@
+// Copyright 2016, Jeffrey E. Bedard
+
 #ifndef BATTERY_H
 #define BATTERY_H
 
@@ -12,7 +14,8 @@ typedef struct Battery {
 		uint16_t begin, end;
 	} x;
 	struct {
-		GC ac, bat, crit, bg;
+		GC xlib;
+		xcb_gc_t ac, bat, crit, bg;
 	} gc;
 	Widget widget;
 	void (*draw)(struct Battery *);
