@@ -24,18 +24,15 @@ Pixel pixel(XData * restrict X, const char * restrict color)
 	xcb_alloc_named_color_reply_t * r
 		= xcb_alloc_named_color_reply(X->xcb,
 			c, &e);
+	if (e) {
+		WARN("Could not alloc color %s", color);
+		free(e);
+	}
 	Pixel p = r->pixel;
 	free(r);
 	return p;
 }
 
-GC colorgc(XData * restrict X, const char * restrict color)
-{
-	XGCValues gv = {.foreground = pixel(X, color),
-		.font = X->font};
-	return XCreateGC(X->d, X->w,
-		GCForeground | GCFont, &gv);
-}
 
 xcb_gc_t xcbgc(XData * restrict X, const char * restrict
 	color)

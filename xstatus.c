@@ -99,7 +99,7 @@ __attribute__ ((hot))
 static void update(XData * restrict X)
 {
 	// xcb_clear_area generates flicker
-	XClearWindow(X->d, X->w);
+	//XClearxcb_window_t(X->d, X->w);
 #ifdef USE_BATTERY
 	xstatus.bat.x.begin=poll_status(X);
 	xstatus.bat.x.end=draw_clock(X);
@@ -148,7 +148,7 @@ static uint16_t setup_buttons(XData * restrict X)
 	return off;
 }
 
-static Button * find_button(const Window w)
+static Button * find_button(const xcb_window_t w)
 {
 	for(Button * i = xstatus.head_button; i; i=i->next)
 		  if(i->widget.window==w)
@@ -156,7 +156,7 @@ static Button * find_button(const Window w)
 	return NULL;
 }
 
-static void iter_buttons(const Window ewin,
+static void iter_buttons(const xcb_window_t ewin,
 	void (*func)(Button * restrict))
 {
 	Button * restrict b = find_button(ewin);
