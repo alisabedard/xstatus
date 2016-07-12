@@ -7,6 +7,8 @@
 #include "xstatus.h"
 #include "util.h"
 
+#include <assert.h>
+
 static void setup_gcs(Battery * restrict b)
 {
 	XData * X = b->widget.X;
@@ -27,14 +29,14 @@ static uint8_t get_percent(void)
 	return pct>100?100:pct;
 }
 
-#if 0
-static void draw_percent(Battery * restrict b, const xcb_gc_t gc)
-#endif
-static void draw_percent(Battery * restrict b)
+static void draw_percent(Battery * restrict b,
+	const xcb_gc_t gc)
 {
-	uint8_t sl=5; // 3 for value + 1 for \% + 1 for \0
-	char str_pct[sl];
-	sl=snprintf(str_pct, sl, "%d%%", b->pct);
+	// 3 for value + 1 for \% + 1 for \0
+#define BUFSZ 5
+	static char str_pct[BUFSZ];
+	const uint8_t sl = snprintf(str_pct, BUFSZ,
+		"%d%%", b->pct);
 	const Widget * w = &b->widget;
 	const uint16_t center = w->geometry.x
 		+ (w->geometry.width>>1);
@@ -48,8 +50,12 @@ static void draw_percent(Battery * restrict b)
 	xcb_poly_text_8(X->xcb, w->window, gc, center,
 		X->font_height, sl, (uint8_t*)str_pct);
 #endif
+	xcb_image_text_8(X->xcb, sl, w->window, gc, center,
+		X->font_height, str_pct);
+#if 0
 	XDrawString(w->X->d, w->window, b->gc.xlib, center,
 		w->X->font_height, str_pct, sl);
+#endif
 }
 
 static void fill(Battery * restrict b, const xcb_gc_t gc)
@@ -91,12 +97,7 @@ static void draw(Battery * restrict b)
 	xcb_poly_rectangle(w->X->xcb, w->window, gc, 1,
 		&w->geometry);
 	fill(b, gc);
-	draw_percent(b);
-#if 0
 	draw_percent(b, gc);
-	XFillRectangle(w->X->d, w->window, gc, w->geometry.x,
-		w->geometry.y, filled, w->geometry.height);
-#endif
 }
 
 void setup_battery(Battery * restrict b, XData * restrict X)

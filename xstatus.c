@@ -229,7 +229,7 @@ static void setup_xdata(XData * X)
 		xcb_get_setup(X->xcb)).data;
 	create_window(X);
 	setup_font(X); // font needed for gc
-	X->gc = colorgc(X, PANEL_FG);
+	X->gc = xcbgc(X, PANEL_FG);
 }
 
 void run_xstatus(
@@ -244,7 +244,7 @@ void run_xstatus(
 	setup_xdata(&X);
 #ifdef USE_BUTTONS
 	XData BX = X;
-	BX.gc = colorgc(&BX, BUTTON_FG);
+	BX.gc = xcbgc(&BX, BUTTON_FG);
 	setup_buttons(&BX);
 #endif//USE_BUTTONS
 	setup_battery(&xstatus.bat, &X);

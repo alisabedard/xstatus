@@ -13,6 +13,7 @@ typedef struct Widget {
 } Widget;
 
 void setup_Widget(Widget * w, XData * restrict X,
-	xcb_rectangle_t * restrict geometry, const Pixel bg);
+	xcb_rectangle_t * restrict geometry, const Pixel bg,
+	const uint32_t events);
 
 #endif//!XS_WIDGET_H

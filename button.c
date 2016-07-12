@@ -13,10 +13,8 @@
 static void draw_Button(Button * restrict b)
 {
 	const Widget * restrict w = &b->widget;
-
-	XClearWindow(w->X->d, w->window);
-	XDrawString(w->X->d, w->window, w->X->gc, PAD,
-		w->X->font_height, b->label, strlen(b->label));
+	xcb_image_text_8(w->X->xcb, strlen(b->label), w->window,
+		w->X->gc, PAD, w->X->font_height, b->label);
 }
 
 void setup_Button(Button * restrict b, XData * restrict X,
@@ -29,10 +27,10 @@ void setup_Button(Button * restrict b, XData * restrict X,
 	b->cb_data=cb_data;
 	b->next=NULL;
 	Widget * w = &b->widget;
-	setup_Widget(&b->widget, X, g, pixel(X, BUTTON_BG));
+	setup_Widget(&b->widget, X, g, pixel(X, BUTTON_BG),
+		XCB_EVENT_MASK_EXPOSURE
+		| XCB_EVENT_MASK_BUTTON_PRESS);
 	memcpy(&w->geometry, g, sizeof(XRectangle));
-	XSelectInput(X->d, w->window, ExposureMask
-		| ButtonPressMask);
 	draw_Button(b);
 }
 

@@ -11,11 +11,11 @@ uint16_t draw_load(XData * restrict X, const uint16_t offset)
 {
 	double l[1];
 	getloadavg(l, 1);
-	static const uint16_t sz=6;
+	uint16_t sz=6;
 	char buf[sz];
-	snprintf(buf, sz, "%.2f", l[0]);
-	XDrawString(X->d, X->w, X->gc, offset+PAD+1,
-		X->font_height, buf, strlen(buf));
-	return X->font_width * strlen(buf) + offset + (PAD<<1);
+	sz = snprintf(buf, sz, "%.2f", l[0]);
+	xcb_image_text_8(X->xcb, sz, X->w, X->gc,
+		offset + BIGPAD, X->font_height, buf);
+	return X->font_width * sz + offset + BIGPAD;
 }
 
