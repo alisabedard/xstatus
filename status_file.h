@@ -6,7 +6,8 @@
 #include <stdint.h>
 
 // Returns offset for next widget
-uint16_t draw_status_file(XData * restrict X, const uint16_t x_offset,
+uint16_t draw_status_file(XData * restrict X,
+	const uint16_t x_offset,
 	const char * restrict filename);
 
 #else//!USE_STATUS

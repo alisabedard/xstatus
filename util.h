@@ -25,7 +25,8 @@ uint32_t sysval(const char *filename);
 #define sysval(f)
 #endif
 
-bool XNextEventTimed(Display * restrict dsp, XEvent * restrict event_return,
+bool next_event_timed(XData * restrict X,
+	xcb_generic_event_t ** restrict e,
 	const uint8_t delay);
 
 Pixel pixel(XData * restrict X, const char * restrict color);

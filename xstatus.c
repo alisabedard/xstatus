@@ -98,8 +98,6 @@ static uint16_t poll_status(XData * restrict X)
 __attribute__ ((hot))
 static void update(XData * restrict X)
 {
-	// xcb_clear_area generates flicker
-	//XClearxcb_window_t(X->d, X->w);
 #ifdef USE_BATTERY
 	xstatus.bat.x.begin=poll_status(X);
 	xstatus.bat.x.end=draw_clock(X);
@@ -109,6 +107,7 @@ static void update(XData * restrict X)
 	poll_status(X);
 	draw_clock(X);
 #endif//USE_BATTERY
+	xcb_flush(X->xcb);
 }
 
 #ifdef USE_BUTTONS
@@ -168,22 +167,29 @@ static void iter_buttons(const xcb_window_t ewin,
 __attribute__((noreturn))
 static void event_loop(XData * restrict X, const uint8_t delay)
 {
-	XEvent e;
+	xcb_generic_event_t * e;
+	xcb_expose_event_t * expose;
+	xcb_button_press_event_t * button;
+	update(X);
  eventl:
-	if (XNextEventTimed(X->d, &e, delay)) {
+//	if (XNextEventTimed(X->d, &e, delay)) {
+	if (next_event_timed(X, &e, delay)) {
 #ifdef USE_BUTTONS
-		switch (e.type) {
-		case Expose:
-			iter_buttons(e.xexpose.window,
+		switch (e->response_type) {
+		case XCB_EXPOSE:
+			expose = (xcb_expose_event_t *)e;
+			iter_buttons(expose->window,
 				xstatus.head_button->draw);
 			break;
-		case ButtonPress:
-			iter_buttons(e.xbutton.window,
+		case XCB_BUTTON_PRESS:
+			button = (xcb_button_press_event_t *)e;
+			iter_buttons(button->event,
 				xstatus.head_button->cb);
 			break;
 		default:
-			LOG("event: %d\n", e.type);
+			LOG("event: %d\n", e->response_type);
 		}
+		free(e);
 #endif//USE_BUTTONS
 	}
 	update(X);
@@ -223,8 +229,14 @@ static void setup_font(XData * restrict X)
 
 static void setup_xdata(XData * X)
 {
-	X->d = get_display();
-	X->xcb = XGetXCBConnection(X->d);
+	//X->d = get_display();
+	//X->xcb = XGetXCBConnection(X->d);
+	int s = 0;
+	X->xcb = xcb_connect(NULL, &s);
+	if (xcb_connection_has_error(X->xcb)) {
+		xcb_disconnect(X->xcb);
+		ERROR("Could not open DISPLAY");
+	}
 	X->screen = xcb_setup_roots_iterator(
 		xcb_get_setup(X->xcb)).data;
 	create_window(X);

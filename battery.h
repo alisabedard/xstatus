@@ -14,7 +14,6 @@ typedef struct Battery {
 		uint16_t begin, end;
 	} x;
 	struct {
-		GC xlib;
 		xcb_gc_t ac, bat, crit, bg;
 	} gc;
 	Widget widget;

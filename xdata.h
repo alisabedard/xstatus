@@ -7,7 +7,6 @@
 typedef struct XData {
 	xcb_connection_t * xcb;
 	xcb_screen_t * screen;
-	Display * d;
 	xcb_gc_t gc;
 	xcb_window_t w;
 	xcb_rectangle_t sz;

@@ -16,10 +16,6 @@ static void setup_gcs(Battery * restrict b)
 	b->gc.bat = xcbgc(X, DEGRADED);
 	b->gc.crit = xcbgc(X, CRITICAL);
 	b->gc.bg = xcbgc(X, PANEL_BG);
-	XGCValues v = {.foreground = X->screen->white_pixel,
-		.font = X->font};
-	b->gc.xlib = XCreateGC(X->d, X->w,
-		GCForeground | GCFont, &v);
 }
 
 static uint8_t get_percent(void)
@@ -45,17 +41,8 @@ static void draw_percent(Battery * restrict b,
 		&(xcb_rectangle_t){.x = center - PAD,
 		.width = X->font_width * sl + BIGPAD,
 		.height = HEIGHT});
-	// FIXME: Generates BadLength
-#if 0
-	xcb_poly_text_8(X->xcb, w->window, gc, center,
-		X->font_height, sl, (uint8_t*)str_pct);
-#endif
 	xcb_image_text_8(X->xcb, sl, w->window, gc, center,
 		X->font_height, str_pct);
-#if 0
-	XDrawString(w->X->d, w->window, b->gc.xlib, center,
-		w->X->font_height, str_pct, sl);
-#endif
 }
 
 static void fill(Battery * restrict b, const xcb_gc_t gc)
