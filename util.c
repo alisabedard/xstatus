@@ -18,14 +18,13 @@ Pixel pixel(XData * restrict X, const char * restrict color)
 		= xcb_alloc_named_color_reply(X->xcb,
 			c, &e);
 	if (e) {
-		WARN("Could not alloc color %s", color);
+		WARN("Could not allocate color %s", color);
 		free(e);
 	}
 	Pixel p = r->pixel;
 	free(r);
 	return p;
 }
-
 
 xcb_gc_t xcbgc(XData * restrict X, char * fg, char * bg)
 {
