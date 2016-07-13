@@ -11,12 +11,9 @@
 #include "log.h"
 #include "status_file.h"
 #include "temperature.h"
-#include "util.h"
-#include "xstatus.h"
-#include "xdata.h"
 
 #include <string.h>
-#include <X11/Xlib-xcb.h>
+
 
 // Application state struct
 #if defined(USE_STATUS) || defined(USE_BUTTONS)\
@@ -241,7 +238,7 @@ static void setup_xdata(XData * X)
 		xcb_get_setup(X->xcb)).data;
 	create_window(X);
 	setup_font(X); // font needed for gc
-	X->gc = xcbgc(X, PANEL_FG);
+	X->gc = xcbgc(X, PANEL_FG, PANEL_BG);
 }
 
 void run_xstatus(
@@ -256,7 +253,7 @@ void run_xstatus(
 	setup_xdata(&X);
 #ifdef USE_BUTTONS
 	XData BX = X;
-	BX.gc = xcbgc(&BX, BUTTON_FG);
+	BX.gc = xcbgc(&BX, BUTTON_FG, BUTTON_BG);
 	setup_buttons(&BX);
 #endif//USE_BUTTONS
 	setup_battery(&xstatus.bat, &X);

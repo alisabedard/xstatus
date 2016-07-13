@@ -15,7 +15,7 @@ CFLAGS+=-I/usr/X11R7/include
 LDFLAGS+=-L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib
 LDFLAGS+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
 # Libs:
-LDFLAGS+=-lX11 -lX11-xcb -lxcb
+LDFLAGS+=-lxcb
 PREFIX=/usr
 prog=xstatus
 objs=${prog}.o util.o widget.o main.o

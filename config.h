@@ -1,4 +1,5 @@
-//Copyright 2016, Jeffrey E. Bedard <jefbed@gmail.com> 
+// Copyright 2016, Jeffrey E. Bedard
+
 #ifndef CONFIG_H
 #define CONFIG_H
 
@@ -20,8 +21,7 @@
 
 #define BORDER 1
 #define PAD 4
-#define BIGPAD 8
-#define BUTTON_BG "grey5"
+#define BUTTON_BG "grey10"
 #define BUTTON_FG "green4"
 #define PANEL_BG "black"
 #define PANEL_FG "green3"

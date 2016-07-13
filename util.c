@@ -7,13 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-Display * get_display()
-{
-	Display *d = XOpenDisplay(NULL);
-	if (!d) ERROR("Cannot open DISPLAY\n");
-	return d;
-}
-
 Pixel pixel(XData * restrict X, const char * restrict color)
 {
 	xcb_alloc_named_color_cookie_t c
@@ -34,12 +27,12 @@ Pixel pixel(XData * restrict X, const char * restrict color)
 }
 
 
-xcb_gc_t xcbgc(XData * restrict X, const char * restrict
-	color)
+xcb_gc_t xcbgc(XData * restrict X, char * fg, char * bg)
 {
 	xcb_gc_t gc = xcb_generate_id(X->xcb);
 	xcb_create_gc(X->xcb, gc, X->w, XCB_GC_FOREGROUND
-		| XCB_GC_FONT, (uint32_t[]){pixel(X, color),
+		| XCB_GC_BACKGROUND | XCB_GC_FONT,
+		(uint32_t[]){pixel(X, fg), pixel(X, bg),
 		X->font});
 	return gc;
 }

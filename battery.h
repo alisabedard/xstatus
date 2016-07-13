@@ -4,9 +4,8 @@
 #define BATTERY_H
 
 #ifdef USE_BATTERY
-#include <X11/Xlib.h>
+
 #include "widget.h"
-#include "xdata.h"
 
 typedef struct Battery {
 	uint8_t pct;

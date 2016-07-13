@@ -1,23 +1,14 @@
+// Copyright 2016, Jeffrey E. Bedard
+
 #ifndef XS_UTIL_H
 #define XS_UTIL_H
 
 #include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <X11/Xlib.h>
 #include "xdata.h"
 
 typedef uint32_t Pixel;
 
-typedef struct {
-	void * e;
-	xcb_gc_t gc;
-} FakeGC;
-
-xcb_gc_t xcbgc(XData * restrict X, const char * restrict
-	color);
-
-Display * get_display();
+xcb_gc_t xcbgc(XData * restrict X, char * fg, char * bg);
 
 #if defined(USE_BATTERY) || defined(USE_TEMP)
 uint32_t sysval(const char *filename);

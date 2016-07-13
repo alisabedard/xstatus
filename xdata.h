@@ -1,8 +1,9 @@
+// Copyright 2016, Jeffrey E. Bedard
+
 #ifndef XS_XDATA_H
 #define XS_XDATA_H
 
-#include <X11/Xlib.h>
-#include <X11/Xlib-xcb.h>
+#include <xcb/xcb.h>
 
 typedef struct XData {
 	xcb_connection_t * xcb;

@@ -1,8 +1,8 @@
-#include <assert.h>
-#include <string.h>
-#include <X11/Xlib.h>
+// Copyright 2016, Jeffrey E. Bedard
+
 #include "widget.h"
-#include "util.h"
+
+#include <string.h>
 
 void setup_Widget(Widget * w, XData * restrict X,
 	xcb_rectangle_t * restrict geometry,

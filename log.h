@@ -11,6 +11,7 @@
 #define LOG(...) {\
 	fprintf(stderr, "%s:%d ", __FILE__, __LINE__);\
 	WARN(__VA_ARGS__);\
+	WARN("\n");\
 }
 #else//!DEBUG
 #define LOG(...)

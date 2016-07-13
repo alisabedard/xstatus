@@ -12,10 +12,10 @@
 static void setup_gcs(Battery * restrict b)
 {
 	XData * X = b->widget.X;
-	b->gc.ac = xcbgc(X, GOOD);
-	b->gc.bat = xcbgc(X, DEGRADED);
-	b->gc.crit = xcbgc(X, CRITICAL);
-	b->gc.bg = xcbgc(X, PANEL_BG);
+	b->gc.ac = xcbgc(X, GOOD, PANEL_BG);
+	b->gc.bat = xcbgc(X, DEGRADED, PANEL_BG);
+	b->gc.crit = xcbgc(X, CRITICAL, PANEL_BG);
+	b->gc.bg = xcbgc(X, PANEL_BG, PANEL_BG);
 }
 
 static uint8_t get_percent(void)
@@ -39,7 +39,7 @@ static void draw_percent(Battery * restrict b,
 	XData * X = w->X;
 	xcb_poly_fill_rectangle(X->xcb, w->window, b->gc.bg, 1,
 		&(xcb_rectangle_t){.x = center - PAD,
-		.width = X->font_width * sl + BIGPAD,
+		.width = X->font_width * sl + PAD + PAD,
 		.height = HEIGHT});
 	xcb_image_text_8(X->xcb, sl, w->window, gc, center,
 		X->font_height, str_pct);

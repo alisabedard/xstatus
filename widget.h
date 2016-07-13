@@ -1,10 +1,9 @@
+// Copyright 2016, Jeffrey E. Bedard
+
 #ifndef XS_WIDGET_H
 #define XS_WIDGET_H
 
-#include <stdint.h>
-#include <X11/Xlib.h>
 #include "util.h"
-#include "xdata.h"
 
 typedef struct Widget {
 	XData * X; // X->w is the parent window.

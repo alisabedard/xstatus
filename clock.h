@@ -1,9 +1,10 @@
+// Copyright 2016, Jeffrey E. Bedard
+
 #ifndef XS_CLOCK_H
 #define XS_CLOCK_H
 
 #ifdef USE_CLOCK
 
-#include <stdint.h>
 #include "xdata.h"
 
 uint16_t draw_clock(XData * restrict X);

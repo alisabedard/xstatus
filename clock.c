@@ -1,9 +1,8 @@
-#include <stdint.h>
-#include <time.h>
-#include <X11/Xlib.h>
+// Copyright 2016, Jeffrey E. Bedard
+
+#include "clock.h"
+
 #include "config.h"
-#include "util.h"
-#include "xdata.h"
 
 __attribute__((hot))
 uint16_t draw_clock(XData * restrict X)

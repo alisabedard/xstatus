@@ -1,14 +1,11 @@
-#include <assert.h>
-#include <stdint.h>
-#include <stdio.h>
+// Copyright 2016, Jeffrey E. Bedard
+
+#include "button.h"
+
+#include "config.h"
+
 #include <stdlib.h>
 #include <string.h>
-#include <X11/Xlib.h>
-#include "button.h"
-#include "config.h"
-#include "log.h"
-#include "util.h"
-#include "xstatus.h"
 
 static void draw_Button(Button * restrict b)
 {
@@ -30,7 +27,7 @@ void setup_Button(Button * restrict b, XData * restrict X,
 	setup_Widget(&b->widget, X, g, pixel(X, BUTTON_BG),
 		XCB_EVENT_MASK_EXPOSURE
 		| XCB_EVENT_MASK_BUTTON_PRESS);
-	memcpy(&w->geometry, g, sizeof(XRectangle));
+	memcpy(&w->geometry, g, sizeof(xcb_rectangle_t));
 	draw_Button(b);
 }
 
