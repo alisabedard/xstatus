@@ -4,14 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define WARN(...) fprintf(stderr, __VA_ARGS__)
+#define WARN(...) {fprintf(stderr, __VA_ARGS__);fputc('\n', stderr);}
 #define ERROR(...) {WARN(__VA_ARGS__); exit(1);}
 
 #ifdef DEBUG
 #define LOG(...) {\
 	fprintf(stderr, "%s:%d ", __FILE__, __LINE__);\
 	WARN(__VA_ARGS__);\
-	WARN("\n");\
 }
 #else//!DEBUG
 #define LOG(...)

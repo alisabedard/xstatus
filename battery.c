@@ -22,7 +22,7 @@ static uint8_t get_percent(void)
 {
 	uint8_t pct=sysval(BATSYSFILE);
 	LOG("Percent: %d\n", pct);
-	return pct>100?100:pct;
+	return pct > 100 ? 100 : pct;
 }
 
 static void draw_percent(Battery * restrict b,

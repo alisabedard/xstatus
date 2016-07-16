@@ -40,15 +40,15 @@ static void create_window(XData * restrict X)
 			- BORDER, .width
 			= X->screen->width_in_pixels,
 			.height = HEIGHT};
-	xcb_create_window(X->xcb, X->screen->root_depth,
-		X->w, X->screen->root, X->sz.x, X->sz.y,
-		X->sz.width, X->sz.height, BORDER,
-		XCB_WINDOW_CLASS_COPY_FROM_PARENT,
-		X->screen->root_visual, XCB_CW_BACK_PIXEL
-		| XCB_CW_OVERRIDE_REDIRECT
-		| XCB_CW_EVENT_MASK, (uint32_t[]){
-		pixel(X, PANEL_BG), true,
-		XCB_EVENT_MASK_EXPOSURE});
+	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
+		| XCB_CW_EVENT_MASK;
+	const uint32_t v[] = { pixel(X, PANEL_BG), true,
+		XCB_EVENT_MASK_EXPOSURE};
+	xcb_create_window(X->xcb, XCB_COPY_FROM_PARENT, X->w,
+			  X->screen->root, X->sz.x, X->sz.y, X->sz.width,
+			  X->sz.height, BORDER,
+			  XCB_WINDOW_CLASS_COPY_FROM_PARENT,
+			  XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(X->xcb, X->w);
 }
 
@@ -112,7 +112,7 @@ static void system_cb(Button * b)
 {
 	const char *cmd = b->cb_data;
 	if (system(cmd))
-		WARN("Cannot execute %s\n", cmd);
+		WARN("Cannot execute %s", cmd);
 }
 
 static uint16_t btn(XData * restrict X, const uint16_t offset,
@@ -182,7 +182,7 @@ eventl:
 				     xstatus.head_button->cb);
 			break;
 		default:
-			LOG("event: %d\n", e->response_type);
+			LOG("event: %d", e->response_type);
 		}
 		free(e);
 #endif//USE_BUTTONS
@@ -202,7 +202,7 @@ static bool open_font(XData * restrict X, const char * fn)
 		strlen(fn), fn);
 	fc = xcb_query_font(X->xcb, X->font);
 	if ((e = xcb_request_check(X->xcb, c))) {
-		WARN("Failed to load font: %s\n", fn);
+		WARN("Failed to load font: %s", fn);
 		free(e);
 		return false;
 	}

@@ -4,6 +4,7 @@
 
 #include "log.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -13,13 +14,11 @@ Pixel pixel(XData * restrict X, const char * restrict color)
 		= xcb_alloc_named_color(X->xcb,
 			X->screen->default_colormap,
 			strlen(color), color);
-	xcb_generic_error_t * e;
 	xcb_alloc_named_color_reply_t * r
-		= xcb_alloc_named_color_reply(X->xcb,
-			c, &e);
-	if (e) {
+		= xcb_alloc_named_color_reply(X->xcb, c, NULL);
+	if (!r) {
 		WARN("Could not allocate color %s", color);
-		free(e);
+		return X->screen->black_pixel;
 	}
 	Pixel p = r->pixel;
 	free(r);
@@ -41,7 +40,7 @@ uint32_t sysval(const char *filename)
 {
 	FILE *f = fopen(filename, "r");
 	if(!f) {
-		WARN("Cannot open %s\n", filename);
+		WARN("Cannot open %s", filename);
 		return 0;
 	}
 	char buf[6];
