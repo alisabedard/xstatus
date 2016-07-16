@@ -167,21 +167,19 @@ static void event_loop(XData * restrict X, const uint8_t delay)
 	xcb_generic_event_t * e;
 	xcb_expose_event_t * expose;
 	xcb_button_press_event_t * button;
-	update(X);
- eventl:
-//	if (XNextEventTimed(X->d, &e, delay)) {
+eventl:
 	if (next_event_timed(X, &e, delay)) {
 #ifdef USE_BUTTONS
 		switch (e->response_type) {
 		case XCB_EXPOSE:
 			expose = (xcb_expose_event_t *)e;
 			iter_buttons(expose->window,
-				xstatus.head_button->draw);
+				     xstatus.head_button->draw);
 			break;
 		case XCB_BUTTON_PRESS:
 			button = (xcb_button_press_event_t *)e;
 			iter_buttons(button->event,
-				xstatus.head_button->cb);
+				     xstatus.head_button->cb);
 			break;
 		default:
 			LOG("event: %d\n", e->response_type);
@@ -219,15 +217,15 @@ static bool open_font(XData * restrict X, const char * fn)
 static void setup_font(XData * restrict X)
 {
 	X->font = xcb_generate_id(X->xcb);
-	if (!open_font(X, FONT)) // default
-		  if (!open_font(X, "fixed")) // fallback
-			    ERROR("Could not load any font");
+	if (open_font(X, FONT)) // default
+		return;
+	if (open_font(X, "fixed")) // fallback
+		return;
+	ERROR("Could not load any font");
 }
 
 static void setup_xdata(XData * X)
 {
-	//X->d = get_display();
-	//X->xcb = XGetXCBConnection(X->d);
 	int s = 0;
 	X->xcb = xcb_connect(NULL, &s);
 	if (xcb_connection_has_error(X->xcb)) {

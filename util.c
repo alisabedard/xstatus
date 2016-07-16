@@ -67,6 +67,7 @@ bool next_event_timed(XData * restrict X,
 	if (!select(fd + 1, &r, NULL, NULL,
 		&(struct timeval){.tv_sec = delay}))
 		return false; // timeout
+	// event occurred before timeout:
 	*e = xcb_poll_for_event(X->xcb);
 	return true;
 }
