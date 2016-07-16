@@ -28,10 +28,14 @@ Pixel pixel(XData * restrict X, const char * restrict color)
 xcb_gc_t xcbgc(XData * restrict X, char * fg, char * bg)
 {
 	xcb_gc_t gc = xcb_generate_id(X->xcb);
-	xcb_create_gc(X->xcb, gc, X->w, XCB_GC_FOREGROUND
-		| XCB_GC_BACKGROUND | XCB_GC_FONT,
-		(uint32_t[]){pixel(X, fg), pixel(X, bg),
-		X->font});
+	xcb_void_cookie_t c = xcb_create_gc_checked(X->xcb, gc, X->w,
+		XCB_GC_FOREGROUND | XCB_GC_BACKGROUND | XCB_GC_FONT,
+		(uint32_t[]){pixel(X, fg), pixel(X, bg), X->font});
+	xcb_generic_error_t * e = xcb_request_check(X->xcb, c);
+	if (e) {
+		WARN("Could not create gc");
+		free(e);
+	}
 	return gc;
 }
 
