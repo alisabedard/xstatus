@@ -50,8 +50,10 @@ uint32_t sysval(const char *filename)
 	char buf[6];
 	size_t sz = fread(&buf, 1, 6, f);
 	fclose(f);
-	if(!sz)
-		  return 0;
+	if(!sz) {
+		WARN("No data in %s", filename);
+		return 0;
+	}
 	return atoi(buf);
 }
 #endif//USE_BATTERY||USE_TEMP

@@ -224,13 +224,32 @@ static void setup_font(XData * restrict X)
 	ERROR("Could not load any font");
 }
 
+__attribute__((noreturn))
+static void xerr(xcb_connection_t * x, const char * msg)
+{
+	xcb_disconnect(x);
+	ERROR("%s", msg ? msg : "Could not open DISPLAY");
+}
+
 static void setup_xdata(XData * X)
 {
 	int s = 0;
-	X->xcb = xcb_connect(NULL, &s);
-	if (xcb_connection_has_error(X->xcb)) {
-		xcb_disconnect(X->xcb);
-		ERROR("Could not open DISPLAY");
+	xcb_connection_t * x = X->xcb = xcb_connect(NULL, &s);
+	switch(xcb_connection_has_error(x)) {
+	case 0: // Success
+		break;
+	case XCB_CONN_ERROR:
+		xerr(x, "X transport error, DISPLAY unavailable");
+	case XCB_CONN_CLOSED_EXT_NOTSUPPORTED:
+		xerr(x, "Extension not supported");
+	case XCB_CONN_CLOSED_MEM_INSUFFICIENT:
+		xerr(x, "Insufficient memory");
+	case XCB_CONN_CLOSED_REQ_LEN_EXCEED:
+		xerr(x, "Request length exceeded");
+	case XCB_CONN_CLOSED_PARSE_ERR:
+		xerr(x, "Invalid DISPLAY string");
+	case XCB_CONN_CLOSED_INVALID_SCREEN:
+		xerr(x, "Invalid screen");
 	}
 	X->screen = xcb_setup_roots_iterator(
 		xcb_get_setup(X->xcb)).data;
