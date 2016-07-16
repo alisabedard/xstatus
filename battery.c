@@ -48,10 +48,12 @@ static void draw_percent(Battery * restrict b,
 static void fill(Battery * restrict b, const xcb_gc_t gc)
 {
 	const Widget * restrict w = &b->widget;
-	const float filled = w->geometry.width * b->pct / 100;
 	xcb_rectangle_t r = w->geometry;
+	const float filled = r.width * b->pct / 100;
 	r.width = filled;
 	LOG("r.width: %d", r.width);
+	xcb_clear_area(w->X->xcb, 0, w->window, r.x, r.y + PAD,
+		w->geometry.width, r.height - PAD);
 	xcb_poly_fill_rectangle(w->X->xcb, w->window, gc, 1, &r);
 }
 
