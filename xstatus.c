@@ -36,7 +36,8 @@ static struct {
 
 static void create_window(XData * restrict X)
 {
-	X->w = xcb_generate_id(X->xcb);
+	xcb_connection_t * xc = X->xcb;
+	X->w = xcb_generate_id(xc);
 	X->sz = (xcb_rectangle_t) { .y
 		= X->screen->height_in_pixels - HEIGHT
 			- BORDER, .width
@@ -44,14 +45,16 @@ static void create_window(XData * restrict X)
 			.height = HEIGHT};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
-	const uint32_t v[] = { pixel(X, PANEL_BG), true,
+	const xcb_colormap_t cm = X->screen->default_colormap;
+	const uint32_t v[] = {jb_get_pixel(xc, cm, PANEL_BG), true,
 		XCB_EVENT_MASK_EXPOSURE};
-	xcb_create_window(X->xcb, XCB_COPY_FROM_PARENT, X->w,
-			  X->screen->root, X->sz.x, X->sz.y, X->sz.width,
-			  X->sz.height, BORDER,
+	const xcb_rectangle_t sz = X->sz;
+	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
+			  X->screen->root, sz.x, sz.y, sz.width,
+			  sz.height, BORDER,
 			  XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 			  XCB_COPY_FROM_PARENT, vm, v);
-	xcb_map_window(X->xcb, X->w);
+	xcb_map_window(xc, X->w);
 }
 
 #ifdef USE_BUTTONS

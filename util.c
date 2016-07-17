@@ -3,35 +3,22 @@
 #include "util.h"
 
 #include "libjb/log.h"
+#include "libjb/xcb.h"
 
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
-Pixel pixel(XData * restrict X, const char * restrict color)
-{
-	xcb_alloc_named_color_cookie_t c
-		= xcb_alloc_named_color(X->xcb,
-			X->screen->default_colormap,
-			strlen(color), color);
-	xcb_alloc_named_color_reply_t * r
-		= xcb_alloc_named_color_reply(X->xcb, c, NULL);
-	if (!r) {
-		WARN("Could not allocate color %s", color);
-		return X->screen->black_pixel;
-	}
-	Pixel p = r->pixel;
-	free(r);
-	return p;
-}
-
 xcb_gc_t xcbgc(XData * restrict X, char * fg, char * bg)
 {
-	xcb_gc_t gc = xcb_generate_id(X->xcb);
-	xcb_void_cookie_t c = xcb_create_gc_checked(X->xcb, gc, X->w,
+	xcb_connection_t * xc = X->xcb;
+	const xcb_gc_t gc = xcb_generate_id(xc);
+	const xcb_colormap_t cm = X->screen->default_colormap;
+	xcb_void_cookie_t c = xcb_create_gc_checked(xc, gc, X->w,
 		XCB_GC_FOREGROUND | XCB_GC_BACKGROUND | XCB_GC_FONT,
-		(uint32_t[]){pixel(X, fg), pixel(X, bg), X->font});
-	xcb_generic_error_t * e = xcb_request_check(X->xcb, c);
+		(uint32_t[]){jb_get_pixel(xc, cm, fg),
+		jb_get_pixel(xc, cm, bg), X->font});
+	xcb_generic_error_t * e = xcb_request_check(xc, c);
 	if (e) {
 		WARN("Could not create gc");
 		free(e);

@@ -3,6 +3,7 @@
 #include "button.h"
 
 #include "config.h"
+#include "libjb/xcb.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +25,8 @@ void setup_Button(Button * restrict b, XData * restrict X,
 	b->cb_data=cb_data;
 	b->next=NULL;
 	Widget * w = &b->widget;
-	setup_Widget(&b->widget, X, g, pixel(X, BUTTON_BG),
+	const xcb_colormap_t cm = X->screen->default_colormap;
+	setup_Widget(&b->widget, X, g, jb_get_pixel(X->xcb, cm, BUTTON_BG),
 		XCB_EVENT_MASK_EXPOSURE
 		| XCB_EVENT_MASK_BUTTON_PRESS);
 	memcpy(&w->geometry, g, sizeof(xcb_rectangle_t));
