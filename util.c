@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-#include "log.h"
+#include "libjb/log.h"
 
 #include <assert.h>
 #include <stdlib.h>
