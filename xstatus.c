@@ -4,18 +4,16 @@
 
 #include "battery.h"
 #include "button.h"
-#include "class.h"
 #include "clock.h"
 #include "config.h"
+#include "libjb/class.h"
+#include "libjb/log.h"
+#include "libjb/xcb.h"
 #include "load.h"
 #include "status_file.h"
 #include "temperature.h"
 
-#include "libjb/log.h"
-#include "libjb/xcb.h"
-
 #include <string.h>
-
 
 // Application state struct
 #if defined(USE_STATUS) || defined(USE_BUTTONS)\
@@ -124,7 +122,7 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 	char * restrict label, char * restrict cmd)
 {
 	Button * i = last_btn();
-	Button * b = new_Button(X, &(xcb_rectangle_t){
+	Button * b = get_button(X, &(xcb_rectangle_t){
 		.x=offset, .width = X->font_width
 		* strlen(label)+(PAD<<1),
 		.height=HEIGHT}, label, system_cb, cmd);
@@ -136,9 +134,9 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 static uint16_t setup_buttons(XData * restrict X)
 {
 	uint16_t off = 0;
-	off=btn(X, off, "Menu", MENU);
-	off=btn(X, off, "Terminal", TERM);
-	off=btn(X, off, "Editor", EDITOR);
+	off = btn(X, off, "Menu", MENU);
+	off = btn(X, off, "Terminal", TERM);
+	off = btn(X, off, "Editor", EDITOR);
 	{
 		char *browser=getenv("BROWSER");
 		off=btn(X, off, "Browser",
@@ -160,9 +158,8 @@ static Button * find_button(const xcb_window_t w)
 static void iter_buttons(const xcb_window_t ewin,
 	void (*func)(Button * restrict))
 {
-	Button * restrict b = find_button(ewin);
-	if(b)
-		  func(b);
+	Button * b = find_button(ewin);
+	if (b) func(b);
 }
 #endif//USE_BUTTONS
 
@@ -231,8 +228,7 @@ static void setup_font(XData * restrict X)
 
 static void setup_xdata(XData * X)
 {
-	int s;
-	X->xcb = jb_get_xcb_connection(NULL, &s);
+	X->xcb = jb_get_xcb_connection(NULL, NULL);
 	X->screen = jb_get_xcb_screen(X->xcb);
 	create_window(X);
 	setup_font(X); // font needed for gc
