@@ -232,7 +232,7 @@ static void setup_font(XData * restrict X)
 static void setup_xdata(XData * X)
 {
 	int s;
-	X->xcb = jb_get_xcb_connection(&s);
+	X->xcb = jb_get_xcb_connection(NULL, &s);
 	X->screen = jb_get_xcb_screen(X->xcb);
 	create_window(X);
 	setup_font(X); // font needed for gc
