@@ -53,7 +53,6 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	const float filled = r.width * b->pct / 100;
 	// Adjust to fit inside outline.
 	--r.height; --r.width; ++r.y; ++r.x;
-	xcb_poly_fill_rectangle(w->X->xcb, w->window, b->gc.bg, 1, &r);
 	r.width = filled;
 	LOG("r.width: %d", r.width);
 	xcb_poly_fill_rectangle(w->X->xcb, w->window, gc, 1, &r);
