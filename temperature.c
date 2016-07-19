@@ -17,7 +17,6 @@ uint16_t draw_temp(XData * restrict X, const uint16_t offset)
 	sz = snprintf(buf, 4, "%dC", v);
 	xcb_image_text_8(X->xcb, sz, X->w, X->gc, offset
 		+ (PAD<<1), X->font_height, buf);
-	return X->font_width * strlen(buf) + offset + (PAD<<1)
-		+ (PAD<<1);
+	return X->font_width * strlen(buf) + offset + (PAD<<2);
 }
 
