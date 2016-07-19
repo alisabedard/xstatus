@@ -95,15 +95,6 @@ static uint16_t poll_status(XData * restrict X)
 #define poll_status(X)
 #endif//USE_LOAD||USE_BUTTON||USE_TEMP||USE_STATUS
 
-#if 0
-static inline void clear(XData * restrict X)
-{
-	xcb_clear_area(X->xcb, false, X->w, 0, 0,
-		X->sz.width, X->sz.height);
-	xcb_flush(X->xcb);
-}
-#endif
-
 __attribute__ ((hot))
 static void update(XData * restrict X)
 {
