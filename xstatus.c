@@ -101,7 +101,6 @@ static void update(XData * restrict X)
 #ifdef USE_BATTERY
 	xstatus.bat.x.begin=poll_status(X);
 	xstatus.bat.x.end=draw_clock(X);
-	xcb_flush(X->xcb);
 	// Depends on x values set in clock and status
 	$(&xstatus.bat, draw);
 #else//!USE_BATTERY
