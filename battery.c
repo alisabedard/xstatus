@@ -50,16 +50,15 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 {
 	const Widget * restrict w = &b->widget;
 	xcb_rectangle_t r = w->geometry;
-	const float filled = r.width * b->pct / 100;
-	// Adjust to fit inside outline.
-	--r.height; --r.width; ++r.y; ++r.x;
-	r.width = filled;
-	LOG("r.width: %d", r.width);
 	XData * X = w->X;
 	xcb_connection_t * c = X->xcb;
 	xcb_poly_fill_rectangle(c, w->window, gc, 1, &r);
-	xcb_clear_area(c, false, w->window, r.x + r.width, r.y,
-		w->geometry.width - r.width - 1, r.height);
+	const float filled = r.width * b->pct / 100;
+	// Adjust to fit inside outline.
+	--r.height;
+	r.width = filled;
+	xcb_clear_area(c, false, w->window, r.x + r.width + 1, r.y + 1,
+		w->geometry.width - r.width - 2, r.height - 1);
 }
 
 /* Compute gadget geometry based on available space.  */
@@ -87,8 +86,8 @@ static void draw(Battery * restrict b)
 	b->pct = get_percent();
 	xcb_gc_t gc = get_gc(b);
 	setup_geometry(b);
-	Widget * w = &b->widget;
-	xcb_poly_rectangle(w->X->xcb, w->window, gc, 1, &w->geometry);
+	//Widget * w = &b->widget;
+	//xcb_poly_rectangle(w->X->xcb, w->window, gc, 1, &w->geometry);
 	fill(b, gc);
 	draw_percent(b, gc);
 }
