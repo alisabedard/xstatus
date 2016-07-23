@@ -32,11 +32,10 @@ static void draw_percent(Battery * restrict b,
 	// 3 for value + 1 for \% + 1 for \0
 #define BUFSZ 5
 	static char str_pct[BUFSZ];
-	const uint8_t sl = snprintf(str_pct, BUFSZ,
-		"%d%%", b->pct);
+	const uint8_t sl = snprintf(str_pct, BUFSZ, "%d%%", b->pct);
 	const Widget * w = &b->widget;
 	const uint16_t center = w->geometry.x
-		+ (w->geometry.width>>1);
+		+ (w->geometry.width >> 1);
 	XData * X = w->X;
 	xcb_poly_fill_rectangle(X->xcb, w->window, b->gc.bg, 1,
 		&(xcb_rectangle_t){.x = center - PAD,
@@ -52,13 +51,19 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	xcb_rectangle_t r = w->geometry;
 	XData * X = w->X;
 	xcb_connection_t * c = X->xcb;
-	xcb_poly_fill_rectangle(c, w->window, gc, 1, &r);
-	const float filled = r.width * b->pct / 100;
+	const xcb_window_t win = w->window;
+	xcb_poly_fill_rectangle(c, win, gc, 1, &r);
+	const uint8_t pct = b->pct;
+	if (pct >= 100) // no need to clear, nor to overflow type.
+		return;
+	const uint16_t filled = r.width * b->pct / 100;
 	// Adjust to fit inside outline.
-	--r.height;
-	r.width = filled;
-	xcb_clear_area(c, false, w->window, r.x + r.width + 1, r.y + 1,
-		w->geometry.width - r.width - 2, r.height - 1);
+	r.x += filled + 1;
+	r.width -= filled;
+	r.width -= 2;
+	++r.y;
+	r.height -= 2;
+	xcb_poly_fill_rectangle(c, win, b->gc.bg, 1, &r);
 }
 
 /* Compute gadget geometry based on available space.  */
@@ -86,8 +91,6 @@ static void draw(Battery * restrict b)
 	b->pct = get_percent();
 	xcb_gc_t gc = get_gc(b);
 	setup_geometry(b);
-	//Widget * w = &b->widget;
-	//xcb_poly_rectangle(w->X->xcb, w->window, gc, 1, &w->geometry);
 	fill(b, gc);
 	draw_percent(b, gc);
 }
