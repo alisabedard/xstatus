@@ -55,7 +55,11 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	--r.height; --r.width; ++r.y; ++r.x;
 	r.width = filled;
 	LOG("r.width: %d", r.width);
-	xcb_poly_fill_rectangle(w->X->xcb, w->window, gc, 1, &r);
+	XData * X = w->X;
+	xcb_connection_t * c = X->xcb;
+	xcb_poly_fill_rectangle(c, w->window, gc, 1, &r);
+	xcb_clear_area(c, false, w->window, r.x + r.width, r.y,
+		w->geometry.width - r.width - 1, r.height);
 }
 
 /* Compute gadget geometry based on available space.  */
