@@ -64,6 +64,7 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	++r.y;
 	r.height -= 2;
 	xcb_clear_area(c, 0, win, r.x, r.y, r.width, r.height);
+	xcb_flush(c);
 }
 
 /* Compute gadget geometry based on available space.  */

@@ -155,11 +155,15 @@ static Button * find_button(const xcb_window_t w)
 	return NULL;
 }
 
-static void iter_buttons(const xcb_window_t ewin,
+static bool iter_buttons(const xcb_window_t ewin,
 	void (*func)(Button * restrict))
 {
 	Button * b = find_button(ewin);
-	if (b) func(b);
+	if (b) {
+		func(b);
+		return true;
+	}
+	return false;
 }
 #endif//USE_BUTTONS
 
@@ -171,12 +175,18 @@ static void event_loop(XData * restrict X, const uint8_t delay)
 	xcb_button_press_event_t * button;
 eventl:
 	if (next_event_timed(X, &e, delay)) {
+		if (!e) {
+			update(X);
+			goto eventl;
+		}
+			
 #ifdef USE_BUTTONS
 		switch (e->response_type) {
 		case XCB_EXPOSE:
 			expose = (xcb_expose_event_t *)e;
-			iter_buttons(expose->window,
-				     xstatus.head_button->draw);
+			if(!iter_buttons(expose->window,
+				     xstatus.head_button->draw))
+				update(X);
 			break;
 		case XCB_BUTTON_PRESS:
 			button = (xcb_button_press_event_t *)e;
@@ -188,8 +198,8 @@ eventl:
 		}
 		free(e);
 #endif//USE_BUTTONS
-	}
-	update(X);
+	} else
+		update(X);
 	goto eventl;
 }
 
