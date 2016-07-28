@@ -63,7 +63,7 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	r.width -= 2;
 	++r.y;
 	r.height -= 2;
-	xcb_clear_area(c, 0, win, r.x, r.y, r.width, r.height);
+	xcb_clear_area(c, true, win, r.x, r.y, r.width, r.height);
 	xcb_flush(c);
 }
 
@@ -98,11 +98,11 @@ static void draw(Battery * restrict b)
 
 void setup_battery(Battery * restrict b, XData * restrict X)
 {
-	b->widget.X=X;
+	b->widget.X = X;
 	/* Battery is a "gadget", so the parent and the
 	   Battery window are identical.  */
-	b->widget.window=X->w;
+	b->widget.window = X->w;
 	setup_gcs(b);
-	b->draw=&draw;
+	b->draw = &draw;
 }
 

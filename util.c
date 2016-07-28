@@ -20,7 +20,7 @@ xcb_gc_t xcbgc(XData * restrict X, char * fg, char * bg)
 		jb_get_pixel(xc, cm, bg), X->font});
 	xcb_generic_error_t * e = xcb_request_check(xc, c);
 	if (e) {
-		WARN("Could not create gc");
+		WARN("Could not create gc -- fg: %s, bg: %s", fg, bg);
 		free(e);
 	}
 	return gc;
