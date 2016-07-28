@@ -174,12 +174,11 @@ static void event_loop(XData * restrict X, const uint8_t delay)
 	xcb_expose_event_t * expose;
 	xcb_button_press_event_t * button;
 eventl:
-	if (next_event_timed(X, &e, delay)) {
+	if (jb_next_event_timed(X->xcb, &e, delay * 1000000)) {
 		if (!e) {
 			update(X);
 			goto eventl;
 		}
-			
 #ifdef USE_BUTTONS
 		switch (e->response_type) {
 		case XCB_EXPOSE:

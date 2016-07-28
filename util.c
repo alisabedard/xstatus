@@ -39,22 +39,3 @@ uint32_t sysval(const char *filename)
 }
 #endif//USE_BATTERY||USE_TEMP
 
-bool next_event_timed(XData * restrict X,
-	xcb_generic_event_t ** restrict e,
-	const uint8_t delay)
-{
-	*e = xcb_poll_for_event(X->xcb);
-	if (*e)
-		  return true;
-	int fd = xcb_get_file_descriptor(X->xcb);
-	fd_set r;
-	FD_ZERO(&r);
-	FD_SET(fd, &r);
-	if (!select(fd + 1, &r, NULL, NULL,
-		&(struct timeval){.tv_sec = delay}))
-		return false; // timeout
-	// event occurred before timeout:
-	*e = xcb_poll_for_event(X->xcb);
-	return true;
-}
-

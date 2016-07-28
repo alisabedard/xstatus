@@ -16,12 +16,6 @@ uint32_t sysval(const char *filename);
 #define sysval(f)
 #endif
 
-/* Wait for either delay or event received.  Return true if event received.
-   Make sure to free e if true.  */
-bool next_event_timed(XData * restrict X,
-	xcb_generic_event_t ** restrict e,
-	const uint8_t delay);
-
 Pixel pixel(XData * restrict X, const char * restrict color);
 
 #endif//XS_UTIL_H
