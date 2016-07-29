@@ -21,9 +21,14 @@ static void setup_gcs(Battery * restrict b)
 
 static uint8_t get_percent(void)
 {
+#ifndef TEST
 	uint8_t pct=sysval(BATSYSFILE);
 	LOG("Percent: %d\n", pct);
 	return pct > 100 ? 100 : pct;
+#else//TEST
+	static uint8_t pct;
+	return (pct += 10) < 100 ? pct : (pct = 0);
+#endif//TEST
 }
 
 static void draw_percent(Battery * restrict b,
@@ -73,8 +78,8 @@ static void setup_geometry(Battery * restrict b)
 {
 	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	g->x = b->x.begin;
-	g->height = HEIGHT/2;
-	g->y = HEIGHT/4;
+	g->height = HEIGHT>>1;
+	g->y = HEIGHT>>2;
 	g->width = b->x.end - g->x - PAD;
 	LOG("setup_geometry(): %dx%d+%d+%d\n",
 		g->width, g->height, g->x, g->y);

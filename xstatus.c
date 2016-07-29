@@ -167,39 +167,37 @@ static bool iter_buttons(const xcb_window_t ewin,
 }
 #endif//USE_BUTTONS
 
+// returns if update needed
+__attribute__((nonnull))
+static void handle_events(XData * restrict X,
+	xcb_generic_event_t * restrict e)
+{
+	switch (e->response_type) {
+	case XCB_EXPOSE:
+		if(!iter_buttons(((xcb_expose_event_t *)e)->window,
+			xstatus.head_button->draw))
+			update(X);
+		break;
+	case XCB_BUTTON_PRESS:
+		iter_buttons(((xcb_button_press_event_t *)e)->event,
+			xstatus.head_button->cb);
+		break;
+	default:
+		LOG("event: %d", e->response_type);
+	}
+	free(e);
+}
+
 __attribute__((noreturn))
 static void event_loop(XData * restrict X, const uint8_t delay)
 {
-	xcb_generic_event_t * e;
-	xcb_expose_event_t * expose;
-	xcb_button_press_event_t * button;
-eventl:
-	if (jb_next_event_timed(X->xcb, &e, delay * 1000000)) {
-		if (!e) {
-			update(X);
-			goto eventl;
-		}
-#ifdef USE_BUTTONS
-		switch (e->response_type) {
-		case XCB_EXPOSE:
-			expose = (xcb_expose_event_t *)e;
-			if(!iter_buttons(expose->window,
-				     xstatus.head_button->draw))
-				update(X);
-			break;
-		case XCB_BUTTON_PRESS:
-			button = (xcb_button_press_event_t *)e;
-			iter_buttons(button->event,
-				     xstatus.head_button->cb);
-			break;
-		default:
-			LOG("event: %d", e->response_type);
-		}
-		free(e);
-#endif//USE_BUTTONS
-	} else
+	for (;;) {
+		xcb_generic_event_t * e;
+		if (jb_next_event_timed(X->xcb, &e,
+			delay * 1000000) && e)
+			handle_events(X, e);
 		update(X);
-	goto eventl;
+	}
 }
 
 static bool open_font(XData * restrict X, const char * fn)
