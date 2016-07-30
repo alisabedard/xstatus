@@ -8,8 +8,6 @@
 
 #include "libjb/log.h"
 
-#include <assert.h>
-
 static void setup_gcs(Battery * restrict b)
 {
 	XData * X = b->widget.X;
@@ -57,6 +55,7 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	XData * X = w->X;
 	xcb_connection_t * c = X->xcb;
 	const xcb_window_t win = w->window;
+	xcb_clear_area(c, false, win, r.x, r.y, r.width, r.height);
 	xcb_poly_fill_rectangle(c, win, gc, 1, &r);
 	const uint8_t pct = b->pct;
 	if (pct >= 100) // no need to clear, nor to overflow type.
@@ -68,7 +67,6 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	r.width -= 2;
 	++r.y;
 	r.height -= 2;
-	xcb_clear_area(c, false, win, r.x, r.y, r.width, r.height);
 	xcb_poly_fill_rectangle(c, win, b->gc.bg, 1, &r);
 	xcb_flush(c);
 }
