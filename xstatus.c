@@ -172,6 +172,8 @@ __attribute__((nonnull))
 static void handle_events(XData * restrict X,
 	xcb_generic_event_t * restrict e)
 {
+	if (xcb_connection_has_error(X->xcb))
+		exit(1); // Server likely exited, avoid looping
 	switch (e->response_type) {
 	case XCB_EXPOSE:
 		if(!iter_buttons(((xcb_expose_event_t *)e)->window,
