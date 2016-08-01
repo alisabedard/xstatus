@@ -68,6 +68,7 @@ static void fill(Battery * restrict b, const xcb_gc_t gc)
 	++r.y;
 	r.height -= 2;
 	xcb_poly_fill_rectangle(c, win, b->gc.bg, 1, &r);
+	xcb_clear_area(c, false, win, r.x, r.y, r.width, r.height);
 	xcb_flush(c);
 }
 
