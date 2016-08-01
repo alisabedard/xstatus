@@ -194,6 +194,7 @@ __attribute__((noreturn))
 static void event_loop(XData * restrict X, const uint8_t delay)
 {
 	for (;;) {
+		jb_check_x(X->xcb); // See if server quit
 		xcb_generic_event_t * e;
 		if (jb_next_event_timed(X->xcb, &e,
 			delay * 1000000) && e)
