@@ -7,13 +7,13 @@
 // Adjust the height for the selected font:
 #define HEIGHT 18
 
-#define MENU "dmenu_run -b"
+#define MENU "dmenu_run -b&"
 #define TCMD "xterm"
 #define TERM TCMD "&"
-#define BROWSER "qupzilla&"
+#define BROWSER "firefox&"
 #define EDITOR TCMD " -e vim&"
 #define MIXER TCMD " -e alsamixer&"
-#define LOCK "slock"
+#define LOCK "slock&"
 
 #define DEFAULTF "/tmp/xstatus"
 

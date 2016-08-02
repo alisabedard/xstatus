@@ -172,8 +172,6 @@ __attribute__((nonnull))
 static void handle_events(XData * restrict X,
 	xcb_generic_event_t * restrict e)
 {
-	if (xcb_connection_has_error(X->xcb))
-		exit(1); // Server likely exited, avoid looping
 	switch (e->response_type) {
 	case XCB_EXPOSE:
 		if(!iter_buttons(((xcb_expose_event_t *)e)->window,
@@ -194,7 +192,6 @@ __attribute__((noreturn))
 static void event_loop(XData * restrict X, const uint8_t delay)
 {
 	for (;;) {
-		jb_check_x(X->xcb); // See if server quit
 		xcb_generic_event_t * e;
 		if (jb_next_event_timed(X->xcb, &e,
 			delay * 1000000) && e)
