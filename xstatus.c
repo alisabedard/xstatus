@@ -25,9 +25,6 @@ static struct {
 #ifdef USE_BUTTONS
 	Button * head_button;
 #endif//USE_BUTTONS
-#ifdef USE_BATTERY
-//	Battery bat;
-#endif//USE_BATTERY
 	xcb_rectangle_t geometry;
 } xstatus;
 #endif//USE_STATUS||USE_BUTTONS||USE_BATTERY
@@ -98,6 +95,9 @@ static uint16_t poll_status(XData * restrict X)
 __attribute__ ((hot))
 static void update(XData * restrict X)
 {
+	xcb_clear_area(X->xcb, 0, X->w, X->sz.x, X->sz.y,
+		X->sz.width, X->sz.height);
+	xcb_flush(X->xcb);
 #ifdef USE_BATTERY
 	draw_battery(X, poll_status(X), draw_clock(X));
 #else//!USE_BATTERY

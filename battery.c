@@ -12,9 +12,16 @@
 // get percent value, maxed to 100
 static uint8_t get_percent(void)
 {
+#ifdef TEST
+	static uint8_t p;
+	if (++p > 100)
+		return p = 0;
+	return p;
+#else//!TEST
 	const uint8_t pct = sysval(BATSYSFILE);
 	LOG("Percent: %d\n", pct);
 	return MIN(pct, 100);
+#endif//TEST
 }
 
 // index into gc array, keeps gc array private
