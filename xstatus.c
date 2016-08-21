@@ -26,7 +26,7 @@ static struct {
 	Button * head_button;
 #endif//USE_BUTTONS
 #ifdef USE_BATTERY
-	Battery bat;
+//	Battery bat;
 #endif//USE_BATTERY
 	xcb_rectangle_t geometry;
 } xstatus;
@@ -99,10 +99,7 @@ __attribute__ ((hot))
 static void update(XData * restrict X)
 {
 #ifdef USE_BATTERY
-	xstatus.bat.x.begin=poll_status(X);
-	xstatus.bat.x.end=draw_clock(X);
-	// Depends on x values set in clock and status
-	$(&xstatus.bat, draw);
+	draw_battery(X, poll_status(X), draw_clock(X));
 #else//!USE_BATTERY
 	poll_status(X);
 	draw_clock(X);
@@ -207,8 +204,7 @@ static bool open_font(XData * restrict X, const char * fn)
 	xcb_query_font_reply_t * r;
 	xcb_charinfo_t * ci;
 	xcb_generic_error_t * e;
-	c = xcb_open_font_checked(X->xcb, X->font,
-		strlen(fn), fn);
+	c = xcb_open_font_checked(X->xcb, X->font, strlen(fn), fn);
 	fc = xcb_query_font(X->xcb, X->font);
 	if ((e = xcb_request_check(X->xcb, c))) {
 		WARN("Failed to load font: %s", fn);
@@ -257,7 +253,7 @@ void run_xstatus(
 	BX.gc = xcbgc(&BX, BUTTON_FG, BUTTON_BG);
 	setup_buttons(&BX);
 #endif//USE_BUTTONS
-	setup_battery(&xstatus.bat, &X);
+//	setup_battery(&xstatus.bat, &X);
 #ifdef USE_STATUS
 	xstatus.filename = filename;
 #endif//USE_STATUS

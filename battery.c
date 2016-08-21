@@ -7,107 +7,46 @@
 #include "util.h"
 
 #include "libjb/log.h"
+#include "libjb/util.h"
 
-static void setup_gcs(Battery * restrict b)
-{
-	XData * X = b->widget.X;
-	b->gc.ac = xcbgc(X, GOOD, PANEL_BG);
-	b->gc.bat = xcbgc(X, DEGRADED, PANEL_BG);
-	b->gc.crit = xcbgc(X, CRITICAL, PANEL_BG);
-	b->gc.bg = xcbgc(X, PANEL_BG, PANEL_BG);
-}
-
+// get percent value, maxed to 100
 static uint8_t get_percent(void)
 {
-#ifndef TEST
-	uint8_t pct=sysval(BATSYSFILE);
+	const uint8_t pct = sysval(BATSYSFILE);
 	LOG("Percent: %d\n", pct);
-	return pct > 100 ? 100 : pct;
-#else//TEST
-	static uint8_t pct;
-	return (pct += 10) < 100 ? pct : (pct = 0);
-#endif//TEST
+	return MIN(pct, 100);
 }
 
-static void draw_percent(Battery * restrict b,
-	const xcb_gc_t gc)
+// index into gc array, keeps gc array private
+enum BATGCs { GC_BG, GC_AC, GC_BAT, GC_CRIT, GC_SZ };
+
+// Selects a gc to use based on ac/battery status
+static enum BATGCs get_gc(const uint8_t pct)
 {
-	// 3 for value + 1 for \% + 1 for \0
-#define BUFSZ 5
-	static char str_pct[BUFSZ];
-	const uint8_t sl = snprintf(str_pct, BUFSZ, "%d%%", b->pct);
-	const Widget * w = &b->widget;
-	const uint16_t center = w->geometry.x
-		+ (w->geometry.width >> 1);
-	XData * X = w->X;
-	xcb_poly_fill_rectangle(X->xcb, w->window, b->gc.bg, 1,
-		&(xcb_rectangle_t){.x = center - PAD,
-		.width = X->font_width * sl + PAD + PAD,
-		.height = HEIGHT});
-	xcb_image_text_8(X->xcb, sl, w->window, gc, center,
-		X->font_height, str_pct);
+	return sysval(ACSYSFILE) ? GC_AC : pct < CRIT_PCT ? GC_CRIT : GC_BAT;
 }
 
-static void fill(Battery * restrict b, const xcb_gc_t gc)
+void draw_battery(XData * restrict X, const uint16_t start,
+	const uint16_t end)
 {
-	const Widget * restrict w = &b->widget;
-	xcb_rectangle_t r = w->geometry;
-	XData * X = w->X;
-	xcb_connection_t * c = X->xcb;
-	const xcb_window_t win = w->window;
-	xcb_clear_area(c, false, win, r.x, r.y, r.width, r.height);
-	xcb_poly_fill_rectangle(c, win, gc, 1, &r);
-	const uint8_t pct = b->pct;
-	if (pct >= 100) // no need to clear, nor to overflow type.
-		return;
-	const uint16_t filled = r.width * b->pct / 100;
-	// Adjust to fit inside outline.
-	r.x += filled + 1;
-	r.width -= filled;
-	r.width -= 2;
-	++r.y;
-	r.height -= 2;
-	xcb_poly_fill_rectangle(c, win, b->gc.bg, 1, &r);
-	xcb_clear_area(c, false, win, r.x, r.y, r.width, r.height);
-	xcb_flush(c);
-}
-
-/* Compute gadget geometry based on available space.  */
-static void setup_geometry(Battery * restrict b)
-{
-	xcb_rectangle_t * restrict g = &b->widget.geometry;
-	g->x = b->x.begin;
-	g->height = HEIGHT>>1;
-	g->y = HEIGHT>>2;
-	g->width = b->x.end - g->x - PAD;
-	LOG("setup_geometry(): %dx%d+%d+%d\n",
-		g->width, g->height, g->x, g->y);
-}
-
-/* Selects a gc to use based on ac/battery status,
-   assigns it to b->widget.gc and returns it.  */
-static xcb_gc_t get_gc(Battery * restrict b)
-{
-	return sysval(ACSYSFILE) ? b->gc.ac : b->pct
-		< CRIT_PCT ? b->gc.crit : b->gc.bat;
-}
-
-static void draw(Battery * restrict b)
-{
-	b->pct = get_percent();
-	xcb_gc_t gc = get_gc(b);
-	setup_geometry(b);
-	fill(b, gc);
-	draw_percent(b, gc);
-}
-
-void setup_battery(Battery * restrict b, XData * restrict X)
-{
-	b->widget.X = X;
-	/* Battery is a "gadget", so the parent and the
-	   Battery window are identical.  */
-	b->widget.window = X->w;
-	setup_gcs(b);
-	b->draw = &draw;
+	static xcb_gc_t gc[GC_SZ];
+	if (!*gc) {
+		gc[GC_BG] = xcbgc(X, PANEL_FG, PANEL_BG);
+		gc[GC_AC] = xcbgc(X, GOOD, PANEL_BG);
+		gc[GC_BAT] = xcbgc(X, DEGRADED, PANEL_BG);
+		gc[GC_CRIT] = xcbgc(X, CRITICAL, PANEL_BG);
+	}
+	const uint8_t pct = get_percent();
+	const enum BATGCs a = get_gc(pct);
+	xcb_rectangle_t g = {.x=start, .y = HEIGHT >> 2,
+		.height = HEIGHT >> 1,
+			.width = (end - start - PAD) * pct/100};
+	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);
+	const uint8_t buf_sz = 7;
+	char buf[buf_sz];
+	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
+	xcb_image_text_8(X->xcb, l, X->w, gc[GC_BG], start + (end-start)/2,
+		X->font_height, buf);
+	xcb_flush(X->xcb);
 }
 

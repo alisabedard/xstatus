@@ -27,8 +27,7 @@ static void setup(Button * restrict b, XData * restrict X,
 	Widget * w = &b->widget;
 	const xcb_colormap_t cm = X->screen->default_colormap;
 	setup_Widget(&b->widget, X, g, jb_get_pixel(X->xcb, cm, BUTTON_BG),
-		XCB_EVENT_MASK_EXPOSURE
-		| XCB_EVENT_MASK_BUTTON_PRESS);
+		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS);
 	memcpy(&w->geometry, g, sizeof(xcb_rectangle_t));
 	draw(b);
 }
