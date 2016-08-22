@@ -14,7 +14,6 @@ uint16_t draw_clock(XData * restrict X)
 		- X->font_width * sz;
 	xcb_image_text_8(X->xcb, sz, X->w, X->gc, offset,
 		X->font_height, buf);
-
 	return offset;
 }
 
