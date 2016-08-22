@@ -9,13 +9,15 @@
 #include "libjb/log.h"
 #include "libjb/util.h"
 
+//#define TEST
 // get percent value, maxed to 100
 static uint8_t get_percent(void)
 {
 #ifdef TEST
-	static uint8_t p;
-	if (++p > 100)
-		return p = 0;
+	static int8_t p = 100;
+	p -= 10;
+	if (p < 0)
+		return p = 100;
 	return p;
 #else//!TEST
 	const uint8_t pct = sysval(BATSYSFILE);
@@ -38,7 +40,7 @@ void draw_battery(XData * restrict X, const uint16_t start,
 {
 	static xcb_gc_t gc[GC_SZ];
 	if (!*gc) {
-		gc[GC_BG] = xcbgc(X, PANEL_FG, PANEL_BG);
+		gc[GC_BG] = xcbgc(X, PANEL_BG, PANEL_BG);
 		gc[GC_AC] = xcbgc(X, GOOD, PANEL_BG);
 		gc[GC_BAT] = xcbgc(X, DEGRADED, PANEL_BG);
 		gc[GC_CRIT] = xcbgc(X, CRITICAL, PANEL_BG);
@@ -46,13 +48,14 @@ void draw_battery(XData * restrict X, const uint16_t start,
 	const uint8_t pct = get_percent();
 	const enum BATGCs a = get_gc(pct);
 	xcb_rectangle_t g = {.x=start, .y = HEIGHT >> 2,
-		.height = HEIGHT >> 1,
-			.width = (end - start - PAD) * pct/100};
+		.height = HEIGHT >> 1, .width = end - start - PAD}
+	xcb_poly_fill_rectangle(X->xcb, X->w, gc[GC_BG], 1, &g);
+	g.width *= pct/100;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);
 	const uint8_t buf_sz = 7;
 	char buf[buf_sz];
 	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
-	xcb_image_text_8(X->xcb, l, X->w, gc[GC_BG], start + (end-start)/2,
+	xcb_image_text_8(X->xcb, l, X->w, gc[a], start + (end-start)/2,
 		X->font_height, buf);
 	xcb_flush(X->xcb);
 }
