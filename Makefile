@@ -1,7 +1,6 @@
-CFLAGS+=-Wall -Wextra
+CFLAGS+=-Wall -Wextra -ggdb
 CFLAGS+=-std=c11
 CFLAGS+=-D_XOPEN_SOURCE=700
-CFLAGS+=-D_BSD_SOURCE
 CFLAGS+=-D_DEFAULT_SOURCE
 CFLAGS+=-I/usr/X11R7/include
 # For NetBSD build:

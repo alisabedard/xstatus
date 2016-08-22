@@ -48,9 +48,9 @@ void draw_battery(XData * restrict X, const uint16_t start,
 	const uint8_t pct = get_percent();
 	const enum BATGCs a = get_gc(pct);
 	xcb_rectangle_t g = {.x=start, .y = HEIGHT >> 2,
-		.height = HEIGHT >> 1, .width = end - start - PAD}
+		.height = HEIGHT >> 1, .width = end - start - PAD};
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[GC_BG], 1, &g);
-	g.width *= pct/100;
+	g.width = g.width * pct / 100;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);
 	const uint8_t buf_sz = 7;
 	char buf[buf_sz];
