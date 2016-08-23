@@ -7,7 +7,7 @@
 
 #include "xdata.h"
 
-uint16_t draw_clock(XData * restrict X);
+uint16_t draw_clock(struct XData * restrict X);
 
 #else//!USE_CLOCK
 #define draw_clock(X)

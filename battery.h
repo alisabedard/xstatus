@@ -6,7 +6,7 @@
 #include "xdata.h"
 
 #ifdef USE_BATTERY
-void draw_battery(XData * restrict X, const uint16_t start,
+void draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end);
 #endif//USE_BATTERY
 

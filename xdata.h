@@ -5,7 +5,7 @@
 
 #include <xcb/xcb.h>
 
-typedef struct XData {
+struct XData {
 	xcb_connection_t * xcb;
 	xcb_screen_t * screen;
 	xcb_gc_t gc;
@@ -14,6 +14,6 @@ typedef struct XData {
 	xcb_font_t font;
 	uint8_t font_width;
 	uint8_t font_height;
-} XData;
+};
 
 #endif//!XS_XDATA_H

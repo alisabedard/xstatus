@@ -35,7 +35,7 @@ static enum BATGCs get_gc(const uint8_t pct)
 	return sysval(ACSYSFILE) ? GC_AC : pct < CRIT_PCT ? GC_CRIT : GC_BAT;
 }
 
-void draw_battery(XData * restrict X, const uint16_t start,
+void draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end)
 {
 	static xcb_gc_t gc[GC_SZ];

@@ -4,18 +4,18 @@
 #include <stdint.h>
 #include "widget.h"
 
-typedef struct Button {
+struct Button {
 	char * label;
 	void (*cb) (struct Button *);
 	void (*draw) (struct Button *);
 	void *cb_data;
 	struct Button * next; // optional linked list
-	Widget widget;
-} Button;
+	struct Widget widget;
+};
 
-Button * get_button(XData * restrict X,
+struct Button * get_button(struct XData * restrict X,
 	xcb_rectangle_t * restrict g,
-	char * restrict label, void (*cb)(Button *),
+	char * restrict label, void (*cb)(struct Button *),
 	void *cb_data);
 
 #endif//_BUTTON_H

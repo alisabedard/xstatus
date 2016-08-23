@@ -23,13 +23,13 @@ static struct {
 	char * filename;
 #endif//USE_STATUS
 #ifdef USE_BUTTONS
-	Button * head_button;
+	struct Button * head_button;
 #endif//USE_BUTTONS
 	xcb_rectangle_t geometry;
 } xstatus;
 #endif//USE_STATUS||USE_BUTTONS||USE_BATTERY
 
-static void create_window(XData * restrict X)
+static void create_window(struct XData * restrict X)
 {
 	xcb_connection_t * xc = X->xcb;
 	X->w = xcb_generate_id(xc);
@@ -53,9 +53,9 @@ static void create_window(XData * restrict X)
 }
 
 #ifdef USE_BUTTONS
-static Button *last_btn(void)
+static struct Button *last_btn(void)
 {
-	Button * i = xstatus.head_button;
+	struct Button * i = xstatus.head_button;
 	if(i)
 		while(i->next)
 			i=i->next;
@@ -64,7 +64,7 @@ static Button *last_btn(void)
 
 static uint16_t get_button_end(void)
 {
-	Button * b = last_btn();
+	struct Button * b = last_btn();
 	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	return g->x + g->width;
 }
@@ -74,7 +74,7 @@ static uint16_t get_button_end(void)
 
 #if defined(USE_LOAD) || defined(USE_BUTTON)\
 	|| defined(USE_TEMP) || defined(USE_STATUS)
-static uint16_t poll_status(XData * restrict X)
+static uint16_t poll_status(struct XData * restrict X)
 {
 	uint16_t offset = get_button_end() + PAD;
 #ifdef USE_LOAD
@@ -93,7 +93,7 @@ static uint16_t poll_status(XData * restrict X)
 #endif//USE_LOAD||USE_BUTTON||USE_TEMP||USE_STATUS
 
 __attribute__ ((hot))
-static void update(XData * restrict X)
+static void update(struct XData * restrict X)
 {
 #ifdef USE_BATTERY
 	draw_battery(X, poll_status(X), draw_clock(X));
@@ -104,18 +104,18 @@ static void update(XData * restrict X)
 }
 
 #ifdef USE_BUTTONS
-static void system_cb(Button * b)
+static void system_cb(struct Button * b)
 {
 	const char *cmd = b->cb_data;
 	if (system(cmd))
 		WARN("Cannot execute %s", cmd);
 }
 
-static uint16_t btn(XData * restrict X, const uint16_t offset,
+static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	char * restrict label, char * restrict cmd)
 {
-	Button * i = last_btn();
-	Button * b = get_button(X, &(xcb_rectangle_t){
+	struct Button * i = last_btn();
+	struct Button * b = get_button(X, &(xcb_rectangle_t){
 		.x=offset, .width = X->font_width
 		* strlen(label)+(PAD<<1),
 		.height=HEIGHT}, label, system_cb, cmd);
@@ -124,7 +124,7 @@ static uint16_t btn(XData * restrict X, const uint16_t offset,
 }
 
 /* Returns x offset after all buttons added.  */
-static uint16_t setup_buttons(XData * restrict X)
+static uint16_t setup_buttons(struct XData * restrict X)
 {
 	uint16_t off = 0;
 	off = btn(X, off, "Menu", MENU);
@@ -140,18 +140,18 @@ static uint16_t setup_buttons(XData * restrict X)
 	return off;
 }
 
-static Button * find_button(const xcb_window_t w)
+static struct Button * find_button(const xcb_window_t w)
 {
-	for(Button * i = xstatus.head_button; i; i=i->next)
+	for(struct Button * i = xstatus.head_button; i; i=i->next)
 		  if(i->widget.window==w)
 			    return i;
 	return NULL;
 }
 
 static bool iter_buttons(const xcb_window_t ewin,
-	void (*func)(Button * restrict))
+	void (*func)(struct Button * restrict))
 {
-	Button * b = find_button(ewin);
+	struct Button * b = find_button(ewin);
 	if (b) {
 		func(b);
 		return true;
@@ -162,7 +162,7 @@ static bool iter_buttons(const xcb_window_t ewin,
 
 // returns if update needed
 __attribute__((nonnull))
-static void handle_events(XData * restrict X,
+static void handle_events(struct XData * restrict X,
 	xcb_generic_event_t * restrict e)
 {
 	switch (e->response_type) {
@@ -182,7 +182,7 @@ static void handle_events(XData * restrict X,
 }
 
 __attribute__((noreturn))
-static void event_loop(XData * restrict X, const uint8_t delay)
+static void event_loop(struct XData * restrict X, const uint8_t delay)
 {
 	for (;;) {
 		xcb_generic_event_t * e;
@@ -193,7 +193,7 @@ static void event_loop(XData * restrict X, const uint8_t delay)
 	}
 }
 
-static bool open_font(XData * restrict X, const char * fn)
+static bool open_font(struct XData * restrict X, const char * fn)
 {
 	xcb_void_cookie_t c;
 	xcb_query_font_cookie_t fc;
@@ -215,7 +215,7 @@ static bool open_font(XData * restrict X, const char * fn)
 	return true;
 }
 
-static void setup_font(XData * restrict X)
+static void setup_font(struct XData * restrict X)
 {
 	X->font = xcb_generate_id(X->xcb);
 	if (open_font(X, FONT)) // default
@@ -225,7 +225,7 @@ static void setup_font(XData * restrict X)
 	ERROR("Could not load any font");
 }
 
-static void setup_xdata(XData * X)
+static void setup_xdata(struct XData * X)
 {
 	X->xcb = jb_get_xcb_connection(NULL, NULL);
 	X->screen = jb_get_xcb_screen(X->xcb);
@@ -242,10 +242,10 @@ void run_xstatus(
 #endif//USE_STATUS
 	const uint8_t delay)
 {
-	XData X;
+	struct XData X;
 	setup_xdata(&X);
 #ifdef USE_BUTTONS
-	XData BX = X;
+	struct XData BX = X;
 	BX.gc = xcbgc(&BX, BUTTON_FG, BUTTON_BG);
 	setup_buttons(&BX);
 #endif//USE_BUTTONS

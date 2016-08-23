@@ -8,7 +8,7 @@
 #include "xdata.h"
 
 // Returns x offset for next item
-uint16_t draw_load(XData * restrict X, const uint16_t offset);
+uint16_t draw_load(struct XData * restrict X, const uint16_t offset);
 
 #else//!USE_LOAD
 #define draw_load(X, o) o

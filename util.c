@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-xcb_gc_t xcbgc(XData * restrict X, char * fg, char * bg)
+xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 {
 	xcb_connection_t * xc = X->xcb;
 	const xcb_gc_t gc = xcb_generate_id(xc);
