@@ -1,8 +1,11 @@
+// Copyright 2016, Jeffrey E. Bedard
+
+#include "xstatus.h"
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "config.h"
-#include "xstatus.h"
 
 static const char * helptext =
 "DESCRIPTION:  Simple X toolbar for minimalistic"
