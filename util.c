@@ -33,7 +33,7 @@ uint32_t sysval(const char *filename)
 		return 0;
 	size_t sz = 6;
 	char buf[sz];
-	sz = fread(buf, 1, sz, f);
+	fread(buf, 1, sz, f);
 	jb_check(fclose(f) == 0, "Cannot close file");
 	return atoi(buf);
 }

@@ -3,6 +3,7 @@
 #include "clock.h"
 
 #include "config.h"
+#include "libjb/xcb.h"
 
 __attribute__((hot))
 uint16_t draw_clock(struct XData * restrict X)
