@@ -3,6 +3,7 @@
 #ifndef XS_XDATA_H
 #define XS_XDATA_H
 
+#include "libjb/size.h"
 #include <xcb/xcb.h>
 
 struct XData {
@@ -12,8 +13,7 @@ struct XData {
 	xcb_window_t w;
 	xcb_rectangle_t sz;
 	xcb_font_t font;
-	uint8_t font_width;
-	uint8_t font_height;
+	struct JBDim font_size;
 };
 
 #endif//!XS_XDATA_H

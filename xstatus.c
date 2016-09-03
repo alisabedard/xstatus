@@ -33,19 +33,17 @@ static void create_window(struct XData * restrict X)
 {
 	xcb_connection_t * xc = X->xcb;
 	X->w = xcb_generate_id(xc);
-	X->sz = (xcb_rectangle_t) { .y
-		= X->screen->height_in_pixels - HEIGHT
-			- BORDER, .width
-			= X->screen->width_in_pixels,
-			.height = HEIGHT};
+	xcb_screen_t * s = X->screen;
+	X->sz = (xcb_rectangle_t) { .y = s->height_in_pixels - HEIGHT
+		- BORDER, .width = s->width_in_pixels, .height = HEIGHT};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
-	const xcb_colormap_t cm = X->screen->default_colormap;
+	const xcb_colormap_t cm = s->default_colormap;
 	const uint32_t v[] = {jb_get_pixel(xc, cm, PANEL_BG), true,
 		XCB_EVENT_MASK_EXPOSURE};
 	const xcb_rectangle_t sz = X->sz;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
-			  X->screen->root, sz.x, sz.y, sz.width,
+			  s->root, sz.x, sz.y, sz.width,
 			  sz.height, BORDER,
 			  XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 			  XCB_COPY_FROM_PARENT, vm, v);
@@ -116,7 +114,7 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 {
 	struct Button * i = last_btn();
 	struct Button * b = get_button(X, &(xcb_rectangle_t){
-		.x=offset, .width = X->font_width
+		.x=offset, .width = X->font_size.width
 		* strlen(label)+(PAD<<1),
 		.height=HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;
@@ -209,8 +207,8 @@ static bool open_font(struct XData * restrict X, const char * fn)
 	}
 	r = xcb_query_font_reply(X->xcb, fc, NULL);
 	ci = &r->max_bounds;
-	X->font_width = ci->character_width;
-	X->font_height = ci->ascent + ci->descent;
+	X->font_size.width = ci->character_width;
+	X->font_size.height = ci->ascent + ci->descent;
 	free(r);
 	return true;
 }

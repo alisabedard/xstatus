@@ -19,16 +19,16 @@
 
 #define TIMEFMT "%a %d %b %T"
 
-#define BORDER 1
-#define PAD 4
+enum { BORDER = 1, PAD = 4, CRIT_PCT = 11 };
+
 #define BUTTON_BG "grey10"
 #define BUTTON_FG "green4"
-#define PANEL_BG "black"
 #define PANEL_FG "green3"
-#define GOOD	"green"
-#define DEGRADED "yellow"
-#define CRITICAL "red"
-#define CRIT_PCT 11
+#define GC_BG_COLOR "black"
+#define PANEL_BG GC_BG_COLOR
+#define GC_AC_COLOR "green"
+#define GC_BAT_COLOR "yellow"
+#define GC_CRIT_COLOR "red"
 
 #define BATSYSFILE "/sys/class/power_supply/BAT0/capacity"
 #define ACSYSFILE "/sys/class/power_supply/AC/online"

@@ -57,5 +57,6 @@ clean:
 	cd libjb && make clean
 
 install:
+	install -d ${installdir}/bin
 	install -s xstatus ${installdir}/bin
 

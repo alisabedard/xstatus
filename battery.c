@@ -40,10 +40,8 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 {
 	static xcb_gc_t gc[GC_SZ];
 	if (!*gc) {
-		gc[GC_BG] = xcbgc(X, PANEL_BG, PANEL_BG);
-		gc[GC_AC] = xcbgc(X, GOOD, PANEL_BG);
-		gc[GC_BAT] = xcbgc(X, DEGRADED, PANEL_BG);
-		gc[GC_CRIT] = xcbgc(X, CRITICAL, PANEL_BG);
+#define MKGC(n) gc[GC_##n] = xcbgc(X, GC_##n##_COLOR, GC_BG_COLOR)
+		MKGC(BG); MKGC(AC); MKGC(BAT); MKGC(CRIT);
 	}
 	const uint8_t pct = get_percent();
 	const enum BATGCs a = get_gc(pct);
@@ -56,7 +54,7 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 	char buf[buf_sz];
 	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
 	xcb_image_text_8(X->xcb, l, X->w, gc[a], start + (end-start)/2,
-		X->font_height, buf);
+		X->font_size.h, buf);
 	xcb_flush(X->xcb);
 }
 

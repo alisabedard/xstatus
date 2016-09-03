@@ -12,7 +12,7 @@ static void draw(struct Button * restrict b)
 {
 	const struct Widget * restrict w = &b->widget;
 	xcb_image_text_8(w->X->xcb, strlen(b->label), w->window,
-		w->X->gc, PAD, w->X->font_height, b->label);
+		w->X->gc, PAD, w->X->font_size.height, b->label);
 }
 
 static void setup(struct Button * restrict b, struct XData * restrict X,

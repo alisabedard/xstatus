@@ -11,10 +11,9 @@ uint16_t draw_clock(struct XData * restrict X)
 	char buf[30];
 	const size_t sz = strftime(buf, sizeof buf,
 		TIMEFMT, localtime(&(time_t){time(NULL)}));
-	const uint16_t offset = X->screen->width_in_pixels
-		- X->font_width * sz;
-	xcb_image_text_8(X->xcb, sz, X->w, X->gc, offset,
-		X->font_height, buf);
+	const struct JBDim f = X->font_size;
+	const uint16_t offset = X->screen->width_in_pixels - f.w * sz;
+	xcb_image_text_8(X->xcb, sz, X->w, X->gc, offset, f.h, buf);
 	return offset;
 }
 
