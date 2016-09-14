@@ -90,7 +90,6 @@ static uint16_t poll_status(struct XData * restrict X)
 #define poll_status(X)
 #endif//USE_LOAD||USE_BUTTON||USE_TEMP||USE_STATUS
 
-__attribute__ ((hot))
 static void update(struct XData * restrict X)
 {
 #ifdef USE_BATTERY
