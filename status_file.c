@@ -24,6 +24,16 @@ static ssize_t poll_status_file(const char * restrict filename,
 	return r;
 }
 
+static void warn_no_data(const char * fn)
+{
+	const char msg[] = "No data in status file: ";
+	write(2, msg, sizeof(msg));
+	size_t l = 0;
+	while(fn[++l]);
+	write(2, fn, l);
+	write(2, "\n", 1);
+}
+
 // Returns offset for next widget
 uint16_t draw_status_file(struct XData * restrict X,
 	const uint16_t x_offset,
@@ -33,16 +43,10 @@ uint16_t draw_status_file(struct XData * restrict X,
 	const ssize_t s = poll_status_file(filename, buf) - 1;
 	if (s <= 0) { // empty or error
 		static bool been_warned;
-		if (been_warned)
-			goto skip_warning;
-		const char msg[] = "No data in status file: ";
-		write(2, msg, sizeof(msg));
-		size_t l = 0;
-		while(filename[++l]);
-		write(2, filename, l);
-		write(2, "\n", 1);
-		been_warned = true;
-skip_warning:
+		if (!been_warned) {
+			warn_no_data(filename);
+			been_warned = true;
+		}
 		return x_offset;
 	}
 	xcb_image_text_8(X->xcb, s, X->w, X->gc, x_offset + XS_WPAD,
