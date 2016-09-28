@@ -12,13 +12,15 @@
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
 {
-	errno = 0;
 	fd_t fd = open(filename, O_RDONLY|O_CREAT, 0644);
+	errno = 0;
 	if (jb_check(fd >= 0, "Could not open status file"))
 		return -1;
+	errno = 0;
 	ssize_t r = read(fd, buf, XS_BUF_SZ);
-	jb_close(fd);
 	jb_check(r != -1, "Could not read status file");
+	errno = 0;
+	jb_close(fd);
 	return r;
 }
 
