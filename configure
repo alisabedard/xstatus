@@ -28,15 +28,15 @@ do
 	t) OPT_TEMP=false;;
 	h|?)
 		ECHO="`which echo`"
-		$ECHO -e "./configure -[${OPTSTR}]\n" \
-		'\t-B\tdisable battery bar\n' \
-		'\t-b\tdisable buttons\n' \
-		'\t-c\tdisable clock\n' \
-		'\t-d\tenable debugging\n' \
-		'\t-l\tdisable load meter\n' \
-		'\t-s\tdisable status file display\n' \
-		'\t-t\tdisable temperature meter\n' \
-		'\t-*\thelp'
+		for line in "./configure -[${OPTSTR}]" \
+		'  -B disable battery bar' \
+		'  -b disable buttons' \
+		'  -c disable clock' \
+		'  -d enable debugging' \
+		'  -l disable load meter' \
+		'  -s disable status file display' \
+		'  -t disable temperature meter' \
+		'  -h help'; do echo $line; done
 		exit 1
 	esac
 done 
@@ -61,8 +61,8 @@ case $ARCH in
 		cat >> $CFG <<- EOF
 		CC=clang
 		PREFIX=/usr/local
-		LIBS+=-L/usr/X11R6/lib
-		LIBS+=-L/usr/local/lib
+		LDFLAGS+=-L/usr/X11R6/lib
+		LDFLAGS+=-L/usr/local/lib
 		CFLAGS+=-D_BSD_SOURCE
 		CFLAGS+=-I/usr/X11R6/include 
 		CFLAGS+=-I/usr/local/include 
@@ -80,9 +80,9 @@ case $ARCH in
 		CFLAGS+=-I/usr/pkg/include
 		CFLAGS+=-I/usr/X11R7/include 
 		CFLAGS+=-I/usr/X11R6/include
-		LIBS+=-L/usr/pkg/lib -Wl,-R/usr/pkg/lib
-		LIBS+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
-		LIBS+=-L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib
+		LDFLAGS+=-L/usr/pkg/lib -Wl,-R/usr/pkg/lib
+		LDFLAGS+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
+		LDFLAGS+=-L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib
 		PREFIX=/usr/local
 		EOF
 		;;
@@ -90,7 +90,7 @@ case $ARCH in
 		cat >> $CFG <<- EOF
 		CFLAGS+=-DFREEBSD -D_BSD_SOURCE -D__BSD_VISIBLE
 		CFLAGS+=-I/usr/local/include
-		LIBS+=-L/usr/local/lib
+		LDFLAGS+=-L/usr/local/lib
 		PREFIX=/usr/local
 		EOF
 		;;
