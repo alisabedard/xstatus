@@ -17,7 +17,7 @@ uint16_t draw_load(struct XData * restrict X, const uint16_t offset)
 	sz = snprintf(buf, sz, "%.2f", l[0]);
 	const struct JBDim f = X->font_size;
 	xcb_image_text_8(X->xcb, sz, X->w, X->gc,
-		offset + PAD + PAD, f.h, buf);
-	return f.w * sz + offset + PAD + PAD;
+		offset + XS_PAD + XS_PAD, f.h, buf);
+	return f.w * sz + offset + XS_PAD + XS_PAD;
 }
 

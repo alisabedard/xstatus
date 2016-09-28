@@ -1,11 +1,20 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef XS_CONFIG_H
+#define XS_CONFIG_H
+
+// Note: Adjust XS_HEIGHT for the selected font:
+
+enum {
+	XS_BORDER = 1,
+	XS_BUF_SZ = 80,
+	XS_CRIT_PCT = 10,
+	XS_HEIGHT = 18,
+	XS_PAD = 4,
+	XS_WPAD = 8
+};
 
 #define FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
-// Adjust the height for the selected font:
-#define HEIGHT 18
 
 #define MENU "dmenu_run -b&"
 #define TCMD "xterm"
@@ -14,12 +23,8 @@
 #define EDITOR TCMD " -e vim&"
 #define MIXER TCMD " -e alsamixer&"
 #define LOCK "slock&"
-
 #define DEFAULTF "/tmp/xstatus"
-
 #define TIMEFMT "%a %d %b %T"
-
-enum { BORDER = 1, PAD = 4, CRIT_PCT = 11 };
 
 #define BUTTON_BG "grey10"
 #define BUTTON_FG "green4"
@@ -34,4 +39,4 @@ enum { BORDER = 1, PAD = 4, CRIT_PCT = 11 };
 #define ACSYSFILE "/sys/class/power_supply/AC/online"
 #define TEMPSYSFILE "/sys/devices/virtual/thermal/thermal_zone0/temp"
 
-#endif//CONFIG_H
+#endif//!XS_CONFIG_H

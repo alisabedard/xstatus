@@ -1,28 +1,33 @@
 #include "status_file.h"
 
 #include "config.h"
+#include "libjb/util.h"
 #include "util.h"
 
-enum { STATUS_BUF_SZ = 80 };
+#include <fcntl.h>
+#include <unistd.h>
 
-static size_t poll_status_file(const char * restrict filename,
-	char *buf)
+static ssize_t poll_status_file(const char * restrict filename,
+	char * restrict buf)
 {
-	FILE * restrict f = fopen(filename, "a+");
-	size_t s = fread(buf, 1, STATUS_BUF_SZ, f);
-	fclose(f);
-	return s;
+	int fd = open(filename, O_RDONLY|O_CREAT);
+	ssize_t r = read(fd, buf, XS_BUF_SZ);
+	jb_check(r != -1, "Could not read status file");
+	jb_close(fd);
+	return r;
 }
 
 // Returns offset for next widget
-uint16_t draw_status_file(XData * restrict X,
+uint16_t draw_status_file(struct XData * restrict X,
 	const uint16_t x_offset,
 	const char * restrict filename)
 {
-	char buf[STATUS_BUF_SZ];
-	const size_t s = poll_status_file(filename, buf) - 1;
-	xcb_image_text_8(X->xcb, s, X->w, X->gc, x_offset
-		+ BIGPAD, X->font_height, buf);
-	return X->font_width * s + x_offset + BIGPAD;
+	char buf[XS_BUF_SZ];
+	const ssize_t s = poll_status_file(filename, buf) - 1;
+	if (s <= 0) // empty or error
+		return x_offset;
+	xcb_image_text_8(X->xcb, s, X->w, X->gc, x_offset + XS_WPAD,
+		X->font_size.h, buf);
+	return X->font_size.w * s + x_offset + XS_WPAD + XS_WPAD;
 }
 

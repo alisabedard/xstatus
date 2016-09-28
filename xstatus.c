@@ -34,8 +34,11 @@ static void create_window(struct XData * restrict X)
 	xcb_connection_t * xc = X->xcb;
 	X->w = xcb_generate_id(xc);
 	xcb_screen_t * s = X->screen;
-	X->sz = (xcb_rectangle_t) { .y = s->height_in_pixels - HEIGHT
-		- BORDER, .width = s->width_in_pixels, .height = HEIGHT};
+	X->sz = (xcb_rectangle_t) {
+		.y = s->height_in_pixels - XS_HEIGHT - XS_BORDER,
+		.width = s->width_in_pixels,
+		.height = XS_HEIGHT
+	};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
 	const xcb_colormap_t cm = s->default_colormap;
@@ -44,7 +47,7 @@ static void create_window(struct XData * restrict X)
 	const xcb_rectangle_t sz = X->sz;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
 			  s->root, sz.x, sz.y, sz.width,
-			  sz.height, BORDER,
+			  sz.height, XS_BORDER,
 			  XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 			  XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(xc, X->w);
@@ -74,7 +77,7 @@ static uint16_t get_button_end(void)
 	|| defined(USE_TEMP) || defined(USE_STATUS)
 static uint16_t poll_status(struct XData * restrict X)
 {
-	uint16_t offset = get_button_end() + PAD;
+	uint16_t offset = get_button_end() + XS_PAD;
 #ifdef USE_LOAD
 	offset = draw_load(X, offset);
 #endif//USE_LOAD
@@ -115,10 +118,10 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	struct Button * i = last_btn();
 	struct Button * b = get_button(X, &(xcb_rectangle_t){
 		.x=offset, .width = X->font_size.width
-		* strlen(label)+(PAD<<1),
-		.height=HEIGHT}, label, system_cb, cmd);
+		* strlen(label) + XS_WPAD,
+		.height=XS_HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;
-	return offset + b->widget.geometry.width + PAD;
+	return offset + b->widget.geometry.width + XS_PAD;
 }
 
 /* Returns x offset after all buttons added.  */

@@ -1,0 +1,173 @@
+#!/bin/sh
+# Copyright 2016, Jeffrey E. Bedard
+
+CFG=config.mk
+
+# Defaults:
+OPT_DEBUG=false
+# Features:
+OPT_BUTTONS=true
+OPT_LOAD=true
+OPT_TEMP=true
+OPT_STATUS=true
+OPT_CLOCK=true
+OPT_BATTERY=true
+
+rm -f "$CFG"
+
+OPTSTR='Bbcdlst'
+while getopts $OPTSTR opt
+do
+	case $opt in
+	b) OPT_BUTTONS=false;;
+	B) OPT_BATTERY=false;;
+	c) OPT_CLOCK=false;;
+	d) OPT_DEBUG=true;;
+	l) OPT_LOAD=false;;
+	s) OPT_STATUS=false;;
+	t) OPT_TEMP=false;;
+	?)
+		echo "./configure -[${OPTSTR}]"
+		echo '-d\tenable debugging'
+		echo '-*\thelp'
+		exit 1
+	esac
+done 
+
+ARCH=`uname | tr 'a-z' 'A-Z'`
+
+echo "Configuring for $ARCH"
+
+if $OPT_DEBUG; then # Clear CFLAGS
+	echo "CFLAGS=" >> $CFG
+else
+	echo "CFLAGS=$CFLAGS" >> $CFG
+fi
+
+# Make current architecture definition available
+echo CFLAGS+="-D${ARCH}" >> $CFG
+
+case $ARCH in
+	OPENBSD)
+		CC=clang
+		echo NOTE:  OpenBSD requires llvm
+		cat >> $CFG <<- EOF
+		CC=clang
+		PREFIX=/usr/local
+		LIBS+=-L/usr/X11R6/lib
+		LIBS+=-L/usr/local/lib
+		CFLAGS+=-D_BSD_SOURCE
+		CFLAGS+=-I/usr/X11R6/include 
+		CFLAGS+=-I/usr/local/include 
+		EOF
+		;;
+	LINUX) 
+		cat >> $CFG <<- EOF
+		CFLAGS+=-D_GNU_SOURCE
+		EOF
+		;;
+	NETBSD)
+		cat >> $CFG <<- EOF
+		CFLAGS+=-D_NETBSD_SOURCE -D_BSD_SOURCE
+		CFLAGS+=-Wno-missing-field-initializers
+		CFLAGS+=-I/usr/pkg/include
+		CFLAGS+=-I/usr/X11R7/include 
+		CFLAGS+=-I/usr/X11R6/include
+		LIBS+=-L/usr/pkg/lib -Wl,-R/usr/pkg/lib
+		LIBS+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
+		LIBS+=-L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib
+		PREFIX=/usr/local
+		EOF
+		;;
+	FREEBSD)
+		cat >> $CFG <<- EOF
+		CFLAGS+=-DFREEBSD -D_BSD_SOURCE -D__BSD_VISIBLE
+		CFLAGS+=-I/usr/local/include
+		LIBS+=-L/usr/local/lib
+		PREFIX=/usr/local
+		EOF
+		;;
+esac
+
+search() # 1: cmd 2: var
+{
+	echo -n "Checking for $1... "
+	local CMD=`command -v $1`
+	if [ "$CMD" ]; then
+		echo $CMD
+		echo "$2=$CMD" >> $CFG
+		export $2=$1
+		return 1
+	fi
+	echo not found
+	return 0
+}
+
+cc_err()
+{
+	echo 'Error: Cannot find a suitable compiler.'
+	echo 'Please set CC to a valid C compiler command'
+	exit 1
+}
+
+if [ ! "$CC" ]; then
+	if [ "$ARCH" = "LINUX" ]; then
+		search cc CC && search gcc CC && search clang CC\
+			&& cc_err
+	else
+		# Many BSD systems come with an old version of
+		# gcc without support of required language features.
+		# Search for clang first.
+		search search clang CC && search cc CC && search gcc CC\
+			&& cc_err
+	fi
+fi
+
+if $OPT_DEBUG; then
+	echo -n 'Enabling debug options... '
+	cat >> $CFG <<- EOF
+	CFLAGS+=-O0 -ggdb -Werror -DDEBUG
+	EOF
+	echo done
+fi
+
+if $OPT_BUTTONS; then
+	cat >> $CFG <<- EOF
+	CFLAGS+=-DUSE_BUTTONS
+	objs+=button.o
+	EOF
+fi
+
+if $OPT_CLOCK; then
+	cat >> $CFG <<- EOF
+	CFLAGS+=-DUSE_CLOCK
+	objs+=clock.o
+	EOF
+fi
+
+if $OPT_BATTERY; then
+	cat >> $CFG <<- EOF
+	CFLAGS+=-DUSE_BATTERY
+	objs+=battery.o
+	EOF
+fi
+
+if $OPT_LOAD; then
+	cat >> $CFG <<- EOF
+	CFLAGS+=-DUSE_LOAD
+	objs+=load.o
+	EOF
+fi
+if $OPT_TEMP; then
+	cat >> $CFG <<- EOF
+	CFLAGS+=-DUSE_TEMP
+	objs+=temperature.o
+	EOF
+fi
+if $OPT_STATUS; then
+	cat >> $CFG <<- EOF
+	CFLAGS+=-DUSE_STATUS
+	objs+=status_file.o
+	EOF
+fi
+
