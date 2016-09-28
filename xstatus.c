@@ -196,23 +196,25 @@ static void event_loop(struct XData * restrict X, const uint8_t delay)
 
 static bool open_font(struct XData * restrict X, const char * fn)
 {
-	xcb_void_cookie_t c;
-	xcb_query_font_cookie_t fc;
-	xcb_query_font_reply_t * r;
-	xcb_charinfo_t * ci;
+	xcb_void_cookie_t c = xcb_open_font_checked(X->xcb,
+		X->font, strlen(fn), fn);
+	xcb_query_font_cookie_t fc = xcb_query_font(X->xcb, X->font);
 	xcb_generic_error_t * e;
-	c = xcb_open_font_checked(X->xcb, X->font, strlen(fn), fn);
-	fc = xcb_query_font(X->xcb, X->font);
 	if ((e = xcb_request_check(X->xcb, c))) {
 		WARN("Failed to load font: %s", fn);
 		free(e);
 		return false;
 	}
-	r = xcb_query_font_reply(X->xcb, fc, NULL);
-	ci = &r->max_bounds;
-	X->font_size.width = ci->character_width;
-	X->font_size.height = ci->ascent + ci->descent;
-	free(r);
+	{
+		xcb_query_font_reply_t * r
+			= xcb_query_font_reply(X->xcb, fc, NULL);
+		{
+			xcb_charinfo_t * ci = &r->max_bounds;
+			X->font_size.width = ci->character_width;
+			X->font_size.height = ci->ascent + ci->descent;
+		}
+		free(r);
+	}
 	return true;
 }
 
