@@ -27,15 +27,16 @@ do
 	s) OPT_STATUS=false;;
 	t) OPT_TEMP=false;;
 	h|?)
-		echo "./configure -[${OPTSTR}]"
-		echo '-b\tdisable buttons'
-		echo '-B\tdisable battery bar'
-		echo '-c\tdisable clock'
-		echo '-d\tenable debugging'
-		echo '-l\tdisable load meter'
-		echo '-s\tdisable status file display'
-		echo '-t\tdisable temperature meter'
-		echo '-*\thelp'
+		ECHO="`which echo`"
+		$ECHO -e "./configure -[${OPTSTR}]\n" \
+		'\t-B\tdisable battery bar\n' \
+		'\t-b\tdisable buttons\n' \
+		'\t-c\tdisable clock\n' \
+		'\t-d\tenable debugging\n' \
+		'\t-l\tdisable load meter\n' \
+		'\t-s\tdisable status file display\n' \
+		'\t-t\tdisable temperature meter\n' \
+		'\t-*\thelp'
 		exit 1
 	esac
 done 
