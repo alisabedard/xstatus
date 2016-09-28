@@ -2,13 +2,12 @@
 
 #include "util.h"
 
-#include "libjb/log.h"
 #include "libjb/util.h"
 #include "libjb/xcb.h"
 
-#include <assert.h>
+#include <fcntl.h>
 #include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
 
 xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 {
@@ -28,13 +27,11 @@ xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 #if defined(USE_BATTERY) || defined(USE_TEMP)
 uint32_t sysval(const char *filename)
 {
-	FILE *f = fopen(filename, "r");
-	if (jb_check(f, "Cannot open file"))
-		return 0;
-	size_t sz = 6;
-	char buf[sz];
-	fread(buf, 1, sz, f);
-	jb_check(fclose(f) == 0, "Cannot close file");
+#define BUF_SZ 6
+	fd_t f = jb_open(filename, O_RDONLY);
+	char buf[BUF_SZ];
+	read(f, buf, BUF_SZ);
+	jb_close(f);
 	return atoi(buf);
 }
 #endif//USE_BATTERY||USE_TEMP

@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static const char * helptext =
+static const char helptext[] =
 "DESCRIPTION:  Simple X toolbar for minimalistic"
 " window managers.\n"
 "USAGE: xstatus [-d DELAY][-f FILE][-h]\n"
@@ -34,7 +34,7 @@ int main(int argc, char ** argv)
 			break;
 		case 'h':
 		default:
-			fprintf(stdout, "%s", helptext);
+			write(2, helptext, sizeof(helptext));
 			exit(0);
 		}
 	}

@@ -17,7 +17,7 @@ uint16_t draw_temp(struct XData * restrict X, const uint16_t offset)
 	sz = snprintf(buf, sz, "%dC", v);
 	const struct JBDim f = X->font_size;
 	xcb_image_text_8(X->xcb, sz, X->w, X->gc, offset
-		+ (PAD<<1), f.h, buf);
-	return f.w * strlen(buf) + offset + (PAD<<2);
+		+ XS_WPAD, f.h, buf);
+	return f.w * strlen(buf) + offset + XS_WPAD + XS_PAD;
 }
 

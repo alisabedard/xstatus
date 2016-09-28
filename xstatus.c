@@ -34,8 +34,11 @@ static void create_window(struct XData * restrict X)
 	xcb_connection_t * xc = X->xcb;
 	X->w = xcb_generate_id(xc);
 	xcb_screen_t * s = X->screen;
-	X->sz = (xcb_rectangle_t) { .y = s->height_in_pixels - HEIGHT
-		- BORDER, .width = s->width_in_pixels, .height = HEIGHT};
+	X->sz = (xcb_rectangle_t) {
+		.y = s->height_in_pixels - XS_HEIGHT - XS_BORDER,
+		.width = s->width_in_pixels,
+		.height = XS_HEIGHT
+	};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
 	const xcb_colormap_t cm = s->default_colormap;
@@ -44,7 +47,7 @@ static void create_window(struct XData * restrict X)
 	const xcb_rectangle_t sz = X->sz;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
 			  s->root, sz.x, sz.y, sz.width,
-			  sz.height, BORDER,
+			  sz.height, XS_BORDER,
 			  XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 			  XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(xc, X->w);
@@ -74,7 +77,7 @@ static uint16_t get_button_end(void)
 	|| defined(USE_TEMP) || defined(USE_STATUS)
 static uint16_t poll_status(struct XData * restrict X)
 {
-	uint16_t offset = get_button_end() + PAD;
+	uint16_t offset = get_button_end() + XS_PAD;
 #ifdef USE_LOAD
 	offset = draw_load(X, offset);
 #endif//USE_LOAD
@@ -93,7 +96,11 @@ static uint16_t poll_status(struct XData * restrict X)
 static void update(struct XData * restrict X)
 {
 #ifdef USE_BATTERY
+#ifdef USE_CLOCK
 	draw_battery(X, poll_status(X), draw_clock(X));
+#else//!USE_CLOCK
+	draw_battery(X, poll_status(X), X->screen->width_in_pixels);
+#endif//USE_CLOCK
 #else//!USE_BATTERY
 	poll_status(X);
 	draw_clock(X);
@@ -114,17 +121,17 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	struct Button * i = last_btn();
 	struct Button * b = get_button(X, &(xcb_rectangle_t){
 		.x=offset, .width = X->font_size.width
-		* strlen(label)+(PAD<<1),
-		.height=HEIGHT}, label, system_cb, cmd);
+		* strlen(label) + XS_WPAD,
+		.height=XS_HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;
-	return offset + b->widget.geometry.width + PAD;
+	return offset + b->widget.geometry.width + XS_PAD;
 }
 
 /* Returns x offset after all buttons added.  */
 static uint16_t setup_buttons(struct XData * restrict X)
 {
 	uint16_t off = 0;
-	off = btn(X, off, "Menu", MENU);
+	off = btn(X, off, "Menu", XS_MENU);
 	off = btn(X, off, "Terminal", TERM);
 	off = btn(X, off, "Editor", EDITOR);
 	{
@@ -155,7 +162,6 @@ static bool iter_buttons(const xcb_window_t ewin,
 	}
 	return false;
 }
-#endif//USE_BUTTONS
 
 // returns if update needed
 __attribute__((nonnull))
@@ -177,6 +183,9 @@ static void handle_events(struct XData * restrict X,
 	}
 	free(e);
 }
+#else//!USE_BUTTONS
+#define handle_events(X, e) {}
+#endif//USE_BUTTONS
 
 __attribute__((noreturn))
 static void event_loop(struct XData * restrict X, const uint8_t delay)
@@ -192,23 +201,27 @@ static void event_loop(struct XData * restrict X, const uint8_t delay)
 
 static bool open_font(struct XData * restrict X, const char * fn)
 {
-	xcb_void_cookie_t c;
-	xcb_query_font_cookie_t fc;
-	xcb_query_font_reply_t * r;
-	xcb_charinfo_t * ci;
-	xcb_generic_error_t * e;
-	c = xcb_open_font_checked(X->xcb, X->font, strlen(fn), fn);
-	fc = xcb_query_font(X->xcb, X->font);
-	if ((e = xcb_request_check(X->xcb, c))) {
-		WARN("Failed to load font: %s", fn);
-		free(e);
-		return false;
+	xcb_void_cookie_t c = xcb_open_font_checked(X->xcb,
+		X->font, strlen(fn), fn);
+	xcb_query_font_cookie_t fc = xcb_query_font(X->xcb, X->font);
+	{
+		xcb_generic_error_t * e;
+		if ((e = xcb_request_check(X->xcb, c))) {
+			WARN("Failed to load font: %s", fn);
+			free(e);
+			return false;
+		}
 	}
-	r = xcb_query_font_reply(X->xcb, fc, NULL);
-	ci = &r->max_bounds;
-	X->font_size.width = ci->character_width;
-	X->font_size.height = ci->ascent + ci->descent;
-	free(r);
+	{
+		xcb_query_font_reply_t * r
+			= xcb_query_font_reply(X->xcb, fc, NULL);
+		{
+			xcb_charinfo_t * ci = &r->max_bounds;
+			X->font_size.width = ci->character_width;
+			X->font_size.height = ci->ascent + ci->descent;
+		}
+		free(r);
+	}
 	return true;
 }
 
