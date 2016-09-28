@@ -16,7 +16,7 @@ enum {
 
 #define FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
 
-#define MENU "dmenu_run -b&"
+#define XS_MENU "dmenu_run -b&"
 #define TCMD "xterm"
 #define TERM TCMD "&"
 #define BROWSER "firefox&"

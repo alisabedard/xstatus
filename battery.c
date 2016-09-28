@@ -48,6 +48,7 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 	const enum BATGCs a = get_gc(pct);
 	xcb_rectangle_t g = {.x=start, .y = XS_HEIGHT >> 2,
 		.height = XS_HEIGHT >> 1, .width = end - start - XS_PAD};
+	++g.y;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[GC_BG], 1, &g);
 	g.width = g.width * pct / 100;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);

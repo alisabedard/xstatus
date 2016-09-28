@@ -132,7 +132,7 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 static uint16_t setup_buttons(struct XData * restrict X)
 {
 	uint16_t off = 0;
-	off = btn(X, off, "Menu", MENU);
+	off = btn(X, off, "Menu", XS_MENU);
 	off = btn(X, off, "Terminal", TERM);
 	off = btn(X, off, "Editor", EDITOR);
 	{
