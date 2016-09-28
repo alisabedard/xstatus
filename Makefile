@@ -2,12 +2,20 @@ CFLAGS+=-Wall -Wextra -ggdb
 CFLAGS+=-std=c11
 CFLAGS+=-D_XOPEN_SOURCE=700
 CFLAGS+=-D_DEFAULT_SOURCE
-CFLAGS+=-I/usr/X11R7/include
-# For NetBSD build:
+CFLAGS+=-D_BSD_SOURCE
+
+# Porting:
+# For OpenBSD:
+CC=clang
+CFLAGS+=-I/usr/X11R6/include
 LDFLAGS+=-L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib
-LDFLAGS+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
-LDFLAGS+=-Llibjb
+
+# For NetBSD:
+#CFLAGS+=-I/usr/X11R7/include
+#LDFLAGS+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
+
 # Libs:
+LDFLAGS+=-Llibjb
 LDFLAGS+=-lxcb -ljb
 PREFIX=/usr
 prog=xstatus
