@@ -97,7 +97,11 @@ __attribute__ ((hot))
 static void update(struct XData * restrict X)
 {
 #ifdef USE_BATTERY
+#ifdef USE_CLOCK
 	draw_battery(X, poll_status(X), draw_clock(X));
+#else//!USE_CLOCK
+	draw_battery(X, poll_status(X), X->screen->width_in_pixels);
+#endif//USE_CLOCK
 #else//!USE_BATTERY
 	poll_status(X);
 	draw_clock(X);
@@ -159,7 +163,6 @@ static bool iter_buttons(const xcb_window_t ewin,
 	}
 	return false;
 }
-#endif//USE_BUTTONS
 
 // returns if update needed
 __attribute__((nonnull))
@@ -181,6 +184,9 @@ static void handle_events(struct XData * restrict X,
 	}
 	free(e);
 }
+#else//!USE_BUTTONS
+#define handle_events(X, e) {}
+#endif//USE_BUTTONS
 
 __attribute__((noreturn))
 static void event_loop(struct XData * restrict X, const uint8_t delay)

@@ -15,7 +15,7 @@ OPT_BATTERY=true
 
 rm -f "$CFG"
 
-OPTSTR='Bbcdlst'
+OPTSTR='Bbcdhlst'
 while getopts $OPTSTR opt
 do
 	case $opt in
@@ -26,9 +26,15 @@ do
 	l) OPT_LOAD=false;;
 	s) OPT_STATUS=false;;
 	t) OPT_TEMP=false;;
-	?)
+	h|?)
 		echo "./configure -[${OPTSTR}]"
+		echo '-b\tdisable buttons'
+		echo '-B\tdisable battery bar'
+		echo '-c\tdisable clock'
 		echo '-d\tenable debugging'
+		echo '-l\tdisable load meter'
+		echo '-s\tdisable status file display'
+		echo '-t\tdisable temperature meter'
 		echo '-*\thelp'
 		exit 1
 	esac
@@ -136,6 +142,7 @@ if $OPT_BUTTONS; then
 	CFLAGS+=-DUSE_BUTTONS
 	objs+=button.o
 	EOF
+	echo enabled buttons
 fi
 
 if $OPT_CLOCK; then
@@ -143,6 +150,7 @@ if $OPT_CLOCK; then
 	CFLAGS+=-DUSE_CLOCK
 	objs+=clock.o
 	EOF
+	echo enabled clock
 fi
 
 if $OPT_BATTERY; then
@@ -150,6 +158,7 @@ if $OPT_BATTERY; then
 	CFLAGS+=-DUSE_BATTERY
 	objs+=battery.o
 	EOF
+	echo enabled battery
 fi
 
 if $OPT_LOAD; then
@@ -157,17 +166,20 @@ if $OPT_LOAD; then
 	CFLAGS+=-DUSE_LOAD
 	objs+=load.o
 	EOF
+	echo enabled load
 fi
 if $OPT_TEMP; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DUSE_TEMP
 	objs+=temperature.o
 	EOF
+	echo enabled temp
 fi
 if $OPT_STATUS; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DUSE_STATUS
 	objs+=status_file.o
 	EOF
+	echo enabled status
 fi
 
