@@ -14,7 +14,7 @@ enum {
 	XSTATUS_CONST_WIDE_PAD = 8
 };
 
-#define FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
+#define XSTATUS_FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
 
 #define XSTATUS_MENU_COMMAND "dmenu_run -b&"
 #define TCMD "xterm"

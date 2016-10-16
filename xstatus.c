@@ -222,7 +222,7 @@ static bool open_font(struct XData * restrict X, const char * fn)
 static void setup_font(struct XData * restrict X)
 {
 	X->font = xcb_generate_id(X->xcb);
-	if (open_font(X, FONT)) // default
+	if (open_font(X, XSTATUS_FONT)) // default
 		return;
 	if (open_font(X, "fixed")) // fallback
 		return;
