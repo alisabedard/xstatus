@@ -19,7 +19,7 @@ enum {
 #define XS_MENU "dmenu_run -b&"
 #define TCMD "xterm"
 #define XSTATUS_TERMINAL TCMD "&"
-#define BROWSER "firefox&"
+#define XSTATUS_BROWSER_COMMAND "firefox&"
 #define EDITOR TCMD " -e vim&"
 #define MIXER TCMD " -e alsamixer&"
 #define LOCK "slock&"

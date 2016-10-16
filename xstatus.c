@@ -135,9 +135,9 @@ static uint16_t setup_buttons(struct XData * restrict X)
 	off = btn(X, off, "Terminal", XSTATUS_TERMINAL);
 	off = btn(X, off, "Editor", EDITOR);
 	{
-		char *browser=getenv("BROWSER");
+		char *browser=getenv("XSTATUS_BROWSER_COMMAND");
 		off=btn(X, off, "Browser",
-			browser?browser:BROWSER);
+			browser?browser:XSTATUS_BROWSER_COMMAND);
 	}
 	off=btn(X, off, "Mixer", MIXER);
 	off=btn(X, off, "Lock", LOCK);
