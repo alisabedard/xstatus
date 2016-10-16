@@ -26,7 +26,7 @@ enum {
 #define DEFAULTF "/tmp/xstatus"
 #define TIMEFMT "%a %d %b %T"
 
-#define BUTTON_BG "grey10"
+#define XSTATUS_BUTTON_BG "grey10"
 #define BUTTON_FG "green4"
 #define PANEL_FG "green3"
 #define GC_BG_COLOR "black"

@@ -250,7 +250,7 @@ void run_xstatus(
 	setup_xdata(&X);
 #ifdef USE_BUTTONS
 	struct XData BX = X;
-	BX.gc = xcbgc(&BX, BUTTON_FG, BUTTON_BG);
+	BX.gc = xcbgc(&BX, BUTTON_FG, XSTATUS_BUTTON_BG);
 	setup_buttons(&BX);
 #endif//USE_BUTTONS
 //	setup_battery(&xstatus.bat, &X);
