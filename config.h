@@ -27,13 +27,13 @@ enum {
 #define TIMEFMT "%a %d %b %T"
 
 #define XSTATUS_BUTTON_BG "grey10"
-#define BUTTON_FG "green4"
-#define PANEL_FG "green3"
-#define GC_BG_COLOR "black"
-#define PANEL_BG GC_BG_COLOR
-#define GC_AC_COLOR "green"
-#define GC_BAT_COLOR "yellow"
-#define GC_CRIT_COLOR "red"
+#define XSTATUS_BUTTON_FG "green4"
+#define XSTATUS_PANEL_FG "green3"
+#define XSTATUS_BATTERY_BACKGROUND_COLOR "black"
+#define PANEL_BG XSTATUS_BATTERY_BACKGROUND_COLOR
+#define XSTATUS_BATTERY_AC_COLOR "green"
+#define XSTATUS_BATTERY_BATTERY_COLOR "yellow"
+#define XSTATUS_BATTERY_CRITICAL_COLOR "red"
 
 #define BATSYSFILE "/sys/class/power_supply/BAT0/capacity"
 #define ACSYSFILE "/sys/class/power_supply/AC/online"

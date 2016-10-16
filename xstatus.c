@@ -235,7 +235,7 @@ static void setup_xdata(struct XData * X)
 	X->screen = jb_get_xcb_screen(X->xcb);
 	create_window(X);
 	setup_font(X); // font needed for gc
-	X->gc = xcbgc(X, PANEL_FG, PANEL_BG);
+	X->gc = xcbgc(X, XSTATUS_PANEL_FG, PANEL_BG);
 }
 
 void run_xstatus(
@@ -250,7 +250,7 @@ void run_xstatus(
 	setup_xdata(&X);
 #ifdef USE_BUTTONS
 	struct XData BX = X;
-	BX.gc = xcbgc(&BX, BUTTON_FG, XSTATUS_BUTTON_BG);
+	BX.gc = xcbgc(&BX, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
 	setup_buttons(&BX);
 #endif//USE_BUTTONS
 //	setup_battery(&xstatus.bat, &X);

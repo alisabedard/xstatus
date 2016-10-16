@@ -27,13 +27,14 @@ static uint8_t get_percent(void)
 }
 
 // index into gc array, keeps gc array private
-enum BATGCs { GC_BG, GC_AC, GC_BAT, GC_CRIT, GC_SZ };
+enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
+	BATTERY_GC_CRITICAL, BATTERY_GC_SIZE };
 
 // Selects a gc to use based on ac/battery status
 static enum BATGCs get_gc(const uint8_t pct)
 {
-	return sysval(ACSYSFILE) ? GC_AC : pct < XS_CRIT_PCT
-		? GC_CRIT : GC_BAT;
+	return sysval(ACSYSFILE) ? BATTERY_GC_AC : pct < XS_CRIT_PCT
+		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
 
 static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
@@ -48,17 +49,27 @@ static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
 void draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end)
 {
-	static xcb_gc_t gc[GC_SZ];
+	static xcb_gc_t gc[BATTERY_GC_SIZE];
 	if (!*gc) {
-#define MKGC(n) gc[GC_##n] = xcbgc(X, GC_##n##_COLOR, GC_BG_COLOR)
-		MKGC(BG); MKGC(AC); MKGC(BAT); MKGC(CRIT);
+		gc[BATTERY_GC_BACKGROUND] = xcbgc(X,
+			XSTATUS_BATTERY_BACKGROUND_COLOR,
+			XSTATUS_BATTERY_BACKGROUND_COLOR);
+		gc[BATTERY_GC_AC] = xcbgc(X,
+			XSTATUS_BATTERY_AC_COLOR,
+			XSTATUS_BATTERY_BACKGROUND_COLOR);
+		gc[BATTERY_GC_BATTERY] = xcbgc(X,
+			XSTATUS_BATTERY_BATTERY_COLOR,
+			XSTATUS_BATTERY_BACKGROUND_COLOR);
+		gc[BATTERY_GC_CRITICAL] = xcbgc(X,
+			XSTATUS_BATTERY_CRITICAL_COLOR,
+			XSTATUS_BATTERY_BACKGROUND_COLOR);
 	}
 	const uint8_t pct = get_percent();
 	const enum BATGCs a = get_gc(pct);
 	xcb_rectangle_t g = {.x=start, .y = XS_HEIGHT >> 2,
 		.height = XS_HEIGHT >> 1, .width = end - start - XS_PAD};
 	++g.y;
-	xcb_poly_fill_rectangle(X->xcb, X->w, gc[GC_BG], 1, &g);
+	xcb_poly_fill_rectangle(X->xcb, X->w, gc[BATTERY_GC_BACKGROUND], 1, &g);
 	g.width = g.width * pct / 100;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);
 	draw_percent(X, gc[a], pct, start + (end-start)/2);
