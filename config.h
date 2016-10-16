@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef XS_CONFIG_H
-#define XS_CONFIG_H
+#ifndef XSTATUS_CONFIG_H
+#define XSTATUS_CONFIG_H
 
 // Note: Adjust XSTATUS_CONST_HEIGHT for the selected font:
 
@@ -42,4 +42,4 @@ enum {
 #define XSTATUS_SYSFILE_TEMPERATURE \
 	"/sys/devices/virtual/thermal/thermal_zone0/temp"
 
-#endif//!XS_CONFIG_H
+#endif//!XSTATUS_CONFIG_H

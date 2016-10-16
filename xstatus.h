@@ -1,5 +1,5 @@
-#ifndef XSTATUS_H
-#define XSTATUS_H
+#ifndef XSTATUS_XSTATUS_H
+#define XSTATUS_XSTATUS_H
 
 #include <stdint.h>
 
@@ -11,4 +11,4 @@ void run_xstatus(
 #endif//USE_STATUS
 	const uint8_t delay);
 
-#endif//!XSTATUS_H
+#endif//!XSTATUS_XSTATUS_H

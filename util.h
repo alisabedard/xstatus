@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef XS_UTIL_H
-#define XS_UTIL_H
+#ifndef XSTATUS_UTIL_H
+#define XSTATUS_UTIL_H
 
 #include <stdbool.h>
 #include "xdata.h"
@@ -18,4 +18,4 @@ uint32_t sysval(const char *filename);
 
 Pixel pixel(struct XData * restrict X, const char * restrict color);
 
-#endif//XS_UTIL_H
+#endif//XSTATUS_UTIL_H

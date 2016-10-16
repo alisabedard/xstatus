@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef XS_TEMPERATURE_H
-#define XS_TEMPERATURE_H
+#ifndef XSTATUS_TEMPERATURE_H
+#define XSTATUS_TEMPERATURE_H
 
 #ifdef USE_TEMP
 
@@ -18,4 +18,4 @@ uint16_t draw_temp(struct XData * restrict X, const uint16_t offset);
 
 #endif//USE_TEMP
 
-#endif//!XS_TEMPERATURE_H
+#endif//!XSTATUS_TEMPERATURE_H

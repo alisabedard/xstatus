@@ -96,11 +96,11 @@ static uint16_t poll_status(struct XData * restrict X)
 static void update(struct XData * restrict X)
 {
 #ifdef USE_BATTERY
-#ifdef USE_CXSTATUS_LOCK_COMMAND
+#ifdef XSTATUS_USE_LOCK
 	draw_battery(X, poll_status(X), draw_clock(X));
-#else//!USE_CXSTATUS_LOCK_COMMAND
+#else//!XSTATUS_USE_LOCK
 	draw_battery(X, poll_status(X), X->screen->width_in_pixels);
-#endif//USE_CXSTATUS_LOCK_COMMAND
+#endif//XSTATUS_USE_LOCK
 #else//!USE_BATTERY
 	poll_status(X);
 	draw_clock(X);

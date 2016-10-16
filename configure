@@ -148,7 +148,7 @@ fi
 
 if $OPT_CXSTATUS_LOCK_COMMAND; then
 	cat >> $CFG <<- EOF
-	CFLAGS+=-DUSE_CXSTATUS_LOCK_COMMAND
+	CFLAGS+=-DXSTATUS_USE_LOCK
 	objs+=clock.o
 	EOF
 	echo enabled clock

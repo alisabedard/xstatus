@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef XS_WIDGET_H
-#define XS_WIDGET_H
+#ifndef XSTATUS_WIDGET_H
+#define XSTATUS_WIDGET_H
 
 #include "util.h"
 
@@ -15,4 +15,4 @@ void setup_Widget(struct Widget * w, struct XData * restrict X,
 	xcb_rectangle_t * restrict geometry, const Pixel bg,
 	const uint32_t events);
 
-#endif//!XS_WIDGET_H
+#endif//!XSTATUS_WIDGET_H

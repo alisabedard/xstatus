@@ -1,5 +1,5 @@
-#ifndef _BUTTON_H
-#define _BUTTON_H
+#ifndef XSTATUS_BUTTON_H
+#define XSTATUS_BUTTON_H
 
 #include <stdint.h>
 #include "widget.h"
@@ -18,4 +18,4 @@ struct Button * get_button(struct XData * restrict X,
 	char * restrict label, void (*cb)(struct Button *),
 	void *cb_data);
 
-#endif//_BUTTON_H
+#endif//XSTATUS_BUTTON_H

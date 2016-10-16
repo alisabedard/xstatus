@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef XS_LOAD_H
-#define XS_LOAD_H
+#ifndef XSTATUS_LOAD_H
+#define XSTATUS_LOAD_H
 
 #ifdef USE_LOAD
 
@@ -14,4 +14,4 @@ uint16_t draw_load(struct XData * restrict X, const uint16_t offset);
 #define draw_load(X, o) o
 #endif//USE_LOAD
 
-#endif//!XS_LOAD_H
+#endif//!XSTATUS_LOAD_H

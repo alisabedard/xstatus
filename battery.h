@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef BATTERY_H
-#define BATTERY_H
+#ifndef XSTATUS_BATTERY_H
+#define XSTATUS_BATTERY_H
 
 #include "xdata.h"
 
@@ -10,4 +10,4 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end);
 #endif//USE_BATTERY
 
-#endif//!BATTERY_H
+#endif//!XSTATUS_BATTERY_H
