@@ -1,9 +1,9 @@
 # xstatus
 simple X11 status bar and launcher for lightweight window managers
 
-# Note on Submodule
-xstatus uses a submodule, libjb.  Please either clone this project recursively,
-or make sure you run the following:
+# Note on Sub-module
+xstatus uses a sub-module, libjb.  Please either clone this project
+recursively, or make sure you run the following:
 
     git submodule init
     git submodule update
@@ -14,8 +14,9 @@ a custom updating status string to xstatus.  xstatus reads /tmp/xstatus
 periodically, displaying the text therein.  You may have to modify the
 files polled in rbstatus.rb to reflect your own system.  
 
-# TODO
-* Handle widget failure gracefully--If something is not available, simply disable it dynamically.
+# TO-DO
+* Handle widget failure gracefully--If something is not available,
+simply disable it dynamically.
 * Compute geometries, rather than using so many fixed values.
 * Add menus
 * Add Xft support
