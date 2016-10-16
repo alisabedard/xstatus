@@ -35,14 +35,16 @@ static void create_window(struct XData * restrict X)
 	X->w = xcb_generate_id(xc);
 	xcb_screen_t * s = X->screen;
 	X->sz = (xcb_rectangle_t) {
-		.y = s->height_in_pixels - XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER,
+		.y = s->height_in_pixels - XSTATUS_CONST_HEIGHT
+			- XSTATUS_CONST_BORDER,
 		.width = s->width_in_pixels,
 		.height = XSTATUS_CONST_HEIGHT
 	};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
 	const xcb_colormap_t cm = s->default_colormap;
-	const uint32_t v[] = {jb_get_pixel(xc, cm, XSTATUS_PANEL_BACKGROUND), true,
+	const uint32_t v[] = {jb_get_pixel(xc, cm,
+		XSTATUS_PANEL_BACKGROUND), true,
 		XCB_EVENT_MASK_EXPOSURE};
 	const xcb_rectangle_t sz = X->sz;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
