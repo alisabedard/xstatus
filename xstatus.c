@@ -131,15 +131,15 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 static uint16_t setup_buttons(struct XData * restrict X)
 {
 	uint16_t off = 0;
-	off = btn(X, off, "Menu", XS_MENU);
+	off = btn(X, off, "Menu", XSTATUS_MENU_COMMAND);
 	off = btn(X, off, "Terminal", XSTATUS_TERMINAL);
-	off = btn(X, off, "Editor", EDITOR);
+	off = btn(X, off, "Editor", XSTATUS_EDITOR_COMMAND);
 	{
 		char *browser=getenv("XSTATUS_BROWSER_COMMAND");
 		off=btn(X, off, "Browser",
 			browser?browser:XSTATUS_BROWSER_COMMAND);
 	}
-	off=btn(X, off, "Mixer", MIXER);
+	off=btn(X, off, "Mixer", XSTATUS_MIXER_COMMAND);
 	off=btn(X, off, "Lock", XSTATUS_LOCK_COMMAND);
 	return off;
 }

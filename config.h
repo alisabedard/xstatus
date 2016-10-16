@@ -16,12 +16,12 @@ enum {
 
 #define FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
 
-#define XS_MENU "dmenu_run -b&"
+#define XSTATUS_MENU_COMMAND "dmenu_run -b&"
 #define TCMD "xterm"
 #define XSTATUS_TERMINAL TCMD "&"
 #define XSTATUS_BROWSER_COMMAND "firefox&"
-#define EDITOR TCMD " -e vim&"
-#define MIXER TCMD " -e alsamixer&"
+#define XSTATUS_EDITOR_COMMAND TCMD " -e vim&"
+#define XSTATUS_MIXER_COMMAND TCMD " -e alsamixer&"
 #define XSTATUS_LOCK_COMMAND "slock&"
 #define XSTATUS_STATUS_FILE "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
