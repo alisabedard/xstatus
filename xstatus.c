@@ -132,7 +132,7 @@ static uint16_t setup_buttons(struct XData * restrict X)
 {
 	uint16_t off = 0;
 	off = btn(X, off, "Menu", XS_MENU);
-	off = btn(X, off, "Terminal", TERM);
+	off = btn(X, off, "Terminal", XSTATUS_TERMINAL);
 	off = btn(X, off, "Editor", EDITOR);
 	{
 		char *browser=getenv("BROWSER");
