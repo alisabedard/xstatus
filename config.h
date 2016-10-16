@@ -23,7 +23,7 @@ enum {
 #define EDITOR TCMD " -e vim&"
 #define MIXER TCMD " -e alsamixer&"
 #define XSTATUS_LOCK_COMMAND "slock&"
-#define DEFAULTF "/tmp/xstatus"
+#define XSTATUS_STATUS_FILE "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
 
 #define XSTATUS_BUTTON_BG "grey10"

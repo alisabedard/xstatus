@@ -21,7 +21,7 @@ static const char helptext[] =
 
 int main(int argc, char ** argv)
 {
-	char *filename=DEFAULTF;
+	char *filename=XSTATUS_STATUS_FILE;
 	uint8_t delay=1;
 	int opt;
 	while((opt = getopt(argc, argv, "d:f:h")) != -1) {
