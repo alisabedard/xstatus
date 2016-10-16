@@ -36,6 +36,15 @@ static enum BATGCs get_gc(const uint8_t pct)
 		? GC_CRIT : GC_BAT;
 }
 
+static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
+	const uint8_t pct, const int16_t x)
+{
+	const uint8_t buf_sz = 7;
+	char buf[buf_sz];
+	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
+	xcb_image_text_8(X->xcb, l, X->w, gc, x, X->font_size.h, buf);
+}
+
 void draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end)
 {
@@ -52,11 +61,7 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[GC_BG], 1, &g);
 	g.width = g.width * pct / 100;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);
-	const uint8_t buf_sz = 7;
-	char buf[buf_sz];
-	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
-	xcb_image_text_8(X->xcb, l, X->w, gc[a], start + (end-start)/2,
-		X->font_size.h, buf);
+	draw_percent(X, gc[a], pct, start + (end-start)/2);
 	xcb_flush(X->xcb);
 }
 
