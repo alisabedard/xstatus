@@ -1,16 +1,16 @@
 // Copyright 2016, Jeffrey E. Bedard
 
-#ifndef XS_CLOCK_H
-#define XS_CLOCK_H
+#ifndef XS_CXSTATUS_LOCK_COMMAND_H
+#define XS_CXSTATUS_LOCK_COMMAND_H
 
-#ifdef USE_CLOCK
+#ifdef USE_CXSTATUS_LOCK_COMMAND
 
 #include "xdata.h"
 
 uint16_t draw_clock(struct XData * restrict X);
 
-#else//!USE_CLOCK
+#else//!USE_CXSTATUS_LOCK_COMMAND
 #define draw_clock(X)
-#endif//USE_CLOCK
+#endif//USE_CXSTATUS_LOCK_COMMAND
 
-#endif//!XS_CLOCK_H
+#endif//!XS_CXSTATUS_LOCK_COMMAND_H

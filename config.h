@@ -22,7 +22,7 @@ enum {
 #define XSTATUS_BROWSER_COMMAND "firefox&"
 #define EDITOR TCMD " -e vim&"
 #define MIXER TCMD " -e alsamixer&"
-#define LOCK "slock&"
+#define XSTATUS_LOCK_COMMAND "slock&"
 #define DEFAULTF "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
 

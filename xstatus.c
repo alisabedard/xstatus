@@ -96,11 +96,11 @@ static uint16_t poll_status(struct XData * restrict X)
 static void update(struct XData * restrict X)
 {
 #ifdef USE_BATTERY
-#ifdef USE_CLOCK
+#ifdef USE_CXSTATUS_LOCK_COMMAND
 	draw_battery(X, poll_status(X), draw_clock(X));
-#else//!USE_CLOCK
+#else//!USE_CXSTATUS_LOCK_COMMAND
 	draw_battery(X, poll_status(X), X->screen->width_in_pixels);
-#endif//USE_CLOCK
+#endif//USE_CXSTATUS_LOCK_COMMAND
 #else//!USE_BATTERY
 	poll_status(X);
 	draw_clock(X);
@@ -140,7 +140,7 @@ static uint16_t setup_buttons(struct XData * restrict X)
 			browser?browser:XSTATUS_BROWSER_COMMAND);
 	}
 	off=btn(X, off, "Mixer", MIXER);
-	off=btn(X, off, "Lock", LOCK);
+	off=btn(X, off, "Lock", XSTATUS_LOCK_COMMAND);
 	return off;
 }
 

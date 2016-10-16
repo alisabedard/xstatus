@@ -10,7 +10,7 @@ OPT_BUTTONS=true
 OPT_LOAD=true
 OPT_TEMP=true
 OPT_STATUS=true
-OPT_CLOCK=true
+OPT_CXSTATUS_LOCK_COMMAND=true
 OPT_BATTERY=true
 
 rm -f "$CFG"
@@ -21,7 +21,7 @@ do
 	case $opt in
 	b) OPT_BUTTONS=false;;
 	B) OPT_BATTERY=false;;
-	c) OPT_CLOCK=false;;
+	c) OPT_CXSTATUS_LOCK_COMMAND=false;;
 	d) OPT_DEBUG=true;;
 	l) OPT_LOAD=false;;
 	s) OPT_STATUS=false;;
@@ -146,9 +146,9 @@ if $OPT_BUTTONS; then
 	echo enabled buttons
 fi
 
-if $OPT_CLOCK; then
+if $OPT_CXSTATUS_LOCK_COMMAND; then
 	cat >> $CFG <<- EOF
-	CFLAGS+=-DUSE_CLOCK
+	CFLAGS+=-DUSE_CXSTATUS_LOCK_COMMAND
 	objs+=clock.o
 	EOF
 	echo enabled clock
