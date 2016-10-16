@@ -10,8 +10,8 @@ enum {
 	XS_BUF_SZ = 80,
 	XS_CRIT_PCT = 10,
 	XS_HEIGHT = 18,
-	XS_PAD = 4,
-	XS_WPAD = 8
+	XSTATUS_CONST_PAD = 4,
+	XSTATUS_CONST_WIDE_PAD = 8
 };
 
 #define FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"

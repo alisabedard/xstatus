@@ -77,7 +77,7 @@ static uint16_t get_button_end(void)
 	|| defined(USE_TEMP) || defined(USE_STATUS)
 static uint16_t poll_status(struct XData * restrict X)
 {
-	uint16_t offset = get_button_end() + XS_PAD;
+	uint16_t offset = get_button_end() + XSTATUS_CONST_PAD;
 #ifdef USE_LOAD
 	offset = draw_load(X, offset);
 #endif//USE_LOAD
@@ -121,10 +121,10 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	struct Button * i = last_btn();
 	struct Button * b = get_button(X, &(xcb_rectangle_t){
 		.x=offset, .width = X->font_size.width
-		* strlen(label) + XS_WPAD,
+		* strlen(label) + XSTATUS_CONST_WIDE_PAD,
 		.height=XS_HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;
-	return offset + b->widget.geometry.width + XS_PAD;
+	return offset + b->widget.geometry.width + XSTATUS_CONST_PAD;
 }
 
 /* Returns x offset after all buttons added.  */
