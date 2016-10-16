@@ -39,6 +39,7 @@ enum {
 
 #define XSTATUS_SYSFILE_BATTERY "/sys/class/power_supply/BAT0/capacity"
 #define XSTATUS_SYSFILE_AC "/sys/class/power_supply/AC/online"
-#define XSTATUS_SYSFILE_TEMPERATURE "/sys/devices/virtual/thermal/thermal_zone0/temp"
+#define XSTATUS_SYSFILE_TEMPERATURE \
+	"/sys/devices/virtual/thermal/thermal_zone0/temp"
 
 #endif//!XS_CONFIG_H
