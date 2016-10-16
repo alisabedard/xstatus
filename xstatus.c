@@ -42,7 +42,7 @@ static void create_window(struct XData * restrict X)
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
 	const xcb_colormap_t cm = s->default_colormap;
-	const uint32_t v[] = {jb_get_pixel(xc, cm, PANEL_BG), true,
+	const uint32_t v[] = {jb_get_pixel(xc, cm, XSTATUS_PANEL_BACKGROUND), true,
 		XCB_EVENT_MASK_EXPOSURE};
 	const xcb_rectangle_t sz = X->sz;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
@@ -235,7 +235,7 @@ static void setup_xdata(struct XData * X)
 	X->screen = jb_get_xcb_screen(X->xcb);
 	create_window(X);
 	setup_font(X); // font needed for gc
-	X->gc = xcbgc(X, XSTATUS_PANEL_FG, PANEL_BG);
+	X->gc = xcbgc(X, XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 }
 
 void run_xstatus(
