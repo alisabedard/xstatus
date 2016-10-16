@@ -37,8 +37,8 @@ enum {
 #define XSTATUS_BATTERY_BATTERY_COLOR "yellow"
 #define XSTATUS_BATTERY_CRITICAL_COLOR "red"
 
-#define BATSYSFILE "/sys/class/power_supply/BAT0/capacity"
-#define ACSYSFILE "/sys/class/power_supply/AC/online"
-#define TEMPSYSFILE "/sys/devices/virtual/thermal/thermal_zone0/temp"
+#define XSTATUS_SYSFILE_BATTERY "/sys/class/power_supply/BAT0/capacity"
+#define XSTATUS_SYSFILE_AC "/sys/class/power_supply/AC/online"
+#define XSTATUS_SYSFILE_TEMPERATURE "/sys/devices/virtual/thermal/thermal_zone0/temp"
 
 #endif//!XS_CONFIG_H

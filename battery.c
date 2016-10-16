@@ -20,7 +20,7 @@ static uint8_t get_percent(void)
 		return p = 100;
 	return p;
 #else//!TEST
-	const uint8_t pct = sysval(BATSYSFILE);
+	const uint8_t pct = sysval(XSTATUS_SYSFILE_BATTERY);
 	LOG("Percent: %d\n", pct);
 	return MIN(pct, 100);
 #endif//TEST
@@ -33,7 +33,7 @@ enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
 // Selects a gc to use based on ac/battery status
 static enum BATGCs get_gc(const uint8_t pct)
 {
-	return sysval(ACSYSFILE) ? BATTERY_GC_AC : pct < XS_CRIT_PCT
+	return sysval(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : pct < XS_CRIT_PCT
 		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
 
