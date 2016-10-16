@@ -35,9 +35,9 @@ static void create_window(struct XData * restrict X)
 	X->w = xcb_generate_id(xc);
 	xcb_screen_t * s = X->screen;
 	X->sz = (xcb_rectangle_t) {
-		.y = s->height_in_pixels - XS_HEIGHT - XS_BORDER,
+		.y = s->height_in_pixels - XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER,
 		.width = s->width_in_pixels,
-		.height = XS_HEIGHT
+		.height = XSTATUS_CONST_HEIGHT
 	};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
@@ -47,7 +47,7 @@ static void create_window(struct XData * restrict X)
 	const xcb_rectangle_t sz = X->sz;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
 			  s->root, sz.x, sz.y, sz.width,
-			  sz.height, XS_BORDER,
+			  sz.height, XSTATUS_CONST_BORDER,
 			  XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 			  XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(xc, X->w);
@@ -122,7 +122,7 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	struct Button * b = get_button(X, &(xcb_rectangle_t){
 		.x=offset, .width = X->font_size.width
 		* strlen(label) + XSTATUS_CONST_WIDE_PAD,
-		.height=XS_HEIGHT}, label, system_cb, cmd);
+		.height=XSTATUS_CONST_HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;
 	return offset + b->widget.geometry.width + XSTATUS_CONST_PAD;
 }

@@ -17,7 +17,7 @@ static ssize_t poll_status_file(const char * restrict filename,
 	if (jb_check(fd >= 0, "Could not open status file"))
 		return -1;
 	errno = 0;
-	ssize_t r = read(fd, buf, XS_BUF_SZ);
+	ssize_t r = read(fd, buf, XSTATUS_CONST_BUFFER_SIZE);
 	jb_check(r != -1, "Could not read status file");
 	errno = 0;
 	jb_close(fd);
@@ -39,7 +39,7 @@ uint16_t draw_status_file(struct XData * restrict X,
 	const uint16_t x_offset,
 	const char * restrict filename)
 {
-	char buf[XS_BUF_SZ];
+	char buf[XSTATUS_CONST_BUFFER_SIZE];
 	const ssize_t s = poll_status_file(filename, buf) - 1;
 	if (s <= 0) { // empty or error
 		static bool been_warned;

@@ -33,7 +33,7 @@ enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
 // Selects a gc to use based on ac/battery status
 static enum BATGCs get_gc(const uint8_t pct)
 {
-	return sysval(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : pct < XS_CRIT_PCT
+	return sysval(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : pct < XSTATUS_CONST_CRITICAL_PERCENT
 		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
 
@@ -66,8 +66,8 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 	}
 	const uint8_t pct = get_percent();
 	const enum BATGCs a = get_gc(pct);
-	xcb_rectangle_t g = {.x=start, .y = XS_HEIGHT >> 2,
-		.height = XS_HEIGHT >> 1, .width = end - start - XSTATUS_CONST_PAD};
+	xcb_rectangle_t g = {.x=start, .y = XSTATUS_CONST_HEIGHT >> 2,
+		.height = XSTATUS_CONST_HEIGHT >> 1, .width = end - start - XSTATUS_CONST_PAD};
 	++g.y;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[BATTERY_GC_BACKGROUND], 1, &g);
 	g.width = g.width * pct / 100;

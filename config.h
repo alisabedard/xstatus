@@ -3,13 +3,13 @@
 #ifndef XS_CONFIG_H
 #define XS_CONFIG_H
 
-// Note: Adjust XS_HEIGHT for the selected font:
+// Note: Adjust XSTATUS_CONST_HEIGHT for the selected font:
 
 enum {
-	XS_BORDER = 1,
-	XS_BUF_SZ = 80,
-	XS_CRIT_PCT = 10,
-	XS_HEIGHT = 18,
+	XSTATUS_CONST_BORDER = 1,
+	XSTATUS_CONST_BUFFER_SIZE = 80,
+	XSTATUS_CONST_CRITICAL_PERCENT = 10,
+	XSTATUS_CONST_HEIGHT = 18,
 	XSTATUS_CONST_PAD = 4,
 	XSTATUS_CONST_WIDE_PAD = 8
 };
