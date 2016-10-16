@@ -24,7 +24,7 @@ enum {
 #define MIXER TCMD " -e alsamixer&"
 #define LOCK "slock&"
 #define DEFAULTF "/tmp/xstatus"
-#define TIMEFMT "%a %d %b %T"
+#define XSTATUS_TIME_FORMAT "%a %d %b %T"
 
 #define XSTATUS_BUTTON_BG "grey10"
 #define XSTATUS_BUTTON_FG "green4"
