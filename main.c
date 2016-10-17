@@ -23,7 +23,7 @@ int main(int argc, char ** argv)
 {
 	char *filename=XSTATUS_STATUS_FILE;
 	uint8_t delay=1;
-	int opt;
+	int8_t opt;
 	while((opt = getopt(argc, argv, "d:f:h")) != -1) {
 		switch(opt) {
 		case 'd':
