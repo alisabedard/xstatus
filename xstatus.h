@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 void run_xstatus(
-#ifdef USE_STATUS
+#ifdef XSTATUS_USE_STATUS_FILE
 	char * restrict filename,
-#else//!USE_STATUS
+#else//!XSTATUS_USE_STATUS_FILE
 	char * restrict filename __attribute__((unused)),
-#endif//USE_STATUS
+#endif//XSTATUS_USE_STATUS_FILE
 	const uint8_t delay);
 
 #endif//!XSTATUS_XSTATUS_H

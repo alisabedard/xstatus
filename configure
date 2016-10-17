@@ -140,7 +140,7 @@ fi
 
 if $OPT_BUTTONS; then
 	cat >> $CFG <<- EOF
-	CFLAGS+=-DUSE_BUTTONS
+	CFLAGS+=-DXSTATUS_USE_BUTTONS
 	objs+=button.o
 	EOF
 	echo enabled buttons
@@ -156,7 +156,7 @@ fi
 
 if $OPT_BATTERY; then
 	cat >> $CFG <<- EOF
-	CFLAGS+=-DUSE_BATTERY
+	CFLAGS+=-DXSTATUS_USE_BATTERY_BAR
 	objs+=battery.o
 	EOF
 	echo enabled battery
@@ -164,21 +164,21 @@ fi
 
 if $OPT_LOAD; then
 	cat >> $CFG <<- EOF
-	CFLAGS+=-DUSE_LOAD
+	CFLAGS+=-DXSTATUS_USE_LOAD
 	objs+=load.o
 	EOF
 	echo enabled load
 fi
 if $OPT_TEMP; then
 	cat >> $CFG <<- EOF
-	CFLAGS+=-DUSE_TEMP
+	CFLAGS+=-DXSTATUS_USE_TEMPERATURE
 	objs+=temperature.o
 	EOF
 	echo enabled temp
 fi
 if $OPT_STATUS; then
 	cat >> $CFG <<- EOF
-	CFLAGS+=-DUSE_STATUS
+	CFLAGS+=-DXSTATUS_USE_STATUS_FILE
 	objs+=status_file.o
 	EOF
 	echo enabled status

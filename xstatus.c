@@ -16,18 +16,18 @@
 #include <string.h>
 
 // Application state struct
-#if defined(USE_STATUS) || defined(USE_BUTTONS)\
-	|| defined(USE_BATTERY)
+#if defined(XSTATUS_USE_STATUS_FILE) || defined(XSTATUS_USE_BUTTONS)\
+	|| defined(XSTATUS_USE_BATTERY_BAR)
 static struct {
-#ifdef USE_STATUS
+#ifdef XSTATUS_USE_STATUS_FILE
 	char * filename;
-#endif//USE_STATUS
-#ifdef USE_BUTTONS
+#endif//XSTATUS_USE_STATUS_FILE
+#ifdef XSTATUS_USE_BUTTONS
 	struct Button * head_button;
-#endif//USE_BUTTONS
+#endif//XSTATUS_USE_BUTTONS
 	xcb_rectangle_t geometry;
 } xstatus;
-#endif//USE_STATUS||USE_BUTTONS||USE_BATTERY
+#endif//XSTATUS_USE_STATUS_FILE||XSTATUS_USE_BUTTONS||XSTATUS_USE_BATTERY_BAR
 
 static void create_window(struct XData * restrict X)
 {
@@ -55,7 +55,7 @@ static void create_window(struct XData * restrict X)
 	xcb_map_window(xc, X->w);
 }
 
-#ifdef USE_BUTTONS
+#ifdef XSTATUS_USE_BUTTONS
 static struct Button *last_btn(void)
 {
 	struct Button * i = xstatus.head_button;
@@ -71,45 +71,46 @@ static uint16_t get_button_end(void)
 	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	return g->x + g->width;
 }
-#else//!USE_BUTTONS
+#else//!XSTATUS_USE_BUTTONS
 #define get_button_end() 0
-#endif//USE_BUTTONS
+#endif//XSTATUS_USE_BUTTONS
 
-#if defined(USE_LOAD) || defined(USE_BUTTON)\
-	|| defined(USE_TEMP) || defined(USE_STATUS)
+#if defined(XSTATUS_USE_LOAD) || defined(USE_BUTTON)\
+	|| defined(XSTATUS_USE_TEMPERATURE) || defined(XSTATUS_USE_STATUS_FILE)
 static uint16_t poll_status(struct XData * restrict X)
 {
 	uint16_t offset = get_button_end() + XSTATUS_CONST_PAD;
-#ifdef USE_LOAD
+#ifdef XSTATUS_USE_LOAD
 	offset = draw_load(X, offset);
-#endif//USE_LOAD
-#ifdef USE_TEMP
+#endif//XSTATUS_USE_LOAD
+#ifdef XSTATUS_USE_TEMPERATURE
 	offset = draw_temp(X, offset);
-#endif//USE_TEMP
-#ifdef USE_STATUS
+#endif//XSTATUS_USE_TEMPERATURE
+#ifdef XSTATUS_USE_STATUS_FILE
 	offset = draw_status_file(X, offset, xstatus.filename);
-#endif//USE_TEMP
+#endif//XSTATUS_USE_TEMPERATURE
 	return offset;
 }
 #else
 #define poll_status(X)
-#endif//USE_LOAD||USE_BUTTON||USE_TEMP||USE_STATUS
+#endif/*XSTATUS_USE_LOAD||USE_BUTTON
+	||XSTATUS_USE_TEMPERATURE||XSTATUS_USE_STATUS_FILE*/
 
 static void update(struct XData * restrict X)
 {
-#ifdef USE_BATTERY
+#ifdef XSTATUS_USE_BATTERY_BAR
 #ifdef XSTATUS_USE_LOCK
 	draw_battery(X, poll_status(X), draw_clock(X));
 #else//!XSTATUS_USE_LOCK
 	draw_battery(X, poll_status(X), X->screen->width_in_pixels);
 #endif//XSTATUS_USE_LOCK
-#else//!USE_BATTERY
+#else//!XSTATUS_USE_BATTERY_BAR
 	poll_status(X);
 	draw_clock(X);
-#endif//USE_BATTERY
+#endif//XSTATUS_USE_BATTERY_BAR
 }
 
-#ifdef USE_BUTTONS
+#ifdef XSTATUS_USE_BUTTONS
 static void system_cb(struct Button * b)
 {
 	const char *cmd = b->cb_data;
@@ -185,9 +186,9 @@ static void handle_events(struct XData * restrict X,
 	}
 	free(e);
 }
-#else//!USE_BUTTONS
+#else//!XSTATUS_USE_BUTTONS
 #define handle_events(X, e) {}
-#endif//USE_BUTTONS
+#endif//XSTATUS_USE_BUTTONS
 
 __attribute__((noreturn))
 static void event_loop(struct XData * restrict X, const uint8_t delay)
@@ -241,24 +242,24 @@ static void setup_xdata(struct XData * X)
 }
 
 void run_xstatus(
-#ifdef USE_STATUS
+#ifdef XSTATUS_USE_STATUS_FILE
 	char * restrict filename,
-#else//!USE_STATUS
+#else//!XSTATUS_USE_STATUS_FILE
 	char * restrict filename __attribute__((unused)),
-#endif//USE_STATUS
+#endif//XSTATUS_USE_STATUS_FILE
 	const uint8_t delay)
 {
 	struct XData X;
 	setup_xdata(&X);
-#ifdef USE_BUTTONS
+#ifdef XSTATUS_USE_BUTTONS
 	struct XData BX = X;
 	BX.gc = xcbgc(&BX, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
 	setup_buttons(&BX);
-#endif//USE_BUTTONS
+#endif//XSTATUS_USE_BUTTONS
 //	setup_battery(&xstatus.bat, &X);
-#ifdef USE_STATUS
+#ifdef XSTATUS_USE_STATUS_FILE
 	xstatus.filename = filename;
-#endif//USE_STATUS
+#endif//XSTATUS_USE_STATUS_FILE
 	event_loop(&X, delay);
 }
 

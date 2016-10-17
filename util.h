@@ -10,7 +10,7 @@ typedef uint32_t Pixel;
 
 xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg);
 
-#if defined(USE_BATTERY) || defined(USE_TEMP)
+#if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
 uint32_t sysval(const char *filename);
 #else
 #define sysval(f)

@@ -5,9 +5,9 @@
 
 #include "xdata.h"
 
-#ifdef USE_BATTERY
+#ifdef XSTATUS_USE_BATTERY_BAR
 void draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end);
-#endif//USE_BATTERY
+#endif//XSTATUS_USE_BATTERY_BAR
 
 #endif//!XSTATUS_BATTERY_H

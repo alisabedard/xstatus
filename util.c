@@ -24,7 +24,7 @@ xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 	return gc;
 }
 
-#if defined(USE_BATTERY) || defined(USE_TEMP)
+#if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
 uint32_t sysval(const char *filename)
 {
 #define BUF_SZ 6
@@ -34,5 +34,5 @@ uint32_t sysval(const char *filename)
 	jb_close(f);
 	return atoi(buf);
 }
-#endif//USE_BATTERY||USE_TEMP
+#endif//XSTATUS_USE_BATTERY_BAR||XSTATUS_USE_TEMPERATURE
 
