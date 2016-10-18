@@ -7,17 +7,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static const char helptext[] =
-"DESCRIPTION:  Simple X toolbar for minimalistic"
-" window managers.\n"
-"USAGE: xstatus [-d DELAY][-f FILE][-h]\n"
-"\t-d DELAY\tSet delay between status updates,"
-" in seconds.\n"
-"\t-f FILE\t\tSet FILE to be continuously polled and"
-" displayed.\n"
-"\t-h\t\tPrint this usage information.\n"
-"Copyright 2016, Jeffrey E. Bedard <jefbed@gmail.com>\n"
-"Project page:  https://github.com/jefbed/xstatus\n";
+#define XSTATUS_HELPTEXT \
+	"DESCRIPTION:  Simple X toolbar for minimalistic"\
+	" window managers.\n" \
+	"USAGE: xstatus [-d DELAY][-f FILE][-h]\n" \
+	"\t-d DELAY\tSet delay between status updates," \
+	" in seconds.\n" \
+	"\t-f FILE\t\tSet FILE to be continuously polled and" \
+	" displayed.\n" \
+	"\t-h\t\tPrint this usage information.\n" \
+	"Copyright 2016, Jeffrey E. Bedard <jefbed@gmail.com>\n" \
+	"Project page:  https://github.com/jefbed/xstatus\n"
 
 int main(int argc, char ** argv)
 {
@@ -33,8 +33,10 @@ int main(int argc, char ** argv)
 			filename=optarg;
 			break;
 		case 'h':
-		default:
+		default: {
+			const char helptext[] = XSTATUS_HELPTEXT;
 			write(2, helptext, sizeof(helptext));
+		}
 			exit(0);
 		}
 	}
