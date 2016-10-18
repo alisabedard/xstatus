@@ -1,11 +1,8 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #ifndef XS_XDATA_H
 #define XS_XDATA_H
-
 #include "libjb/size.h"
 #include <xcb/xcb.h>
-
 struct XData {
 	xcb_connection_t * xcb;
 	xcb_screen_t * screen;
@@ -15,5 +12,4 @@ struct XData {
 	xcb_font_t font;
 	struct JBDim font_size;
 };
-
 #endif//!XS_XDATA_H

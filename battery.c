@@ -1,14 +1,11 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "battery.h"
 #include "config.h"
 #include "clock.h"
 #include "xstatus.h"
 #include "util.h"
-
 #include "libjb/log.h"
 #include "libjb/util.h"
-
 //#define TEST
 // get percent value, maxed to 100
 static uint8_t get_percent(void)
@@ -25,11 +22,9 @@ static uint8_t get_percent(void)
 	return JB_MIN(pct, 100);
 #endif//TEST
 }
-
 // index into gc array, keeps gc array private
 enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
 	BATTERY_GC_CRITICAL, BATTERY_GC_SIZE };
-
 // Selects a gc to use based on ac/battery status
 static enum BATGCs get_gc(const uint8_t pct)
 {
@@ -37,7 +32,6 @@ static enum BATGCs get_gc(const uint8_t pct)
 		< XSTATUS_CONST_CRITICAL_PERCENT
 		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
-
 static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
 	const uint8_t pct, const int16_t x)
 {
@@ -46,7 +40,6 @@ static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
 	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
 	xcb_image_text_8(X->xcb, l, X->w, gc, x, X->font_size.h, buf);
 }
-
 void draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end)
 {
@@ -77,4 +70,3 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 	draw_percent(X, gc[a], pct, start + (end-start)/2);
 	xcb_flush(X->xcb);
 }
-

@@ -1,13 +1,9 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "temperature.h"
-
 #include "config.h"
 #include "util.h"
-
 #include <stdio.h>
 #include <string.h>
-
 // Returns x offset for next item
 uint16_t draw_temp(struct XData * restrict X, const uint16_t offset)
 {
@@ -21,4 +17,3 @@ uint16_t draw_temp(struct XData * restrict X, const uint16_t offset)
 	return f.w * strlen(buf) + offset + XSTATUS_CONST_WIDE_PAD
 		+ XSTATUS_CONST_PAD;
 }
-

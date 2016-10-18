@@ -1,12 +1,9 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "xstatus.h"
 #include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #define XSTATUS_HELPTEXT \
 	"DESCRIPTION:  Simple X toolbar for minimalistic"\
 	" window managers.\n" \
@@ -18,7 +15,6 @@
 	"\t-h\t\tPrint this usage information.\n" \
 	"Copyright 2016, Jeffrey E. Bedard <jefbed@gmail.com>\n" \
 	"Project page:  https://github.com/jefbed/xstatus\n"
-
 int main(int argc, char ** argv)
 {
 	char *filename=XSTATUS_STATUS_FILE;
@@ -42,4 +38,3 @@ int main(int argc, char ** argv)
 	}
 	run_xstatus(filename, delay);
 }
-

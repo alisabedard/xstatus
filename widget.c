@@ -1,7 +1,5 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "widget.h"
-
 void setup_Widget(struct Widget * w, struct XData * restrict X,
 	xcb_rectangle_t * restrict geometry,
 	const Pixel bg, const uint32_t events)
@@ -17,4 +15,3 @@ void setup_Widget(struct Widget * w, struct XData * restrict X,
 		XCB_COPY_FROM_PARENT, vm, (uint32_t[]){bg, events});
 	xcb_map_window(X->xcb, w->window);
 }
-

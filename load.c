@@ -1,12 +1,8 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "load.h"
-
 #include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
-
 // Returns x offset for next item
 uint16_t draw_load(struct XData * restrict X, const uint16_t offset)
 {
@@ -20,4 +16,3 @@ uint16_t draw_load(struct XData * restrict X, const uint16_t offset)
 		offset + XSTATUS_CONST_PAD, f.h, buf);
 	return f.w * sz + offset + XSTATUS_CONST_WIDE_PAD;
 }
-

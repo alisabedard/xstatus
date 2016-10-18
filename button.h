@@ -1,9 +1,7 @@
 #ifndef XSTATUS_BUTTON_H
 #define XSTATUS_BUTTON_H
-
 #include <stdint.h>
 #include "widget.h"
-
 struct Button {
 	char * label;
 	void (*cb) (struct Button *);
@@ -12,10 +10,8 @@ struct Button {
 	struct Button * next; // optional linked list
 	struct Widget widget;
 };
-
 struct Button * get_button(struct XData * restrict X,
 	xcb_rectangle_t * restrict g,
 	char * restrict label, void (*cb)(struct Button *),
 	void *cb_data);
-
 #endif//XSTATUS_BUTTON_H

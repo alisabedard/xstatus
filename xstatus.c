@@ -1,7 +1,5 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "xstatus.h"
-
 #include "battery.h"
 #include "button.h"
 #include "clock.h"
@@ -12,9 +10,7 @@
 #include "load.h"
 #include "status_file.h"
 #include "temperature.h"
-
 #include <string.h>
-
 // Application state struct
 #if defined(XSTATUS_USE_STATUS_FILE) || defined(XSTATUS_USE_BUTTONS)\
 	|| defined(XSTATUS_USE_BATTERY_BAR)
@@ -28,7 +24,6 @@ static struct {
 	xcb_rectangle_t geometry;
 } xstatus;
 #endif//XSTATUS_USE_STATUS_FILE||XSTATUS_USE_BUTTONS||XSTATUS_USE_BATTERY_BAR
-
 static void create_window(struct XData * restrict X)
 {
 	xcb_connection_t * xc = X->xcb;
@@ -54,7 +49,6 @@ static void create_window(struct XData * restrict X)
 			  XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(xc, X->w);
 }
-
 #ifdef XSTATUS_USE_BUTTONS
 static struct Button *last_btn(void)
 {
@@ -64,7 +58,6 @@ static struct Button *last_btn(void)
 			i=i->next;
 	return i;
 }
-
 static uint16_t get_button_end(void)
 {
 	struct Button * b = last_btn();
@@ -74,7 +67,6 @@ static uint16_t get_button_end(void)
 #else//!XSTATUS_USE_BUTTONS
 #define get_button_end() 0
 #endif//XSTATUS_USE_BUTTONS
-
 #if defined(XSTATUS_USE_LOAD) || defined(USE_BUTTON)\
 	|| defined(XSTATUS_USE_TEMPERATURE) || defined(XSTATUS_USE_STATUS_FILE)
 static uint16_t poll_status(struct XData * restrict X)
@@ -95,7 +87,6 @@ static uint16_t poll_status(struct XData * restrict X)
 #define poll_status(X)
 #endif/*XSTATUS_USE_LOAD||USE_BUTTON
 	||XSTATUS_USE_TEMPERATURE||XSTATUS_USE_STATUS_FILE*/
-
 static void update(struct XData * restrict X)
 {
 #ifdef XSTATUS_USE_BATTERY_BAR
@@ -109,7 +100,6 @@ static void update(struct XData * restrict X)
 	draw_clock(X);
 #endif//XSTATUS_USE_BATTERY_BAR
 }
-
 #ifdef XSTATUS_USE_BUTTONS
 static void system_cb(struct Button * b)
 {
@@ -117,7 +107,6 @@ static void system_cb(struct Button * b)
 	if (system(cmd))
 		WARN("Cannot execute %s", cmd);
 }
-
 static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	char * restrict label, char * restrict cmd)
 {
@@ -129,7 +118,6 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	*(i ? &i->next : &xstatus.head_button) = b;
 	return offset + b->widget.geometry.width + XSTATUS_CONST_PAD;
 }
-
 /* Returns x offset after all buttons added.  */
 static uint16_t setup_buttons(struct XData * restrict X)
 {
@@ -146,7 +134,6 @@ static uint16_t setup_buttons(struct XData * restrict X)
 	off=btn(X, off, "Lock", XSTATUS_LOCK_COMMAND);
 	return off;
 }
-
 static struct Button * find_button(const xcb_window_t w)
 {
 	for(struct Button * i = xstatus.head_button; i; i=i->next)
@@ -154,7 +141,6 @@ static struct Button * find_button(const xcb_window_t w)
 			    return i;
 	return NULL;
 }
-
 static bool iter_buttons(const xcb_window_t ewin,
 	void (*func)(struct Button * restrict))
 {
@@ -165,7 +151,6 @@ static bool iter_buttons(const xcb_window_t ewin,
 	}
 	return false;
 }
-
 // returns if update needed
 __attribute__((nonnull))
 static void handle_events(struct XData * restrict X,
@@ -189,7 +174,6 @@ static void handle_events(struct XData * restrict X,
 #else//!XSTATUS_USE_BUTTONS
 #define handle_events(X, e) {}
 #endif//XSTATUS_USE_BUTTONS
-
 __attribute__((noreturn))
 static void event_loop(struct XData * restrict X, const uint8_t delay)
 {
@@ -201,7 +185,6 @@ static void event_loop(struct XData * restrict X, const uint8_t delay)
 		update(X);
 	}
 }
-
 static bool open_font(struct XData * restrict X, const char * fn)
 {
 	xcb_connection_t * xc = X->xcb;
@@ -221,7 +204,6 @@ static bool open_font(struct XData * restrict X, const char * fn)
 	free(r);
 	return true;
 }
-
 static void setup_font(struct XData * restrict X)
 {
 	X->font = xcb_generate_id(X->xcb);
@@ -231,7 +213,6 @@ static void setup_font(struct XData * restrict X)
 		return;
 	ERROR("Could not load any font");
 }
-
 static void setup_xdata(struct XData * X)
 {
 	X->xcb = jb_get_xcb_connection(NULL, NULL);
@@ -240,7 +221,6 @@ static void setup_xdata(struct XData * X)
 	setup_font(X); // font needed for gc
 	X->gc = xcbgc(X, XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 }
-
 void run_xstatus(
 #ifdef XSTATUS_USE_STATUS_FILE
 	char * restrict filename,
@@ -262,4 +242,3 @@ void run_xstatus(
 #endif//XSTATUS_USE_STATUS_FILE
 	event_loop(&X, delay);
 }
-

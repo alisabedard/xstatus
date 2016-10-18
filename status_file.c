@@ -1,14 +1,11 @@
 #include "status_file.h"
-
 #include "config.h"
 #include "libjb/util.h"
 #include "util.h"
-
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
 {
@@ -23,7 +20,6 @@ static ssize_t poll_status_file(const char * restrict filename,
 	close(fd);
 	return r;
 }
-
 static void warn_no_data(const char * fn)
 {
 	const char msg[] = "No data in status file: ";
@@ -33,7 +29,6 @@ static void warn_no_data(const char * fn)
 	write(2, fn, l);
 	write(2, "\n", 1);
 }
-
 // Returns offset for next widget
 uint16_t draw_status_file(struct XData * restrict X,
 	const uint16_t x_offset,
@@ -54,4 +49,3 @@ uint16_t draw_status_file(struct XData * restrict X,
 	return X->font_size.w * s + x_offset + XSTATUS_CONST_WIDE_PAD
 		+ XSTATUS_CONST_WIDE_PAD;
 }
-

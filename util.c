@@ -1,15 +1,11 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "util.h"
-
 #include "libjb/file.h"
 #include "libjb/util.h"
 #include "libjb/xcb.h"
-
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 {
 	xcb_connection_t * xc = X->xcb;
@@ -24,7 +20,6 @@ xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 		free(e);
 	return gc;
 }
-
 #if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
 uint32_t sysval(const char *filename)
 {
@@ -36,4 +31,3 @@ uint32_t sysval(const char *filename)
 	return atoi(buf);
 }
 #endif//XSTATUS_USE_BATTERY_BAR||XSTATUS_USE_TEMPERATURE
-

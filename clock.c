@@ -1,10 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
-
 #include "clock.h"
-
 #include "config.h"
 #include "libjb/xcb.h"
-
 __attribute__((hot))
 uint16_t draw_clock(struct XData * restrict X)
 {
@@ -16,4 +13,3 @@ uint16_t draw_clock(struct XData * restrict X)
 	xcb_image_text_8(X->xcb, sz, X->w, X->gc, offset, f.h, buf);
 	return offset;
 }
-

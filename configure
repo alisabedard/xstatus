@@ -1,8 +1,6 @@
 #!/bin/sh
 # Copyright 2016, Jeffrey E. Bedard
-
 CFG=config.mk
-
 # Defaults:
 OPT_DEBUG=false
 # Features:
@@ -12,9 +10,7 @@ OPT_TEMP=true
 OPT_STATUS=true
 OPT_CXSTATUS_LOCK_COMMAND=true
 OPT_BATTERY=true
-
 rm -f "$CFG"
-
 OPTSTR='Bbcdhlst'
 while getopts $OPTSTR opt
 do
@@ -40,20 +36,15 @@ do
 		exit 1
 	esac
 done 
-
 ARCH=`uname | tr 'a-z' 'A-Z'`
-
 echo "Configuring for $ARCH"
-
 if $OPT_DEBUG; then # Clear CFLAGS
 	echo "CFLAGS=" >> $CFG
 else
 	echo "CFLAGS=$CFLAGS" >> $CFG
 fi
-
 # Make current architecture definition available
 echo CFLAGS+="-D${ARCH}" >> $CFG
-
 case $ARCH in
 	OPENBSD)
 		CC=clang
@@ -95,7 +86,6 @@ case $ARCH in
 		EOF
 		;;
 esac
-
 search() # 1: cmd 2: var
 {
 	echo -n "Checking for $1... "
@@ -109,14 +99,12 @@ search() # 1: cmd 2: var
 	echo not found
 	return 0
 }
-
 cc_err()
 {
 	echo 'Error: Cannot find a suitable compiler.'
 	echo 'Please set CC to a valid C compiler command'
 	exit 1
 }
-
 if [ ! "$CC" ]; then
 	if [ "$ARCH" = "LINUX" ]; then
 		search cc CC && search gcc CC && search clang CC\
@@ -129,7 +117,6 @@ if [ ! "$CC" ]; then
 			&& cc_err
 	fi
 fi
-
 if $OPT_DEBUG; then
 	echo -n 'Enabling debug options... '
 	cat >> $CFG <<- EOF
@@ -137,7 +124,6 @@ if $OPT_DEBUG; then
 	EOF
 	echo done
 fi
-
 if $OPT_BUTTONS; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DXSTATUS_USE_BUTTONS
@@ -145,7 +131,6 @@ if $OPT_BUTTONS; then
 	EOF
 	echo enabled buttons
 fi
-
 if $OPT_CXSTATUS_LOCK_COMMAND; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DXSTATUS_USE_LOCK
@@ -153,7 +138,6 @@ if $OPT_CXSTATUS_LOCK_COMMAND; then
 	EOF
 	echo enabled clock
 fi
-
 if $OPT_BATTERY; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DXSTATUS_USE_BATTERY_BAR
@@ -161,7 +145,6 @@ if $OPT_BATTERY; then
 	EOF
 	echo enabled battery
 fi
-
 if $OPT_LOAD; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DXSTATUS_USE_LOAD
@@ -183,4 +166,3 @@ if $OPT_STATUS; then
 	EOF
 	echo enabled status
 fi
-
