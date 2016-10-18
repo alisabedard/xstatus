@@ -2,6 +2,7 @@
 
 #include "util.h"
 
+#include "libjb/file.h"
 #include "libjb/util.h"
 #include "libjb/xcb.h"
 
@@ -31,7 +32,7 @@ uint32_t sysval(const char *filename)
 	fd_t f = jb_open(filename, O_RDONLY);
 	char buf[BUF_SZ];
 	read(f, buf, BUF_SZ);
-	jb_close(f);
+	close(f);
 	return atoi(buf);
 }
 #endif//XSTATUS_USE_BATTERY_BAR||XSTATUS_USE_TEMPERATURE

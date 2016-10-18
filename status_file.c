@@ -20,7 +20,7 @@ static ssize_t poll_status_file(const char * restrict filename,
 	ssize_t r = read(fd, buf, XSTATUS_CONST_BUFFER_SIZE);
 	jb_check(r != -1, "Could not read status file");
 	errno = 0;
-	jb_close(fd);
+	close(fd);
 	return r;
 }
 

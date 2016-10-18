@@ -22,7 +22,7 @@ static uint8_t get_percent(void)
 #else//!TEST
 	const uint8_t pct = sysval(XSTATUS_SYSFILE_BATTERY);
 	LOG("Percent: %d\n", pct);
-	return MIN(pct, 100);
+	return JB_MIN(pct, 100);
 #endif//TEST
 }
 
