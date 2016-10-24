@@ -89,6 +89,7 @@ static uint16_t poll_status(struct XData * restrict X)
 	||XSTATUS_USE_TEMPERATURE||XSTATUS_USE_STATUS_FILE*/
 static void update(struct XData * restrict X)
 {
+	xcb_clear_area(X->xcb, 0, X->w, 0, 0, X->sz.width, X->sz.height);
 #ifdef XSTATUS_USE_BATTERY_BAR
 #ifdef XSTATUS_USE_LOCK
 	draw_battery(X, poll_status(X), draw_clock(X));
