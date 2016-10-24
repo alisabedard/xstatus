@@ -7,7 +7,7 @@ struct XStatusWidget {
 	xcb_rectangle_t geometry;
 	xcb_window_t window;
 };
-struct XStatusWidget * setup_XStatusWidget(
+struct XStatusWidget * xstatus_get_widget(
 	struct XStatusWidget * restrict w,
 	struct XData * restrict X,
 	xcb_rectangle_t * restrict geometry, const pixel_t bg,

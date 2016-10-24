@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 #include "widget.h"
 #include <stdlib.h>
-struct XStatusWidget * setup_XStatusWidget(
+struct XStatusWidget * xstatus_get_widget(
 	struct XStatusWidget * restrict w,
 	struct XData * restrict X,
 	xcb_rectangle_t * restrict geometry,
