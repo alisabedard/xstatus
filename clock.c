@@ -3,7 +3,7 @@
 #include "config.h"
 #include "libjb/xcb.h"
 __attribute__((hot))
-uint16_t draw_clock(struct XData * restrict X)
+uint16_t xstatus_draw_clock(struct XData * restrict X)
 {
 	char buf[30];
 	const size_t sz = strftime(buf, sizeof buf,
