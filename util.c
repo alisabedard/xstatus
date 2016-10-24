@@ -23,9 +23,9 @@ xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 #if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
 uint32_t sysval(const char *filename)
 {
-#define BUF_SZ 6
+#define BUF_SZ 8
 	fd_t f = jb_open(filename, O_RDONLY);
-	char buf[BUF_SZ];
+	char buf[BUF_SZ] = {};
 	read(f, buf, BUF_SZ);
 	close(f);
 	return atoi(buf);
