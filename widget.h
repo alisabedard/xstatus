@@ -8,6 +8,6 @@ struct Widget {
 	xcb_window_t window;
 };
 void setup_Widget(struct Widget * w, struct XData * restrict X,
-	xcb_rectangle_t * restrict geometry, const Pixel bg,
+	xcb_rectangle_t * restrict geometry, const pixel_t bg,
 	const uint32_t events);
 #endif//!XSTATUS_WIDGET_H

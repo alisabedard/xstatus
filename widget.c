@@ -2,7 +2,7 @@
 #include "widget.h"
 void setup_Widget(struct Widget * w, struct XData * restrict X,
 	xcb_rectangle_t * restrict geometry,
-	const Pixel bg, const uint32_t events)
+	const pixel_t bg, const uint32_t events)
 {
 	w->window = xcb_generate_id(X->xcb);
 	w->geometry = *geometry;
