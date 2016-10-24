@@ -40,7 +40,7 @@ static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
 	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
 	xcb_image_text_8(X->xcb, l, X->w, gc, x, X->font_size.h, buf);
 }
-void draw_battery(struct XData * restrict X, const uint16_t start,
+void xstatus_draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end)
 {
 	static xcb_gc_t gc[BATTERY_GC_SIZE];

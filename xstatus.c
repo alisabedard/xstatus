@@ -92,9 +92,9 @@ static void update(struct XData * restrict X)
 	xcb_clear_area(X->xcb, 0, X->w, 0, 0, X->sz.width, X->sz.height);
 #ifdef XSTATUS_USE_BATTERY_BAR
 #ifdef XSTATUS_USE_LOCK
-	draw_battery(X, poll_status(X), xstatus_draw_clock(X));
+	xstatus_draw_battery(X, poll_status(X), xstatus_draw_clock(X));
 #else//!XSTATUS_USE_LOCK
-	draw_battery(X, poll_status(X), X->screen->width_in_pixels);
+	xstatus_draw_battery(X, poll_status(X), X->screen->width_in_pixels);
 #endif//XSTATUS_USE_LOCK
 #else//!XSTATUS_USE_BATTERY_BAR
 	poll_status(X);
