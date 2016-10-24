@@ -32,21 +32,21 @@ static void create_window(struct XData * restrict X)
 	X->sz = (xcb_rectangle_t) {
 		.y = s->height_in_pixels - XSTATUS_CONST_HEIGHT
 			- XSTATUS_CONST_BORDER,
-		.width = s->width_in_pixels,
-		.height = XSTATUS_CONST_HEIGHT
+			.width = s->width_in_pixels,
+			.height = XSTATUS_CONST_HEIGHT
 	};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
 	const xcb_colormap_t cm = s->default_colormap;
 	const uint32_t v[] = {jb_get_pixel(xc, cm,
 		XSTATUS_PANEL_BACKGROUND), true,
-		XCB_EVENT_MASK_EXPOSURE};
+	      XCB_EVENT_MASK_EXPOSURE};
 	const xcb_rectangle_t sz = X->sz;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
-			  s->root, sz.x, sz.y, sz.width,
-			  sz.height, XSTATUS_CONST_BORDER,
-			  XCB_WINDOW_CLASS_COPY_FROM_PARENT,
-			  XCB_COPY_FROM_PARENT, vm, v);
+		s->root, sz.x, sz.y, sz.width,
+		sz.height, XSTATUS_CONST_BORDER,
+		XCB_WINDOW_CLASS_COPY_FROM_PARENT,
+		XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(xc, X->w);
 }
 #ifdef XSTATUS_USE_BUTTONS
@@ -68,7 +68,7 @@ static uint16_t get_button_end(void)
 #define get_button_end() 0
 #endif//XSTATUS_USE_BUTTONS
 #if defined(XSTATUS_USE_LOAD) || defined(USE_BUTTON)\
-	|| defined(XSTATUS_USE_TEMPERATURE) || defined(XSTATUS_USE_STATUS_FILE)
+|| defined(XSTATUS_USE_TEMPERATURE) || defined(XSTATUS_USE_STATUS_FILE)
 static uint16_t poll_status(struct XData * restrict X)
 {
 	uint16_t offset = get_button_end() + XSTATUS_CONST_PAD;
@@ -138,8 +138,8 @@ static uint16_t setup_buttons(struct XData * restrict X)
 static struct Button * find_button(const xcb_window_t w)
 {
 	for(struct Button * i = xstatus.head_button; i; i=i->next)
-		  if(i->widget.window==w)
-			    return i;
+		if(i->widget.window==w)
+			return i;
 	return NULL;
 }
 static bool iter_buttons(const xcb_window_t ewin,
@@ -237,7 +237,6 @@ void run_xstatus(
 	BX.gc = xcbgc(&BX, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
 	setup_buttons(&BX);
 #endif//XSTATUS_USE_BUTTONS
-//	setup_battery(&xstatus.bat, &X);
 #ifdef XSTATUS_USE_STATUS_FILE
 	xstatus.filename = filename;
 #endif//XSTATUS_USE_STATUS_FILE
