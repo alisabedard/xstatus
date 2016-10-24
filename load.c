@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 // Returns x offset for next item
-uint16_t draw_load(struct XData * restrict X, const uint16_t offset)
+uint16_t xstatus_draw_load(struct XData * restrict X, const uint16_t offset)
 {
 	double l[1];
 	getloadavg(l, 1);

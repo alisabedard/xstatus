@@ -73,7 +73,7 @@ static uint16_t poll_status(struct XData * restrict X)
 {
 	uint16_t offset = get_button_end() + XSTATUS_CONST_PAD;
 #ifdef XSTATUS_USE_LOAD
-	offset = draw_load(X, offset);
+	offset = xstatus_draw_load(X, offset);
 #endif//XSTATUS_USE_LOAD
 #ifdef XSTATUS_USE_TEMPERATURE
 	offset = draw_temp(X, offset);

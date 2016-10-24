@@ -4,8 +4,8 @@
 #ifdef XSTATUS_USE_LOAD
 #include "xdata.h"
 // Returns x offset for next item
-uint16_t draw_load(struct XData * restrict X, const uint16_t offset);
+uint16_t xstatus_draw_load(struct XData * restrict X, const uint16_t offset);
 #else//!XSTATUS_USE_LOAD
-#define draw_load(X, o) o
+#define xstatus_draw_load(X, o) o
 #endif//XSTATUS_USE_LOAD
 #endif//!XSTATUS_LOAD_H
