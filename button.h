@@ -8,7 +8,7 @@ struct Button {
 	void (*draw) (struct Button *);
 	void *cb_data;
 	struct Button * next; // optional linked list
-	struct Widget widget;
+	struct XStatusWidget widget;
 };
 struct Button * get_button(struct XData * restrict X,
 	xcb_rectangle_t * restrict g,

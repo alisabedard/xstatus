@@ -6,7 +6,7 @@
 #include <string.h>
 static void draw(struct Button * restrict b)
 {
-	const struct Widget * restrict w = &b->widget;
+	const struct XStatusWidget * restrict w = &b->widget;
 	xcb_image_text_8(w->X->xcb, strlen(b->label), w->window,
 		w->X->gc, XSTATUS_CONST_PAD, w->X->font_size.height, b->label);
 }
@@ -19,9 +19,9 @@ static void setup(struct Button * restrict b, struct XData * restrict X,
 	b->cb = cb;
 	b->cb_data = cb_data;
 	b->next = NULL;
-	struct Widget * w = &b->widget;
+	struct XStatusWidget * w = &b->widget;
 	const xcb_colormap_t cm = X->screen->default_colormap;
-	setup_Widget(&b->widget, X, g, jb_get_pixel(X->xcb, cm, XSTATUS_BUTTON_BG),
+	setup_XStatusWidget(&b->widget, X, g, jb_get_pixel(X->xcb, cm, XSTATUS_BUTTON_BG),
 		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS);
 	memcpy(&w->geometry, g, sizeof(xcb_rectangle_t));
 	draw(b);
