@@ -36,5 +36,5 @@ int main(int argc, char ** argv)
 			exit(0);
 		}
 	}
-	run_xstatus(filename, delay);
+	xstatus_start(filename, delay);
 }

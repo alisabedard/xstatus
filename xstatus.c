@@ -222,7 +222,7 @@ static void setup_xdata(struct XData * X)
 	setup_font(X); // font needed for gc
 	X->gc = xcbgc(X, XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 }
-void run_xstatus(
+void xstatus_start(
 #ifdef XSTATUS_USE_STATUS_FILE
 	char * restrict filename,
 #else//!XSTATUS_USE_STATUS_FILE

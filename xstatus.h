@@ -1,7 +1,7 @@
 #ifndef XSTATUS_XSTATUS_H
 #define XSTATUS_XSTATUS_H
 #include <stdint.h>
-void run_xstatus(
+void xstatus_start(
 #ifdef XSTATUS_USE_STATUS_FILE
 	char * restrict filename,
 #else//!XSTATUS_USE_STATUS_FILE
