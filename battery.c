@@ -17,7 +17,7 @@ static uint8_t get_percent(void)
 		return p = 100;
 	return p;
 #else//!TEST
-	const uint8_t pct = sysval(XSTATUS_SYSFILE_BATTERY);
+	const uint8_t pct = xstatus_system_value(XSTATUS_SYSFILE_BATTERY);
 	LOG("Percent: %d\n", pct);
 	return JB_MIN(pct, 100);
 #endif//TEST
@@ -28,7 +28,7 @@ enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
 // Selects a gc to use based on ac/battery status
 static enum BATGCs get_gc(const uint8_t pct)
 {
-	return sysval(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : pct
+	return xstatus_system_value(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : pct
 		< XSTATUS_CONST_CRITICAL_PERCENT
 		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
@@ -45,16 +45,16 @@ void draw_battery(struct XData * restrict X, const uint16_t start,
 {
 	static xcb_gc_t gc[BATTERY_GC_SIZE];
 	if (!*gc) {
-		gc[BATTERY_GC_BACKGROUND] = xcbgc(X,
+		gc[BATTERY_GC_BACKGROUND] = xstatus_get_gc(X,
 			XSTATUS_BATTERY_BACKGROUND_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		gc[BATTERY_GC_AC] = xcbgc(X,
+		gc[BATTERY_GC_AC] = xstatus_get_gc(X,
 			XSTATUS_BATTERY_AC_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		gc[BATTERY_GC_BATTERY] = xcbgc(X,
+		gc[BATTERY_GC_BATTERY] = xstatus_get_gc(X,
 			XSTATUS_BATTERY_BATTERY_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		gc[BATTERY_GC_CRITICAL] = xcbgc(X,
+		gc[BATTERY_GC_CRITICAL] = xstatus_get_gc(X,
 			XSTATUS_BATTERY_CRITICAL_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
 	}

@@ -220,7 +220,7 @@ static void setup_xdata(struct XData * X)
 	X->screen = jb_get_xcb_screen(X->xcb);
 	create_window(X);
 	setup_font(X); // font needed for gc
-	X->gc = xcbgc(X, XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
+	X->gc = xstatus_get_gc(X, XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 }
 void xstatus_start(
 #ifdef XSTATUS_USE_STATUS_FILE
@@ -234,7 +234,7 @@ void xstatus_start(
 	setup_xdata(&X);
 #ifdef XSTATUS_USE_BUTTONS
 	struct XData BX = X;
-	BX.gc = xcbgc(&BX, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
+	BX.gc = xstatus_get_gc(&BX, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
 	setup_buttons(&BX);
 #endif//XSTATUS_USE_BUTTONS
 #ifdef XSTATUS_USE_STATUS_FILE

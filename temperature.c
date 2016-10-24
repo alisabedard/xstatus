@@ -7,7 +7,7 @@
 // Returns x offset for next item
 uint16_t draw_temp(struct XData * restrict X, const uint16_t offset)
 {
-	const uint8_t v = sysval(XSTATUS_SYSFILE_TEMPERATURE)/1000;
+	const uint8_t v = xstatus_system_value(XSTATUS_SYSFILE_TEMPERATURE)/1000;
 	uint8_t sz = 4;
 	char buf[sz];
 	sz = snprintf(buf, sz, "%dC", v);

@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
-xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
+xcb_gc_t xstatus_get_gc(struct XData * restrict X, char * fg, char * bg)
 {
 	xcb_connection_t * xc = X->xcb;
 	const xcb_gc_t gc = xcb_generate_id(xc);
@@ -21,7 +21,7 @@ xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg)
 	return gc;
 }
 #if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
-uint32_t sysval(const char *filename)
+uint32_t xstatus_system_value(const char *filename)
 {
 #define BUF_SZ 8
 	fd_t f = jb_open(filename, O_RDONLY);

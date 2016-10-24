@@ -4,11 +4,11 @@
 #include <stdbool.h>
 #include "libjb/xcb.h"
 #include "xdata.h"
-xcb_gc_t xcbgc(struct XData * restrict X, char * fg, char * bg);
+xcb_gc_t xstatus_get_gc(struct XData * restrict X, char * fg, char * bg);
 #if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
-uint32_t sysval(const char *filename);
+uint32_t xstatus_system_value(const char *filename);
 #else
-#define sysval(f)
+#define xstatus_system_value(f)
 #endif
 pixel_t xstatus_get_pixel(struct XData * restrict X,
 	const char * restrict color);
