@@ -33,7 +33,8 @@ struct XStatusButton * xstatus_get_button(struct XData * restrict X,
 	char * restrict label, void (*cb)(struct XStatusButton *),
 	void *cb_data)
 {
-	struct XStatusButton * restrict b = malloc(sizeof(struct XStatusButton));
+	struct XStatusButton * restrict b
+		= malloc(sizeof(struct XStatusButton));
 	setup(b, X, geometry, label, cb, cb_data);
 	return b;
 }

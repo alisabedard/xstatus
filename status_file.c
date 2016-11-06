@@ -44,8 +44,8 @@ uint16_t draw_status_file(struct XData * restrict X,
 		}
 		return x_offset;
 	}
-	xcb_image_text_8(X->xcb, s, X->w, X->gc, x_offset + XSTATUS_CONST_WIDE_PAD,
-		X->font_size.h, buf);
+	xcb_image_text_8(X->xcb, s, X->w, X->gc, x_offset
+		+ XSTATUS_CONST_WIDE_PAD, X->font_size.h, buf);
 	return X->font_size.w * s + x_offset + XSTATUS_CONST_WIDE_PAD
 		+ XSTATUS_CONST_WIDE_PAD;
 }

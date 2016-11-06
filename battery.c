@@ -64,7 +64,8 @@ void xstatus_draw_battery(struct XData * restrict X, const uint16_t start,
 		.height = XSTATUS_CONST_HEIGHT >> 1, .width = end - start
 			- XSTATUS_CONST_PAD};
 	++g.y;
-	xcb_poly_fill_rectangle(X->xcb, X->w, gc[BATTERY_GC_BACKGROUND], 1, &g);
+	xcb_poly_fill_rectangle(X->xcb, X->w,
+		gc[BATTERY_GC_BACKGROUND], 1, &g);
 	g.width = g.width * pct / 100;
 	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);
 	draw_percent(X, gc[a], pct, start + (end-start)/2);
