@@ -4,6 +4,7 @@
 #include "button.h"
 #include "clock.h"
 #include "config.h"
+#include "font.h"
 #include "libjb/class.h"
 #include "libjb/log.h"
 #include "libjb/xcb.h"
@@ -186,37 +187,17 @@ static void event_loop(struct XData * restrict X, const uint8_t delay)
 		update(X);
 	}
 }
-static bool open_font(struct XData * restrict X, const char * fn)
-{
-	xcb_connection_t * xc = X->xcb;
-	xcb_void_cookie_t c = xcb_open_font_checked(xc, X->font,
-		strlen(fn), fn);
-	xcb_query_font_cookie_t fc = xcb_query_font(xc, X->font);
-	if (jb_xcb_cookie_has_error(xc, c)) {
-		WARN("Failed to load font: %s", fn);
-		return false;
-	}
-	xcb_query_font_reply_t * r = xcb_query_font_reply(xc, fc, NULL);
-	{
-		xcb_charinfo_t * ci = &r->max_bounds;
-		X->font_size.width = ci->character_width;
-		X->font_size.height = ci->ascent + ci->descent;
-	}
-	free(r);
-	return true;
-}
 static void setup_font(struct XData * restrict X)
 {
-	X->font = xcb_generate_id(X->xcb);
-	if (open_font(X, XSTATUS_FONT)) // default
-		return;
-	if (open_font(X, "fixed")) // fallback
-		return;
-	ERROR("Could not load any font");
+	if (!xstatus_open_font(X->xcb, XSTATUS_FONT)) // default
+		if (!xstatus_open_font(X->xcb, "fixed")) // fallback
+			ERROR("Could not load any font");
+	X->font_size = xstatus_get_font_size();
 }
 static void setup_xdata(struct XData * X)
 {
 	X->xcb = jb_get_xcb_connection(NULL, NULL);
+	X->font = xstatus_get_font(X->xcb); // get the id
 	X->screen = jb_get_xcb_screen(X->xcb);
 	create_window(X);
 	setup_font(X); // font needed for gc

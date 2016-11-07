@@ -1,4 +1,4 @@
-objs=${prog}.o util.o widget.o main.o
+objs=${prog}.o util.o widget.o main.o font.o
 include config.mk
 CFLAGS+=-std=c99
 CFLAGS+=-D_XOPEN_SOURCE=700
