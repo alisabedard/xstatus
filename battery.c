@@ -1,7 +1,6 @@
 // Copyright 2016, Jeffrey E. Bedard
 #include "battery.h"
 #include "config.h"
-#include "clock.h"
 #include "font.h"
 #include "libjb/log.h"
 #include "libjb/util.h"
