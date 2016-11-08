@@ -7,7 +7,7 @@
 #include "libjb/log.h"
 #include "libjb/util.h"
 //#define TEST
-// get percent value, maxed to 100
+// get percent value, maximum 100
 static uint8_t get_percent(void)
 {
 #ifdef TEST

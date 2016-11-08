@@ -14,6 +14,15 @@ struct JBDim xstatus_get_font_size(void)
 {
 	return font_size;
 }
+static void finish_query(xcb_connection_t * restrict xc,
+	const xcb_query_font_cookie_t fc)
+{
+	xcb_query_font_reply_t * r = xcb_query_font_reply(xc, fc, NULL);
+	xcb_charinfo_t * restrict ci = &r->max_bounds;
+	font_size.width = ci->character_width;
+	font_size.height = ci->ascent + ci->descent;
+	free(r);
+}
 // returns true if successful
 bool xstatus_open_font(xcb_connection_t * restrict xc,
 	const char * restrict fn)
@@ -25,13 +34,7 @@ bool xstatus_open_font(xcb_connection_t * restrict xc,
 		LIBJB_WARN("Failed to load font: %s", fn);
 		return false;
 	}
-	xcb_query_font_reply_t * r = xcb_query_font_reply(xc, fc, NULL);
-	{
-		xcb_charinfo_t * ci = &r->max_bounds;
-		font_size.width = ci->character_width;
-		font_size.height = ci->ascent + ci->descent;
-	}
-	free(r);
+	finish_query(xc, fc);
 	return true;
 }
 
