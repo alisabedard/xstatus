@@ -25,7 +25,7 @@ static void setup(struct XStatusButton * restrict b, xcb_connection_t * xc,
 	b->cb_data = cb_data;
 	b->next = NULL;
 	struct XStatusWidget * w = &b->widget;
-	xstatus_get_widget(xc, &b->widget, g,
+	xstatus_setup_widget(xc, &b->widget, g,
 		jb_get_pixel(xc, xstatus_get_colormap(xc),
 		XSTATUS_BUTTON_BG),
 		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS);
