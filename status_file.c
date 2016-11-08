@@ -1,5 +1,6 @@
 #include "status_file.h"
 #include "config.h"
+#include "font.h"
 #include "libjb/util.h"
 #include "util.h"
 #include <errno.h>
@@ -45,7 +46,7 @@ uint16_t draw_status_file(struct XData * restrict X,
 		return x_offset;
 	}
 	xcb_image_text_8(X->xcb, s, X->w, X->gc, x_offset
-		+ XSTATUS_CONST_WIDE_PAD, X->font_size.h, buf);
-	return X->font_size.w * s + x_offset + XSTATUS_CONST_WIDE_PAD
+		+ XSTATUS_CONST_WIDE_PAD, xstatus_get_font_size().h, buf);
+	return xstatus_get_font_size().w * s + x_offset + XSTATUS_CONST_WIDE_PAD
 		+ XSTATUS_CONST_WIDE_PAD;
 }

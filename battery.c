@@ -2,10 +2,11 @@
 #include "battery.h"
 #include "config.h"
 #include "clock.h"
-#include "xstatus.h"
-#include "util.h"
+#include "font.h"
 #include "libjb/log.h"
 #include "libjb/util.h"
+#include "util.h"
+#include "xstatus.h"
 //#define TEST
 // get percent value, maximum 100
 static uint8_t get_percent(void)
@@ -38,7 +39,7 @@ static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
 	const uint8_t buf_sz = 7;
 	char buf[buf_sz];
 	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
-	xcb_image_text_8(X->xcb, l, X->w, gc, x, X->font_size.h, buf);
+	xcb_image_text_8(X->xcb, l, X->w, gc, x, xstatus_get_font_size().h, buf);
 }
 void xstatus_draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end)

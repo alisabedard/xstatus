@@ -1,6 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 #include "button.h"
 #include "config.h"
+#include "font.h"
 #include "libjb/xcb.h"
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +9,7 @@ static void draw(struct XStatusButton * restrict b)
 {
 	const struct XStatusWidget * restrict w = &b->widget;
 	xcb_image_text_8(w->X->xcb, strlen(b->label), w->window,
-		w->X->gc, XSTATUS_CONST_PAD, w->X->font_size.height,
+		w->X->gc, XSTATUS_CONST_PAD, xstatus_get_font_size().height,
 		b->label);
 }
 static void setup(struct XStatusButton * restrict b, struct XData * restrict X,

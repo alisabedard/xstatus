@@ -1,5 +1,6 @@
 // Copyright 2016, Jeffrey E. Bedard
 #include "util.h"
+#include "font.h"
 #include "libjb/file.h"
 #include "libjb/util.h"
 #include "libjb/xcb.h"
@@ -14,7 +15,7 @@ xcb_gc_t xstatus_get_gc(struct XData * restrict X, char * fg, char * bg)
 	xcb_void_cookie_t c = xcb_create_gc_checked(xc, gc, X->w,
 		XCB_GC_FOREGROUND | XCB_GC_BACKGROUND | XCB_GC_FONT,
 		(uint32_t[]){jb_get_pixel(xc, cm, fg),
-		jb_get_pixel(xc, cm, bg), X->font});
+		jb_get_pixel(xc, cm, bg), xstatus_get_font(X->xcb)});
 	xcb_generic_error_t * e = xcb_request_check(xc, c);
 	if (jb_check(!e, "Could not create GC"))
 		free(e);

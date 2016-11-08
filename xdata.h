@@ -9,7 +9,5 @@ struct XData {
 	xcb_gc_t gc;
 	xcb_window_t w;
 	xcb_rectangle_t sz;
-	xcb_font_t font;
-	struct JBDim font_size;
 };
 #endif//!XS_XDATA_H

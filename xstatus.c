@@ -114,7 +114,7 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 {
 	struct XStatusButton * i = last_btn();
 	struct XStatusButton * b = xstatus_get_button(X, &(xcb_rectangle_t){
-		.x=offset, .width = X->font_size.width
+		.x=offset, .width = xstatus_get_font_size().width
 		* strlen(label) + XSTATUS_CONST_WIDE_PAD,
 		.height=XSTATUS_CONST_HEIGHT}, label, system_cb, cmd);
 	*(i ? &i->next : &xstatus.head_button) = b;
@@ -192,12 +192,10 @@ static void setup_font(struct XData * restrict X)
 	if (!xstatus_open_font(X->xcb, XSTATUS_FONT)) // default
 		if (!xstatus_open_font(X->xcb, "fixed")) // fallback
 			LIBJB_ERROR("Could not load any font");
-	X->font_size = xstatus_get_font_size();
 }
 static void setup_xdata(struct XData * X)
 {
 	X->xcb = jb_get_xcb_connection(NULL, NULL);
-	X->font = xstatus_get_font(X->xcb); // get the id
 	X->screen = jb_get_xcb_screen(X->xcb);
 	create_window(X);
 	setup_font(X); // font needed for gc
