@@ -107,7 +107,7 @@ static void system_cb(struct XStatusButton * b)
 {
 	const char *cmd = b->cb_data;
 	if (system(cmd))
-		WARN("Cannot execute %s", cmd);
+		LIBJB_WARN("Cannot execute %s", cmd);
 }
 static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	char * restrict label, char * restrict cmd)
@@ -191,7 +191,7 @@ static void setup_font(struct XData * restrict X)
 {
 	if (!xstatus_open_font(X->xcb, XSTATUS_FONT)) // default
 		if (!xstatus_open_font(X->xcb, "fixed")) // fallback
-			ERROR("Could not load any font");
+			LIBJB_ERROR("Could not load any font");
 	X->font_size = xstatus_get_font_size();
 }
 static void setup_xdata(struct XData * X)

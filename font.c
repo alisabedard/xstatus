@@ -22,7 +22,7 @@ bool xstatus_open_font(xcb_connection_t * restrict xc,
 	xcb_void_cookie_t c = xcb_open_font_checked(xc, f, strlen(fn), fn);
 	xcb_query_font_cookie_t fc = xcb_query_font(xc, f);
 	if (jb_xcb_cookie_has_error(xc, c)) {
-		WARN("Failed to load font: %s", fn);
+		LIBJB_WARN("Failed to load font: %s", fn);
 		return false;
 	}
 	xcb_query_font_reply_t * r = xcb_query_font_reply(xc, fc, NULL);
