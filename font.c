@@ -14,13 +14,16 @@ struct JBDim xstatus_get_font_size(void)
 {
 	return font_size;
 }
+static void charinfo_to_size(xcb_charinfo_t * restrict ci)
+{
+	font_size.width = ci->character_width;
+	font_size.height = ci->ascent + ci->descent;
+}
 static void finish_query(xcb_connection_t * restrict xc,
 	const xcb_query_font_cookie_t fc)
 {
 	xcb_query_font_reply_t * r = xcb_query_font_reply(xc, fc, NULL);
-	xcb_charinfo_t * restrict ci = &r->max_bounds;
-	font_size.width = ci->character_width;
-	font_size.height = ci->ascent + ci->descent;
+	charinfo_to_size(&r->max_bounds);
 	free(r);
 }
 // returns true if successful
