@@ -28,7 +28,7 @@ static void setup(struct XStatusButton * restrict b, xcb_connection_t * xc,
 		jb_get_pixel(xc, xstatus_get_colormap(xc),
 		XSTATUS_BUTTON_BG),
 		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS);
-	memcpy(&w->geometry, g, sizeof(xcb_rectangle_t));
+	w->geometry = *g;
 	draw(b);
 }
 struct XStatusButton * xstatus_get_button(xcb_connection_t * xc,
