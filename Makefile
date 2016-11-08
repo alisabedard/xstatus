@@ -1,4 +1,5 @@
-objs=${prog}.o util.o widget.o main.o font.o xdata.o
+objs=${prog}.o util.o widget.o main.o font.o xdata.o button.o
+objs+=clock.o load.o status_file.o
 include config.mk
 CFLAGS+=-std=c99
 CFLAGS+=-D_XOPEN_SOURCE=700

@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 #ifndef XSTATUS_WIDGET_H
 #define XSTATUS_WIDGET_H
-#include "util.h"
+#include "libjb/xcb.h"
 struct XStatusWidget {
 	xcb_rectangle_t geometry;
 	xcb_window_t window;

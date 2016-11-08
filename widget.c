@@ -1,5 +1,6 @@
 // Copyright 2016, Jeffrey E. Bedard
 #include "widget.h"
+#include "xdata.h"
 #include <stdlib.h>
 struct XStatusWidget * xstatus_get_widget(
 	xcb_connection_t * restrict xc,

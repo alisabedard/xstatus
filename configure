@@ -3,21 +3,16 @@
 CFG=config.mk
 # Defaults:
 OPT_DEBUG=false
+# Features that are not portable are kept optional
 # Features:
-OPT_BUTTONS=true
-OPT_LOAD=true
 OPT_TEMP=true
-OPT_STATUS=true
-OPT_CXSTATUS_LOCK_COMMAND=true
 OPT_BATTERY=true
 rm -f "$CFG"
 OPTSTR='Bbcdhlst'
 while getopts $OPTSTR opt
 do
 	case $opt in
-	b) OPT_BUTTONS=false;;
 	B) OPT_BATTERY=false;;
-	c) OPT_CXSTATUS_LOCK_COMMAND=false;;
 	d) OPT_DEBUG=true;;
 	l) OPT_LOAD=false;;
 	s) OPT_STATUS=false;;
@@ -26,11 +21,7 @@ do
 		ECHO="`which echo`"
 		for line in "./configure -[${OPTSTR}]" \
 		'  -B disable battery bar' \
-		'  -b disable buttons' \
-		'  -c disable clock' \
 		'  -d enable debugging' \
-		'  -l disable load meter' \
-		'  -s disable status file display' \
 		'  -t disable temperature meter' \
 		'  -h help'; do echo $line; done
 		exit 1
@@ -124,20 +115,6 @@ if $OPT_DEBUG; then
 	EOF
 	echo done
 fi
-if $OPT_BUTTONS; then
-	cat >> $CFG <<- EOF
-	CFLAGS+=-DXSTATUS_USE_BUTTONS
-	objs+=button.o
-	EOF
-	echo enabled buttons
-fi
-if $OPT_CXSTATUS_LOCK_COMMAND; then
-	cat >> $CFG <<- EOF
-	CFLAGS+=-DXSTATUS_USE_LOCK
-	objs+=clock.o
-	EOF
-	echo enabled clock
-fi
 if $OPT_BATTERY; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DXSTATUS_USE_BATTERY_BAR
@@ -145,24 +122,10 @@ if $OPT_BATTERY; then
 	EOF
 	echo enabled battery
 fi
-if $OPT_LOAD; then
-	cat >> $CFG <<- EOF
-	CFLAGS+=-DXSTATUS_USE_LOAD
-	objs+=load.o
-	EOF
-	echo enabled load
-fi
 if $OPT_TEMP; then
 	cat >> $CFG <<- EOF
 	CFLAGS+=-DXSTATUS_USE_TEMPERATURE
 	objs+=temperature.o
 	EOF
 	echo enabled temp
-fi
-if $OPT_STATUS; then
-	cat >> $CFG <<- EOF
-	CFLAGS+=-DXSTATUS_USE_STATUS_FILE
-	objs+=status_file.o
-	EOF
-	echo enabled status
 fi

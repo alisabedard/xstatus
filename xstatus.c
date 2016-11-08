@@ -11,13 +11,10 @@
 #include "load.h"
 #include "status_file.h"
 #include "temperature.h"
+#include "util.h"
 #include <string.h>
-#ifdef XSTATUS_USE_BUTTONS
 static struct XStatusButton * xstatus_head_button;
-#endif//XSTATUS_USE_BUTTONS
-#ifdef XSTATUS_USE_STATUS_FILE
 static char * xstatus_filename;
-#endif//XSTATUS_USE_STATUS_FILE
 static void create_window(xcb_connection_t * xc)
 {
 	xcb_screen_t * s = xstatus_get_screen(xc);
@@ -35,7 +32,6 @@ static void create_window(xcb_connection_t * xc)
 		XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(xc, w);
 }
-#ifdef XSTATUS_USE_BUTTONS
 static struct XStatusButton *last_btn(void)
 {
 	struct XStatusButton * i = xstatus_head_button;
@@ -50,46 +46,28 @@ static uint16_t xstatus_get_button_end(void)
 	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	return g->x + g->width;
 }
-#else//!XSTATUS_USE_BUTTONS
-#define xstatus_get_button_end() 0
-#endif//XSTATUS_USE_BUTTONS
-#if defined(XSTATUS_USE_LOAD) || defined(USE_BUTTON)\
-|| defined(XSTATUS_USE_TEMPERATURE) || defined(XSTATUS_USE_STATUS_FILE)
 static uint16_t poll_status(xcb_connection_t * restrict xc)
 {
 	uint16_t offset = xstatus_get_button_end() + XSTATUS_CONST_PAD;
-#ifdef XSTATUS_USE_LOAD
 	offset = xstatus_draw_load(xc, offset);
-#endif//XSTATUS_USE_LOAD
 #ifdef XSTATUS_USE_TEMPERATURE
 	offset = draw_temp(xc, offset);
 #endif//XSTATUS_USE_TEMPERATURE
-#ifdef XSTATUS_USE_STATUS_FILE
 	offset = draw_status_file(xc, offset, xstatus_filename);
-#endif//XSTATUS_USE_TEMPERATURE
 	return offset;
 }
-#else
-#define poll_status(X)
-#endif/*XSTATUS_USE_LOAD||USE_BUTTON
-	||XSTATUS_USE_TEMPERATURE||XSTATUS_USE_STATUS_FILE*/
 static void update(xcb_connection_t * xc)
 {
 	const uint16_t width = xstatus_get_screen(xc)->width_in_pixels;
 	xcb_clear_area(xc, 0, xstatus_get_window(xc),
 		0, 0, width, XSTATUS_CONST_HEIGHT);
 #ifdef XSTATUS_USE_BATTERY_BAR
-#ifdef XSTATUS_USE_LOCK
 	xstatus_draw_battery(xc, poll_status(xc), xstatus_draw_clock(xc));
-#else//!XSTATUS_USE_LOCK
-	xstatus_draw_battery(xc, poll_status(xc), width);
-#endif//XSTATUS_USE_LOCK
 #else//!XSTATUS_USE_BATTERY_BAR
 	poll_status(xc);
 	xstatus_draw_clock(xc);
 #endif//XSTATUS_USE_BATTERY_BAR
 }
-#ifdef XSTATUS_USE_BUTTONS
 static void system_cb(struct XStatusButton * b)
 {
 	const char *cmd = b->cb_data;
@@ -160,9 +138,6 @@ static void handle_events(xcb_connection_t * xc,
 	}
 	free(e);
 }
-#else//!XSTATUS_USE_BUTTONS
-#define handle_events(X, e) {}
-#endif//XSTATUS_USE_BUTTONS
 __attribute__((noreturn))
 static void event_loop(xcb_connection_t * xc, const uint8_t delay)
 {
@@ -188,23 +163,13 @@ static xcb_connection_t * setup_xdata(void)
 		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 	return xc;
 }
-void xstatus_start(
-#ifdef XSTATUS_USE_STATUS_FILE
-	char * restrict filename,
-#else//!XSTATUS_USE_STATUS_FILE
-	char * restrict filename __attribute__((unused)),
-#endif//XSTATUS_USE_STATUS_FILE
-	const uint8_t delay)
+void xstatus_start(char * restrict filename, const uint8_t delay)
 {
 	xcb_connection_t * xc = setup_xdata();
-#ifdef XSTATUS_USE_BUTTONS
 	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
 		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
 		XSTATUS_BUTTON_BG);
 	setup_buttons(xc);
-#endif//XSTATUS_USE_BUTTONS
-#ifdef XSTATUS_USE_STATUS_FILE
 	xstatus_filename = filename;
-#endif//XSTATUS_USE_STATUS_FILE
 	event_loop(xc, delay);
 }
