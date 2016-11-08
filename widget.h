@@ -6,6 +6,9 @@ struct XStatusWidget {
 	xcb_rectangle_t geometry;
 	xcb_window_t window;
 };
+void xstatus_create_widget_window(xcb_connection_t * restrict xc,
+	const xcb_window_t window, xcb_rectangle_t * restrict geo,
+	const pixel_t bg, const uint32_t events);
 struct XStatusWidget * xstatus_get_widget(
 	xcb_connection_t * restrict xc,
 	struct XStatusWidget * restrict w,
