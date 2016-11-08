@@ -1,7 +1,6 @@
 // Copyright 2016, Jeffrey E. Bedard
 #include "widget.h"
 #include "xdata.h"
-#include <stdlib.h>
 void xstatus_create_widget_window(xcb_connection_t * restrict xc,
 	const xcb_window_t window, xcb_rectangle_t * restrict geo,
 	const pixel_t bg, const uint32_t events)
