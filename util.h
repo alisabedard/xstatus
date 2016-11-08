@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include "libjb/xcb.h"
 #include "xdata.h"
-xcb_gc_t xstatus_get_gc(struct XData * restrict X, char * fg, char * bg);
+void xstatus_create_gc(xcb_connection_t * xc, const xcb_gc_t gc,
+	const xcb_window_t win, char * restrict fg, char * restrict bg);
 #if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
 uint32_t xstatus_system_value(const char *filename);
 #else

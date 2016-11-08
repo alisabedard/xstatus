@@ -13,7 +13,8 @@ uint16_t xstatus_draw_load(struct XData * restrict X, const uint16_t offset)
 	char buf[sz];
 	sz = snprintf(buf, sz, "%.2f", l[0]);
 	const struct JBDim f = xstatus_get_font_size();
-	xcb_image_text_8(X->xcb, sz, X->w, X->gc,
+	xcb_connection_t * xc = X->xcb;
+	xcb_image_text_8(xc, sz, X->w, xstatus_get_gc(xc),
 		offset + XSTATUS_CONST_PAD, f.h, buf);
 	return f.w * sz + offset + XSTATUS_CONST_WIDE_PAD;
 }

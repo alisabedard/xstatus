@@ -5,9 +5,11 @@
 #include <xcb/xcb.h>
 struct XData {
 	xcb_connection_t * xcb;
-	xcb_screen_t * screen;
-	xcb_gc_t gc;
 	xcb_window_t w;
 	xcb_rectangle_t sz;
 };
+xcb_colormap_t xstatus_get_colormap(xcb_connection_t * xc);
+xcb_gc_t xstatus_get_button_gc(xcb_connection_t * xc);
+xcb_gc_t xstatus_get_gc(xcb_connection_t * xc);
+xcb_screen_t * xstatus_get_screen(xcb_connection_t * xc);
 #endif//!XS_XDATA_H

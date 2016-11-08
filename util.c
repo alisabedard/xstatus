@@ -7,19 +7,17 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
-xcb_gc_t xstatus_get_gc(struct XData * restrict X, char * fg, char * bg)
+void xstatus_create_gc(xcb_connection_t * xc, const xcb_gc_t gc,
+	const xcb_window_t win, char * restrict fg, char * restrict bg)
 {
-	xcb_connection_t * xc = X->xcb;
-	const xcb_gc_t gc = xcb_generate_id(xc);
-	const xcb_colormap_t cm = X->screen->default_colormap;
-	xcb_void_cookie_t c = xcb_create_gc_checked(xc, gc, X->w,
+	const xcb_colormap_t cm = xstatus_get_colormap(xc);
+	xcb_void_cookie_t c = xcb_create_gc_checked(xc, gc, win,
 		XCB_GC_FOREGROUND | XCB_GC_BACKGROUND | XCB_GC_FONT,
 		(uint32_t[]){jb_get_pixel(xc, cm, fg),
-		jb_get_pixel(xc, cm, bg), xstatus_get_font(X->xcb)});
+		jb_get_pixel(xc, cm, bg), xstatus_get_font(xc)});
 	xcb_generic_error_t * e = xcb_request_check(xc, c);
 	if (jb_check(!e, "Could not create GC"))
 		free(e);
-	return gc;
 }
 #if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
 uint32_t xstatus_system_value(const char *filename)

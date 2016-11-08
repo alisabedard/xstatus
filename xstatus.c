@@ -29,7 +29,7 @@ static void create_window(struct XData * restrict X)
 {
 	xcb_connection_t * xc = X->xcb;
 	X->w = xcb_generate_id(xc);
-	xcb_screen_t * s = X->screen;
+	xcb_screen_t * s = xstatus_get_screen(xc);
 	X->sz = (xcb_rectangle_t) {
 		.y = s->height_in_pixels - XSTATUS_CONST_HEIGHT
 			- XSTATUS_CONST_BORDER,
@@ -38,8 +38,7 @@ static void create_window(struct XData * restrict X)
 	};
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
-	const xcb_colormap_t cm = s->default_colormap;
-	const uint32_t v[] = {jb_get_pixel(xc, cm,
+	const uint32_t v[] = {jb_get_pixel(xc, s->default_colormap,
 		XSTATUS_PANEL_BACKGROUND), true,
 	      XCB_EVENT_MASK_EXPOSURE};
 	const xcb_rectangle_t sz = X->sz;
@@ -193,14 +192,14 @@ static void setup_font(struct XData * restrict X)
 		if (!xstatus_open_font(X->xcb, "fixed")) // fallback
 			LIBJB_ERROR("Could not load any font");
 }
-static void setup_xdata(struct XData * X)
+static xcb_connection_t * setup_xdata(struct XData * X)
 {
-	X->xcb = jb_get_xcb_connection(NULL, NULL);
-	X->screen = jb_get_xcb_screen(X->xcb);
+	xcb_connection_t * xc = X->xcb = jb_get_xcb_connection(NULL, NULL);
 	create_window(X);
 	setup_font(X); // font needed for gc
-	X->gc = xstatus_get_gc(X, XSTATUS_PANEL_FOREGROUND,
-		XSTATUS_PANEL_BACKGROUND);
+	xstatus_create_gc(xc, xstatus_get_gc(xc), X->w,
+		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
+	return xc;
 }
 void xstatus_start(
 #ifdef XSTATUS_USE_STATUS_FILE
@@ -211,11 +210,11 @@ void xstatus_start(
 	const uint8_t delay)
 {
 	struct XData X;
-	setup_xdata(&X);
+	xcb_connection_t * xc = setup_xdata(&X);
 #ifdef XSTATUS_USE_BUTTONS
-	struct XData BX = X;
-	BX.gc = xstatus_get_gc(&BX, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
-	setup_buttons(&BX);
+	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
+		X.w, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
+	setup_buttons(&X);
 #endif//XSTATUS_USE_BUTTONS
 #ifdef XSTATUS_USE_STATUS_FILE
 	xstatus.filename = filename;

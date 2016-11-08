@@ -8,9 +8,10 @@
 static void draw(struct XStatusButton * restrict b)
 {
 	const struct XStatusWidget * restrict w = &b->widget;
-	xcb_image_text_8(w->X->xcb, strlen(b->label), w->window,
-		w->X->gc, XSTATUS_CONST_PAD, xstatus_get_font_size().height,
-		b->label);
+	xcb_connection_t * xc = w->X->xcb;
+	xcb_image_text_8(xc, strlen(b->label), w->window,
+		xstatus_get_button_gc(xc), XSTATUS_CONST_PAD,
+		xstatus_get_font_size().height, b->label);
 }
 static void setup(struct XStatusButton * restrict b, struct XData * restrict X,
 	xcb_rectangle_t * restrict g, char * restrict label,
@@ -22,9 +23,9 @@ static void setup(struct XStatusButton * restrict b, struct XData * restrict X,
 	b->cb_data = cb_data;
 	b->next = NULL;
 	struct XStatusWidget * w = &b->widget;
-	const xcb_colormap_t cm = X->screen->default_colormap;
 	xstatus_get_widget(&b->widget, X, g,
-		jb_get_pixel(X->xcb, cm, XSTATUS_BUTTON_BG),
+		jb_get_pixel(X->xcb, xstatus_get_colormap(X->xcb),
+		XSTATUS_BUTTON_BG),
 		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS);
 	memcpy(&w->geometry, g, sizeof(xcb_rectangle_t));
 	draw(b);

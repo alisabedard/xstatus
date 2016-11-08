@@ -44,18 +44,24 @@ static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
 void xstatus_draw_battery(struct XData * restrict X, const uint16_t start,
 	const uint16_t end)
 {
+	xcb_connection_t * xc = X->xcb;
+	const xcb_window_t w = X->w;
 	static xcb_gc_t gc[BATTERY_GC_SIZE];
 	if (!*gc) {
-		gc[BATTERY_GC_BACKGROUND] = xstatus_get_gc(X,
+		gc[BATTERY_GC_BACKGROUND] = xcb_generate_id(xc);
+		gc[BATTERY_GC_AC] = xcb_generate_id(xc);
+		gc[BATTERY_GC_BATTERY] = xcb_generate_id(xc);
+		gc[BATTERY_GC_CRITICAL] = xcb_generate_id(xc);
+		xstatus_create_gc(xc, gc[BATTERY_GC_BACKGROUND], w,
 			XSTATUS_BATTERY_BACKGROUND_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		gc[BATTERY_GC_AC] = xstatus_get_gc(X,
+		xstatus_create_gc(xc, gc[BATTERY_GC_AC], w,
 			XSTATUS_BATTERY_AC_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		gc[BATTERY_GC_BATTERY] = xstatus_get_gc(X,
+		xstatus_create_gc(xc, gc[BATTERY_GC_BATTERY], w,
 			XSTATUS_BATTERY_BATTERY_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		gc[BATTERY_GC_CRITICAL] = xstatus_get_gc(X,
+		xstatus_create_gc(xc, gc[BATTERY_GC_CRITICAL], w,
 			XSTATUS_BATTERY_CRITICAL_COLOR,
 			XSTATUS_BATTERY_BACKGROUND_COLOR);
 	}
