@@ -20,8 +20,8 @@ static void create_window(xcb_connection_t * xc)
 	xcb_screen_t * s = xstatus_get_screen(xc);
 	const int16_t y = s->height_in_pixels
 		- XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
-	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
-		| XCB_CW_EVENT_MASK;
+#define WIN_VM XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT \
+		| XCB_CW_EVENT_MASK
 	const uint32_t v[] = {jb_get_pixel(xc, s->default_colormap,
 		XSTATUS_PANEL_BACKGROUND), true,
 	      XCB_EVENT_MASK_EXPOSURE};
@@ -29,7 +29,8 @@ static void create_window(xcb_connection_t * xc)
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, w,
 		s->root, 0, y, s->width_in_pixels, XSTATUS_CONST_HEIGHT,
 		XSTATUS_CONST_BORDER, XCB_WINDOW_CLASS_COPY_FROM_PARENT,
-		XCB_COPY_FROM_PARENT, vm, v);
+		XCB_COPY_FROM_PARENT, WIN_VM, v);
+#undef WIN_VM
 	xcb_map_window(xc, w);
 }
 static struct XStatusButton *last_btn(void)
