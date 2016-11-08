@@ -22,7 +22,6 @@ static struct {
 #ifdef XSTATUS_USE_BUTTONS
 	struct XStatusButton * head_button;
 #endif//XSTATUS_USE_BUTTONS
-	xcb_rectangle_t geometry;
 } xstatus;
 #endif//XSTATUS_USE_STATUS_FILE||XSTATUS_USE_BUTTONS||XSTATUS_USE_BATTERY_BAR
 static void create_window(struct XData * restrict X)
@@ -30,22 +29,16 @@ static void create_window(struct XData * restrict X)
 	xcb_connection_t * xc = X->xcb;
 	X->w = xcb_generate_id(xc);
 	xcb_screen_t * s = xstatus_get_screen(xc);
-	X->sz = (xcb_rectangle_t) {
-		.y = s->height_in_pixels - XSTATUS_CONST_HEIGHT
-			- XSTATUS_CONST_BORDER,
-			.width = s->width_in_pixels,
-			.height = XSTATUS_CONST_HEIGHT
-	};
+	const int16_t y = s->height_in_pixels
+		- XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
 		| XCB_CW_EVENT_MASK;
 	const uint32_t v[] = {jb_get_pixel(xc, s->default_colormap,
 		XSTATUS_PANEL_BACKGROUND), true,
 	      XCB_EVENT_MASK_EXPOSURE};
-	const xcb_rectangle_t sz = X->sz;
-	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w,
-		s->root, sz.x, sz.y, sz.width,
-		sz.height, XSTATUS_CONST_BORDER,
-		XCB_WINDOW_CLASS_COPY_FROM_PARENT,
+	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w, s->root,
+		0, y, s->width_in_pixels, XSTATUS_CONST_HEIGHT,
+		XSTATUS_CONST_BORDER, XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 		XCB_COPY_FROM_PARENT, vm, v);
 	xcb_map_window(xc, X->w);
 }
@@ -89,12 +82,14 @@ static uint16_t poll_status(struct XData * restrict X)
 	||XSTATUS_USE_TEMPERATURE||XSTATUS_USE_STATUS_FILE*/
 static void update(struct XData * restrict X)
 {
-	xcb_clear_area(X->xcb, 0, X->w, 0, 0, X->sz.width, X->sz.height);
+	xcb_connection_t * xc = X->xcb;
+	const uint16_t width = xstatus_get_screen(xc)->width_in_pixels;
+	xcb_clear_area(xc, 0, X->w, 0, 0, width, XSTATUS_CONST_HEIGHT);
 #ifdef XSTATUS_USE_BATTERY_BAR
 #ifdef XSTATUS_USE_LOCK
 	xstatus_draw_battery(X, poll_status(X), xstatus_draw_clock(X));
 #else//!XSTATUS_USE_LOCK
-	xstatus_draw_battery(X, poll_status(X), X->screen->width_in_pixels);
+	xstatus_draw_battery(X, poll_status(X), width);
 #endif//XSTATUS_USE_LOCK
 #else//!XSTATUS_USE_BATTERY_BAR
 	poll_status(X);
