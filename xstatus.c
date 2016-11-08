@@ -12,18 +12,12 @@
 #include "status_file.h"
 #include "temperature.h"
 #include <string.h>
-// Application state struct
-#if defined(XSTATUS_USE_STATUS_FILE) || defined(XSTATUS_USE_BUTTONS)\
-	|| defined(XSTATUS_USE_BATTERY_BAR)
-static struct {
-#ifdef XSTATUS_USE_STATUS_FILE
-	char * filename;
-#endif//XSTATUS_USE_STATUS_FILE
 #ifdef XSTATUS_USE_BUTTONS
-	struct XStatusButton * head_button;
+static struct XStatusButton * xstatus_head_button;
 #endif//XSTATUS_USE_BUTTONS
-} xstatus;
-#endif//XSTATUS_USE_STATUS_FILE||XSTATUS_USE_BUTTONS||XSTATUS_USE_BATTERY_BAR
+#ifdef XSTATUS_USE_STATUS_FILE
+static char * xstatus_filename;
+#endif//XSTATUS_USE_STATUS_FILE
 static void create_window(xcb_connection_t * xc)
 {
 	xcb_screen_t * s = xstatus_get_screen(xc);
@@ -44,7 +38,7 @@ static void create_window(xcb_connection_t * xc)
 #ifdef XSTATUS_USE_BUTTONS
 static struct XStatusButton *last_btn(void)
 {
-	struct XStatusButton * i = xstatus.head_button;
+	struct XStatusButton * i = xstatus_head_button;
 	if(i)
 		while(i->next)
 			i=i->next;
@@ -71,7 +65,7 @@ static uint16_t poll_status(xcb_connection_t * restrict xc)
 	offset = draw_temp(xc, offset);
 #endif//XSTATUS_USE_TEMPERATURE
 #ifdef XSTATUS_USE_STATUS_FILE
-	offset = draw_status_file(xc, offset, xstatus.filename);
+	offset = draw_status_file(xc, offset, xstatus_filename);
 #endif//XSTATUS_USE_TEMPERATURE
 	return offset;
 }
@@ -110,7 +104,7 @@ static uint16_t btn(xcb_connection_t * xc, const uint16_t offset,
 		.x=offset, .width = xstatus_get_font_size().width
 		* strlen(label) + XSTATUS_CONST_WIDE_PAD,
 		.height=XSTATUS_CONST_HEIGHT}, label, system_cb, cmd);
-	*(i ? &i->next : &xstatus.head_button) = b;
+	*(i ? &i->next : &xstatus_head_button) = b;
 	return offset + b->widget.geometry.width + XSTATUS_CONST_PAD;
 }
 /* Returns x offset after all buttons added.  */
@@ -131,7 +125,7 @@ static uint16_t setup_buttons(xcb_connection_t * xc)
 }
 static struct XStatusButton * find_button(const xcb_window_t w)
 {
-	for(struct XStatusButton * i = xstatus.head_button; i; i=i->next)
+	for(struct XStatusButton * i = xstatus_head_button; i; i=i->next)
 		if(i->widget.window==w)
 			return i;
 	return NULL;
@@ -154,12 +148,12 @@ static void handle_events(xcb_connection_t * xc,
 	switch (e->response_type) {
 	case XCB_EXPOSE:
 		if(!iter_buttons(((xcb_expose_event_t *)e)->window,
-			xstatus.head_button->draw))
+			xstatus_head_button->draw))
 			update(xc);
 		break;
 	case XCB_BUTTON_PRESS:
 		iter_buttons(((xcb_button_press_event_t *)e)->event,
-			xstatus.head_button->cb);
+			xstatus_head_button->cb);
 		break;
 	default:
 		LOG("event: %d", e->response_type);
@@ -210,7 +204,7 @@ void xstatus_start(
 	setup_buttons(xc);
 #endif//XSTATUS_USE_BUTTONS
 #ifdef XSTATUS_USE_STATUS_FILE
-	xstatus.filename = filename;
+	xstatus_filename = filename;
 #endif//XSTATUS_USE_STATUS_FILE
 	event_loop(xc, delay);
 }
