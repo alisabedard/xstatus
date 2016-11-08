@@ -4,7 +4,7 @@
 #include "xdata.h"
 #include <stdint.h>
 // Returns offset for next widget
-uint16_t draw_status_file(struct XData * restrict X,
+uint16_t draw_status_file(xcb_connection_t * xc,
 	const uint16_t x_offset,
 	const char * restrict filename);
 #else//!XSTATUS_USE_STATUS_FILE

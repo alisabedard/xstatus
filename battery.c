@@ -33,20 +33,20 @@ static enum BATGCs get_gc(const uint8_t pct)
 		< XSTATUS_CONST_CRITICAL_PERCENT
 		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
-static void draw_percent(struct XData * restrict X, const xcb_gc_t gc,
+static void draw_percent(xcb_connection_t * xc, const xcb_gc_t gc,
 	const uint8_t pct, const int16_t x)
 {
 	const uint8_t buf_sz = 7;
 	char buf[buf_sz];
 	const uint8_t l = snprintf(buf, buf_sz, " %d%% ", pct);
-	xcb_image_text_8(X->xcb, l, X->w, gc, x, xstatus_get_font_size().h, buf);
+	xcb_image_text_8(xc, l, xstatus_get_window(xc),
+		gc, x, xstatus_get_font_size().h, buf);
 }
-void xstatus_draw_battery(struct XData * restrict X, const uint16_t start,
+void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
-	xcb_connection_t * xc = X->xcb;
-	const xcb_window_t w = X->w;
 	static xcb_gc_t gc[BATTERY_GC_SIZE];
+	const xcb_window_t w = xstatus_get_window(xc);
 	if (!*gc) {
 		gc[BATTERY_GC_BACKGROUND] = xcb_generate_id(xc);
 		gc[BATTERY_GC_AC] = xcb_generate_id(xc);
@@ -71,10 +71,9 @@ void xstatus_draw_battery(struct XData * restrict X, const uint16_t start,
 		.height = XSTATUS_CONST_HEIGHT >> 1, .width = end - start
 			- XSTATUS_CONST_PAD};
 	++g.y;
-	xcb_poly_fill_rectangle(X->xcb, X->w,
-		gc[BATTERY_GC_BACKGROUND], 1, &g);
+	xcb_poly_fill_rectangle(xc, w, gc[BATTERY_GC_BACKGROUND], 1, &g);
 	g.width = g.width * pct / 100;
-	xcb_poly_fill_rectangle(X->xcb, X->w, gc[a], 1, &g);
-	draw_percent(X, gc[a], pct, start + (end-start)/2);
-	xcb_flush(X->xcb);
+	xcb_poly_fill_rectangle(xc, w, gc[a], 1, &g);
+	draw_percent(xc, gc[a], pct, start + (end-start)/2);
+	xcb_flush(xc);
 }

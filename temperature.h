@@ -5,7 +5,7 @@
 #include "xdata.h"
 #include <stdint.h>
 // Returns x offset for next item
-uint16_t draw_temp(struct XData * restrict X, const uint16_t offset);
+uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset);
 #else//!XSTATUS_USE_TEMPERATURE
 #define draw_temp(X, o) o
 #endif//XSTATUS_USE_TEMPERATURE

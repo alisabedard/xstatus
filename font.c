@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 static struct JBDim font_size;
+xcb_window_t xstatus_get_window(xcb_connection_t * restrict xc)
+{
+	static xcb_window_t w;
+	return w ? w : (w = xcb_generate_id(xc));
+}
 xcb_font_t xstatus_get_font(xcb_connection_t * restrict xc)
 {
 	static xcb_font_t f;

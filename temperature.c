@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 // Returns x offset for next item
-uint16_t draw_temp(struct XData * restrict X, const uint16_t offset)
+uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset)
 {
 	const uint8_t v
 		= xstatus_system_value(XSTATUS_SYSFILE_TEMPERATURE)/1000;
@@ -14,9 +14,8 @@ uint16_t draw_temp(struct XData * restrict X, const uint16_t offset)
 	char buf[sz];
 	sz = snprintf(buf, sz, "%dC", v);
 	const struct JBDim f = xstatus_get_font_size();
-	xcb_connection_t * xc = X->xcb;
-	xcb_image_text_8(xc, sz, X->w, xstatus_get_gc(xc), offset
-		+ XSTATUS_CONST_WIDE_PAD, f.h, buf);
+	xcb_image_text_8(xc, sz, xstatus_get_window(xc),
+		xstatus_get_gc(xc), offset + XSTATUS_CONST_WIDE_PAD, f.h, buf);
 	return f.w * strlen(buf) + offset + XSTATUS_CONST_WIDE_PAD
 		+ XSTATUS_CONST_PAD;
 }

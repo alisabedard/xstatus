@@ -24,10 +24,8 @@ static struct {
 #endif//XSTATUS_USE_BUTTONS
 } xstatus;
 #endif//XSTATUS_USE_STATUS_FILE||XSTATUS_USE_BUTTONS||XSTATUS_USE_BATTERY_BAR
-static void create_window(struct XData * restrict X)
+static void create_window(xcb_connection_t * xc)
 {
-	xcb_connection_t * xc = X->xcb;
-	X->w = xcb_generate_id(xc);
 	xcb_screen_t * s = xstatus_get_screen(xc);
 	const int16_t y = s->height_in_pixels
 		- XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
@@ -36,11 +34,12 @@ static void create_window(struct XData * restrict X)
 	const uint32_t v[] = {jb_get_pixel(xc, s->default_colormap,
 		XSTATUS_PANEL_BACKGROUND), true,
 	      XCB_EVENT_MASK_EXPOSURE};
-	xcb_create_window(xc, XCB_COPY_FROM_PARENT, X->w, s->root,
-		0, y, s->width_in_pixels, XSTATUS_CONST_HEIGHT,
+	const xcb_window_t w = xstatus_get_window(xc);
+	xcb_create_window(xc, XCB_COPY_FROM_PARENT, w,
+		s->root, 0, y, s->width_in_pixels, XSTATUS_CONST_HEIGHT,
 		XSTATUS_CONST_BORDER, XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 		XCB_COPY_FROM_PARENT, vm, v);
-	xcb_map_window(xc, X->w);
+	xcb_map_window(xc, w);
 }
 #ifdef XSTATUS_USE_BUTTONS
 static struct XStatusButton *last_btn(void)
@@ -62,17 +61,17 @@ static uint16_t xstatus_get_button_end(void)
 #endif//XSTATUS_USE_BUTTONS
 #if defined(XSTATUS_USE_LOAD) || defined(USE_BUTTON)\
 || defined(XSTATUS_USE_TEMPERATURE) || defined(XSTATUS_USE_STATUS_FILE)
-static uint16_t poll_status(struct XData * restrict X)
+static uint16_t poll_status(xcb_connection_t * restrict xc)
 {
 	uint16_t offset = xstatus_get_button_end() + XSTATUS_CONST_PAD;
 #ifdef XSTATUS_USE_LOAD
-	offset = xstatus_draw_load(X, offset);
+	offset = xstatus_draw_load(xc, offset);
 #endif//XSTATUS_USE_LOAD
 #ifdef XSTATUS_USE_TEMPERATURE
-	offset = draw_temp(X, offset);
+	offset = draw_temp(xc, offset);
 #endif//XSTATUS_USE_TEMPERATURE
 #ifdef XSTATUS_USE_STATUS_FILE
-	offset = draw_status_file(X, offset, xstatus.filename);
+	offset = draw_status_file(xc, offset, xstatus.filename);
 #endif//XSTATUS_USE_TEMPERATURE
 	return offset;
 }
@@ -80,20 +79,20 @@ static uint16_t poll_status(struct XData * restrict X)
 #define poll_status(X)
 #endif/*XSTATUS_USE_LOAD||USE_BUTTON
 	||XSTATUS_USE_TEMPERATURE||XSTATUS_USE_STATUS_FILE*/
-static void update(struct XData * restrict X)
+static void update(xcb_connection_t * xc)
 {
-	xcb_connection_t * xc = X->xcb;
 	const uint16_t width = xstatus_get_screen(xc)->width_in_pixels;
-	xcb_clear_area(xc, 0, X->w, 0, 0, width, XSTATUS_CONST_HEIGHT);
+	xcb_clear_area(xc, 0, xstatus_get_window(xc),
+		0, 0, width, XSTATUS_CONST_HEIGHT);
 #ifdef XSTATUS_USE_BATTERY_BAR
 #ifdef XSTATUS_USE_LOCK
-	xstatus_draw_battery(X, poll_status(X), xstatus_draw_clock(X));
+	xstatus_draw_battery(xc, poll_status(xc), xstatus_draw_clock(xc));
 #else//!XSTATUS_USE_LOCK
-	xstatus_draw_battery(X, poll_status(X), width);
+	xstatus_draw_battery(xc, poll_status(xc), width);
 #endif//XSTATUS_USE_LOCK
 #else//!XSTATUS_USE_BATTERY_BAR
-	poll_status(X);
-	xstatus_draw_clock(X);
+	poll_status(xc);
+	xstatus_draw_clock(xc);
 #endif//XSTATUS_USE_BATTERY_BAR
 }
 #ifdef XSTATUS_USE_BUTTONS
@@ -103,11 +102,11 @@ static void system_cb(struct XStatusButton * b)
 	if (system(cmd))
 		LIBJB_WARN("Cannot execute %s", cmd);
 }
-static uint16_t btn(struct XData * restrict X, const uint16_t offset,
+static uint16_t btn(xcb_connection_t * xc, const uint16_t offset,
 	char * restrict label, char * restrict cmd)
 {
 	struct XStatusButton * i = last_btn();
-	struct XStatusButton * b = xstatus_get_button(X, &(xcb_rectangle_t){
+	struct XStatusButton * b = xstatus_get_button(xc, &(xcb_rectangle_t){
 		.x=offset, .width = xstatus_get_font_size().width
 		* strlen(label) + XSTATUS_CONST_WIDE_PAD,
 		.height=XSTATUS_CONST_HEIGHT}, label, system_cb, cmd);
@@ -115,19 +114,19 @@ static uint16_t btn(struct XData * restrict X, const uint16_t offset,
 	return offset + b->widget.geometry.width + XSTATUS_CONST_PAD;
 }
 /* Returns x offset after all buttons added.  */
-static uint16_t setup_buttons(struct XData * restrict X)
+static uint16_t setup_buttons(xcb_connection_t * xc)
 {
 	uint16_t off = 0;
-	off = btn(X, off, "Menu", XSTATUS_MENU_COMMAND);
-	off = btn(X, off, "Terminal", XSTATUS_TERMINAL);
-	off = btn(X, off, "Editor", XSTATUS_EDITOR_COMMAND);
+	off = btn(xc, off, "Menu", XSTATUS_MENU_COMMAND);
+	off = btn(xc, off, "Terminal", XSTATUS_TERMINAL);
+	off = btn(xc, off, "Editor", XSTATUS_EDITOR_COMMAND);
 	{
 		char *browser=getenv("XSTATUS_BROWSER_COMMAND");
-		off=btn(X, off, "Browser",
+		off=btn(xc, off, "Browser",
 			browser?browser:XSTATUS_BROWSER_COMMAND);
 	}
-	off=btn(X, off, "Mixer", XSTATUS_MIXER_COMMAND);
-	off=btn(X, off, "Lock", XSTATUS_LOCK_COMMAND);
+	off=btn(xc, off, "Mixer", XSTATUS_MIXER_COMMAND);
+	off=btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
 	return off;
 }
 static struct XStatusButton * find_button(const xcb_window_t w)
@@ -149,14 +148,14 @@ static bool iter_buttons(const xcb_window_t ewin,
 }
 // returns if update needed
 __attribute__((nonnull))
-static void handle_events(struct XData * restrict X,
+static void handle_events(xcb_connection_t * xc,
 	xcb_generic_event_t * restrict e)
 {
 	switch (e->response_type) {
 	case XCB_EXPOSE:
 		if(!iter_buttons(((xcb_expose_event_t *)e)->window,
 			xstatus.head_button->draw))
-			update(X);
+			update(xc);
 		break;
 	case XCB_BUTTON_PRESS:
 		iter_buttons(((xcb_button_press_event_t *)e)->event,
@@ -171,28 +170,27 @@ static void handle_events(struct XData * restrict X,
 #define handle_events(X, e) {}
 #endif//XSTATUS_USE_BUTTONS
 __attribute__((noreturn))
-static void event_loop(struct XData * restrict X, const uint8_t delay)
+static void event_loop(xcb_connection_t * xc, const uint8_t delay)
 {
 	for (;;) {
 		xcb_generic_event_t * e;
-		if (jb_next_event_timed(X->xcb, &e,
-			delay * 1000000) && e)
-			handle_events(X, e);
-		update(X);
+		if (jb_next_event_timed(xc, &e, delay * 1000000) && e)
+			handle_events(xc, e);
+		update(xc);
 	}
 }
-static void setup_font(struct XData * restrict X)
+static void setup_font(xcb_connection_t * xc)
 {
-	if (!xstatus_open_font(X->xcb, XSTATUS_FONT)) // default
-		if (!xstatus_open_font(X->xcb, "fixed")) // fallback
+	if (!xstatus_open_font(xc, XSTATUS_FONT)) // default
+		if (!xstatus_open_font(xc, "fixed")) // fallback
 			LIBJB_ERROR("Could not load any font");
 }
-static xcb_connection_t * setup_xdata(struct XData * X)
+static xcb_connection_t * setup_xdata(void)
 {
-	xcb_connection_t * xc = X->xcb = jb_get_xcb_connection(NULL, NULL);
-	create_window(X);
-	setup_font(X); // font needed for gc
-	xstatus_create_gc(xc, xstatus_get_gc(xc), X->w,
+	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
+	create_window(xc);
+	setup_font(xc); // font needed for gc
+	xstatus_create_gc(xc, xstatus_get_gc(xc), xstatus_get_window(xc),
 		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 	return xc;
 }
@@ -204,15 +202,15 @@ void xstatus_start(
 #endif//XSTATUS_USE_STATUS_FILE
 	const uint8_t delay)
 {
-	struct XData X;
-	xcb_connection_t * xc = setup_xdata(&X);
+	xcb_connection_t * xc = setup_xdata();
 #ifdef XSTATUS_USE_BUTTONS
 	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
-		X.w, XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
-	setup_buttons(&X);
+		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
+		XSTATUS_BUTTON_BG);
+	setup_buttons(xc);
 #endif//XSTATUS_USE_BUTTONS
 #ifdef XSTATUS_USE_STATUS_FILE
 	xstatus.filename = filename;
 #endif//XSTATUS_USE_STATUS_FILE
-	event_loop(&X, delay);
+	event_loop(xc, delay);
 }

@@ -31,7 +31,7 @@ static void warn_no_data(const char * fn)
 	write(2, "\n", 1);
 }
 // Returns offset for next widget
-uint16_t draw_status_file(struct XData * restrict X,
+uint16_t draw_status_file(xcb_connection_t * xc,
 	const uint16_t x_offset,
 	const char * restrict filename)
 {
@@ -45,9 +45,9 @@ uint16_t draw_status_file(struct XData * restrict X,
 		}
 		return x_offset;
 	}
-	xcb_connection_t * xc = X->xcb;
-	xcb_image_text_8(xc, s, X->w, xstatus_get_gc(xc), x_offset
-		+ XSTATUS_CONST_WIDE_PAD, xstatus_get_font_size().h, buf);
+	xcb_image_text_8(xc, s, xstatus_get_window(xc),
+		xstatus_get_gc(xc), x_offset + XSTATUS_CONST_WIDE_PAD,
+		xstatus_get_font_size().h, buf);
 	return xstatus_get_font_size().w * s + x_offset + XSTATUS_CONST_WIDE_PAD
 		+ XSTATUS_CONST_WIDE_PAD;
 }
