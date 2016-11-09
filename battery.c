@@ -41,29 +41,34 @@ static void draw_percent(xcb_connection_t * xc, const xcb_gc_t gc,
 	xcb_image_text_8(xc, l, xstatus_get_window(xc),
 		gc, x, xstatus_get_font_size().h, buf);
 }
+static void init_gcs(xcb_connection_t * xc, const xcb_window_t w,
+	xcb_gc_t * restrict gc)
+{
+	gc[BATTERY_GC_BACKGROUND] = xcb_generate_id(xc);
+	gc[BATTERY_GC_AC] = xcb_generate_id(xc);
+	gc[BATTERY_GC_BATTERY] = xcb_generate_id(xc);
+	gc[BATTERY_GC_CRITICAL] = xcb_generate_id(xc);
+	xstatus_create_gc(xc, gc[BATTERY_GC_BACKGROUND], w,
+		XSTATUS_BATTERY_BACKGROUND_COLOR,
+		XSTATUS_BATTERY_BACKGROUND_COLOR);
+	xstatus_create_gc(xc, gc[BATTERY_GC_AC], w,
+		XSTATUS_BATTERY_AC_COLOR,
+		XSTATUS_BATTERY_BACKGROUND_COLOR);
+	xstatus_create_gc(xc, gc[BATTERY_GC_BATTERY], w,
+		XSTATUS_BATTERY_BATTERY_COLOR,
+		XSTATUS_BATTERY_BACKGROUND_COLOR);
+	xstatus_create_gc(xc, gc[BATTERY_GC_CRITICAL], w,
+		XSTATUS_BATTERY_CRITICAL_COLOR,
+		XSTATUS_BATTERY_BACKGROUND_COLOR);
+
+}
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
 	static xcb_gc_t gc[BATTERY_GC_SIZE];
 	const xcb_window_t w = xstatus_get_window(xc);
-	if (!*gc) {
-		gc[BATTERY_GC_BACKGROUND] = xcb_generate_id(xc);
-		gc[BATTERY_GC_AC] = xcb_generate_id(xc);
-		gc[BATTERY_GC_BATTERY] = xcb_generate_id(xc);
-		gc[BATTERY_GC_CRITICAL] = xcb_generate_id(xc);
-		xstatus_create_gc(xc, gc[BATTERY_GC_BACKGROUND], w,
-			XSTATUS_BATTERY_BACKGROUND_COLOR,
-			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		xstatus_create_gc(xc, gc[BATTERY_GC_AC], w,
-			XSTATUS_BATTERY_AC_COLOR,
-			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		xstatus_create_gc(xc, gc[BATTERY_GC_BATTERY], w,
-			XSTATUS_BATTERY_BATTERY_COLOR,
-			XSTATUS_BATTERY_BACKGROUND_COLOR);
-		xstatus_create_gc(xc, gc[BATTERY_GC_CRITICAL], w,
-			XSTATUS_BATTERY_CRITICAL_COLOR,
-			XSTATUS_BATTERY_BACKGROUND_COLOR);
-	}
+	if (!*gc)
+		init_gcs(xc, w, gc);
 	const uint8_t pct = get_percent();
 	const enum BATGCs a = get_gc(pct);
 	xcb_rectangle_t g = {.x=start, .y = XSTATUS_CONST_HEIGHT >> 2,
