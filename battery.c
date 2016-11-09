@@ -32,7 +32,7 @@ static enum BATGCs get_gc(const uint8_t pct)
 		< XSTATUS_CONST_CRITICAL_PERCENT
 		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
-static void draw_percent(xcb_connection_t * xc, const xcb_gc_t gc,
+static void draw_percent(xcb_connection_t * restrict xc, const xcb_gc_t gc,
 	const uint8_t pct, const int16_t x)
 {
 	const uint8_t buf_sz = 7;
@@ -41,26 +41,23 @@ static void draw_percent(xcb_connection_t * xc, const xcb_gc_t gc,
 	xcb_image_text_8(xc, l, xstatus_get_window(xc),
 		gc, x, xstatus_get_font_size().h, buf);
 }
-static void init_gcs(xcb_connection_t * xc, const xcb_window_t w,
+static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
+	xcb_gc_t * restrict gc, const char * restrict fg)
+{
+	xstatus_create_gc(xc, *gc = xcb_generate_id(xc), w, fg,
+		XSTATUS_BATTERY_BACKGROUND_COLOR);
+}
+static void init_gcs(xcb_connection_t * restrict xc, const xcb_window_t w,
 	xcb_gc_t * restrict gc)
 {
-	gc[BATTERY_GC_BACKGROUND] = xcb_generate_id(xc);
-	gc[BATTERY_GC_AC] = xcb_generate_id(xc);
-	gc[BATTERY_GC_BATTERY] = xcb_generate_id(xc);
-	gc[BATTERY_GC_CRITICAL] = xcb_generate_id(xc);
-	xstatus_create_gc(xc, gc[BATTERY_GC_BACKGROUND], w,
-		XSTATUS_BATTERY_BACKGROUND_COLOR,
+	set_gc(xc, w, gc + BATTERY_GC_BACKGROUND,
 		XSTATUS_BATTERY_BACKGROUND_COLOR);
-	xstatus_create_gc(xc, gc[BATTERY_GC_AC], w,
-		XSTATUS_BATTERY_AC_COLOR,
-		XSTATUS_BATTERY_BACKGROUND_COLOR);
-	xstatus_create_gc(xc, gc[BATTERY_GC_BATTERY], w,
-		XSTATUS_BATTERY_BATTERY_COLOR,
-		XSTATUS_BATTERY_BACKGROUND_COLOR);
-	xstatus_create_gc(xc, gc[BATTERY_GC_CRITICAL], w,
-		XSTATUS_BATTERY_CRITICAL_COLOR,
-		XSTATUS_BATTERY_BACKGROUND_COLOR);
-
+	set_gc(xc, w, gc + BATTERY_GC_AC,
+		XSTATUS_BATTERY_AC_COLOR);
+	set_gc(xc, w, gc + BATTERY_GC_BATTERY,
+		XSTATUS_BATTERY_BATTERY_COLOR);
+	set_gc(xc, w, gc + BATTERY_GC_CRITICAL,
+		XSTATUS_BATTERY_CRITICAL_COLOR);
 }
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)

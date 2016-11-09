@@ -8,7 +8,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 void xstatus_create_gc(xcb_connection_t * xc, const xcb_gc_t gc,
-	const xcb_window_t win, char * restrict fg, char * restrict bg)
+	const xcb_window_t win, const char * restrict fg,
+	const char * restrict bg)
 {
 	const xcb_colormap_t cm = xstatus_get_colormap(xc);
 	xcb_void_cookie_t c = xcb_create_gc_checked(xc, gc, win,
