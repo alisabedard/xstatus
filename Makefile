@@ -1,26 +1,22 @@
 objs=${prog}.o util.o widget.o main.o font.o xdata.o button.o
 objs+=clock.o load.o status_file.o
 include config.mk
-CFLAGS+=-std=c99
-CFLAGS+=-D_XOPEN_SOURCE=700
-CFLAGS+=-D_DEFAULT_SOURCE
-CFLAGS+=-D_BSD_SOURCE
-LDFLAGS+=-Llibjb
-LDFLAGS+=-lxcb -ljb
+cflags+=-std=c11
+cflags+=-D_XOPEN_SOURCE=700
+cflags+=-D_DEFAULT_SOURCE
+cflags+=-D_BSD_SOURCE
+ldflags+=-Llibjb
+ldflags+=-lxcb -ljb
+ldlags+=${LDFLAGS}
+cflags+=${CFLAGS}
 PREFIX=/usr
 prog=xstatus
 installdir=${DESTDIR}${PREFIX}
-all:
-	cd libjb && ${MAKE} CC="${CC}" CFLAGS="${CFLAGS}"
-	make ${prog}
-	ls -l ${prog} >> sz.log; tail -n 5 sz.log
+${prog}: ${objs}
+	${CC} ${cflags} ${ldflags} ${objs} -o $@
 include depend.mk
-${objs}: *.h
-${prog}: ${objs} libjb/libjb.a
-	${CC} ${CFLAGS} ${objs} libjb/libjb.a -o $@ ${LDFLAGS}
 clean:
 	rm -f ${prog} *.o
-	cd libjb && make clean
 install:
 	install -d ${installdir}/bin
 	install -s xstatus ${installdir}/bin

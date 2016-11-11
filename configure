@@ -2,18 +2,20 @@
 # Copyright 2016, Jeffrey E. Bedard
 CFG=config.mk
 # Defaults:
+OPT_SHARED_LIBJB=false
 OPT_DEBUG=false
 # Features that are not portable are kept optional
 # Features:
 OPT_TEMP=true
 OPT_BATTERY=true
 rm -f "$CFG"
-OPTSTR='Bbcdhlst'
+OPTSTR='Bbcdhjlst'
 while getopts $OPTSTR opt
 do
 	case $opt in
 	B) OPT_BATTERY=false;;
 	d) OPT_DEBUG=true;;
+	j) OPT_SHARED_LIBJB=true;;
 	l) OPT_LOAD=false;;
 	s) OPT_STATUS=false;;
 	t) OPT_TEMP=false;;
@@ -129,3 +131,16 @@ if $OPT_TEMP; then
 	EOF
 	echo enabled temp
 fi
+checklib() # 1: prefix 2: library file
+{
+	if [ -f "${1}/lib/${2}" ]; then
+		echo "Found ${1}/lib/${2}"
+		echo "LDFLAGS+=-L${1}/lib" >> ${CFG}
+		echo "CFLAGS+=-I${1}/include" >> ${CFG}
+		return 0
+	fi
+	return 1
+}
+checklib /usr libjb.so && checklib /usr/local libjb.so \
+	&& checklib /usr/pkg libjb.so && checklib /opt libjb.so \
+	&& checklib ~ libjb.so && echo 'Could not find libjb'

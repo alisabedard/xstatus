@@ -5,9 +5,9 @@
 #include "clock.h"
 #include "config.h"
 #include "font.h"
-#include "libjb/class.h"
-#include "libjb/log.h"
-#include "libjb/xcb.h"
+#include <libjb/class.h>
+#include <libjb/log.h>
+#include <libjb/xcb.h>
 #include "load.h"
 #include "status_file.h"
 #include "temperature.h"
