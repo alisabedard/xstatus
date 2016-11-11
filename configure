@@ -2,7 +2,7 @@
 # Copyright 2016, Jeffrey E. Bedard
 CFG=config.mk
 # Defaults:
-OPT_SHARED_LIBJB=false
+OPT_STATIC_LIBJB=true
 OPT_DEBUG=false
 # Features that are not portable are kept optional
 # Features:
@@ -131,16 +131,10 @@ if $OPT_TEMP; then
 	EOF
 	echo enabled temp
 fi
-checklib() # 1: prefix 2: library file
-{
-	if [ -f "${1}/lib/${2}" ]; then
-		echo "Found ${1}/lib/${2}"
-		echo "LDFLAGS+=-L${1}/lib" >> ${CFG}
-		echo "CFLAGS+=-I${1}/include" >> ${CFG}
-		return 0
-	fi
-	return 1
-}
-checklib /usr libjb.so && checklib /usr/local libjb.so \
-	&& checklib /usr/pkg libjb.so && checklib /opt libjb.so \
-	&& checklib ~ libjb.so && echo 'Could not find libjb'
+if $OPT_STATIC_LIBJB; then
+	echo Using static libjb...
+	echo "static=libjb/libjb.a" >> ${CFG}
+else
+	echo Using shared libjb...
+	echo "ldflags+=-Llibjb -ljb" >> ${CFG}
+fi

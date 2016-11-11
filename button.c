@@ -2,8 +2,8 @@
 #include "button.h"
 #include "config.h"
 #include "font.h"
-#include "libjb/xcb.h"
 #include "xdata.h"
+#include <libjb/xcb.h>
 #include <stdlib.h>
 #include <string.h>
 static void draw(struct XStatusButton * restrict b)
