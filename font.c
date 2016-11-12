@@ -36,13 +36,9 @@ bool xstatus_open_font(xcb_connection_t * restrict xc,
 	const char * restrict fn)
 {
 	xcb_font_t f = xstatus_get_font(xc);
-	xcb_void_cookie_t c = xcb_open_font_checked(xc, f, strlen(fn), fn);
-	xcb_query_font_cookie_t fc = xcb_query_font(xc, f);
-	if (jb_xcb_cookie_has_error(xc, c)) {
-		LIBJB_WARN("Failed to load font: %s", fn);
+	if(!jb_open_font(xc, f, fn))
 		return false;
-	}
-	finish_query(xc, fc);
+	finish_query(xc, xcb_query_font(xc, f));
 	return true;
 }
 
