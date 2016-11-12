@@ -14,7 +14,7 @@ installdir=${DESTDIR}${PREFIX}
 ${exe}: libjb/libjb.a ${objs}
 	${CC} ${cflags} ${ldflags} ${objs} ${static} -o $@
 libjb/libjb.a:
-	cd libjb && ${MAKE}
+	cd libjb && ${MAKE} libjb.a
 include depend.mk
 clean:
 	cd libjb && ${MAKE} clean
