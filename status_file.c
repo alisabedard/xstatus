@@ -1,10 +1,10 @@
 #include "status_file.h"
 #include "config.h"
 #include "font.h"
+#include "libjb/util.h"
 #include "util.h"
 #include <errno.h>
 #include <fcntl.h>
-#include <libjb/util.h>
 #include <sys/stat.h>
 #include <unistd.h>
 static ssize_t poll_status_file(const char * restrict filename,

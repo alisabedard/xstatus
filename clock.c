@@ -2,7 +2,7 @@
 #include "clock.h"
 #include "config.h"
 #include "font.h"
-#include <libjb/xcb.h>
+#include "libjb/xcb.h"
 __attribute__((hot))
 uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 {

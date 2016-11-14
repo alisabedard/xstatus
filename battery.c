@@ -2,10 +2,10 @@
 #include "battery.h"
 #include "config.h"
 #include "font.h"
+#include "libjb/log.h"
+#include "libjb/util.h"
 #include "util.h"
 #include "xstatus.h"
-#include <libjb/log.h>
-#include <libjb/util.h>
 //#define TEST
 // get percent value, maximum 100
 static uint8_t get_percent(void)

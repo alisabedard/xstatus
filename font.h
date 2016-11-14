@@ -1,7 +1,7 @@
 // Copyright 2016, Jeffrey E. Bedard
 #ifndef XSTATUS_FONT_H
 #define XSTATUS_FONT_H
-#include "libjb/size.h"
+#include "libjb/JBDim.h"
 #include <stdbool.h>
 #include <xcb/xcb.h>
 xcb_font_t xstatus_get_font(xcb_connection_t * restrict xc);
