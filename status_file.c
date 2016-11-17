@@ -5,6 +5,7 @@
 #include "util.h"
 #include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
 static ssize_t poll_status_file(const char * restrict filename,
@@ -21,14 +22,13 @@ static ssize_t poll_status_file(const char * restrict filename,
 	close(fd);
 	return r;
 }
-static void warn_no_data(const char * fn)
+static void warn_no_data(const char * restrict fn)
 {
-	const char msg[] = "No data in status file: ";
-	write(2, msg, sizeof(msg));
-	size_t l = 0;
-	while(fn[++l]);
-	write(2, fn, l);
-	write(2, "\n", 1);
+	static bool warned;
+	if (warned)
+		return;
+	fprintf(stderr, "No data in status file: %s\n", fn);
+	warned = true;
 }
 // Returns offset for next widget
 uint16_t draw_status_file(xcb_connection_t * xc,
@@ -38,11 +38,7 @@ uint16_t draw_status_file(xcb_connection_t * xc,
 	char buf[XSTATUS_CONST_BUFFER_SIZE];
 	const ssize_t s = poll_status_file(filename, buf) - 1;
 	if (s <= 0) { // empty or error
-		static bool been_warned;
-		if (!been_warned) {
-			warn_no_data(filename);
-			been_warned = true;
-		}
+		warn_no_data(filename);
 		return x_offset;
 	}
 	xcb_image_text_8(xc, s, xstatus_get_window(xc),
