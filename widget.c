@@ -19,7 +19,7 @@ void xstatus_setup_widget(
 	xcb_rectangle_t * restrict geometry,
 	const pixel_t bg, const uint32_t events)
 {
-	const xcb_window_t win = w->window = xcb_generate_id(xc);
-	xstatus_create_widget_window(xc, win, geometry, bg, events);
+	xstatus_create_widget_window(xc, w->window = xcb_generate_id(xc),
+		geometry, bg, events);
 	w->geometry = *geometry;
 }
