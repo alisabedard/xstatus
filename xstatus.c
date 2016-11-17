@@ -30,7 +30,7 @@ static void create_window(xcb_connection_t * xc)
 		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK, v);
 	xcb_map_window(xc, w);
 }
-static struct XStatusButton *last_btn(void)
+static struct XStatusButton *get_last_button(void)
 {
 	struct XStatusButton * i = xstatus_head_button;
 	if(i)
@@ -40,7 +40,7 @@ static struct XStatusButton *last_btn(void)
 }
 static uint16_t xstatus_get_button_end(void)
 {
-	struct XStatusButton * b = last_btn();
+	struct XStatusButton * b = get_last_button();
 	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	return g->x + g->width;
 }
@@ -75,7 +75,7 @@ static void system_cb(struct XStatusButton * b)
 static uint16_t btn(xcb_connection_t * xc, const uint16_t offset,
 	char * restrict label, char * restrict cmd)
 {
-	struct XStatusButton * i = last_btn();
+	struct XStatusButton * i = get_last_button();
 	struct XStatusButton * b = xstatus_get_button(xc, &(xcb_rectangle_t){
 		.x=offset, .width = xstatus_get_font_size().width
 		* strlen(label) + XSTATUS_CONST_WIDE_PAD,
@@ -118,7 +118,7 @@ static bool iter_buttons(const xcb_window_t ewin,
 }
 // returns if update needed
 __attribute__((nonnull))
-static void handle_events(xcb_connection_t * xc,
+static void handle_events(xcb_connection_t * restrict xc,
 	xcb_generic_event_t * restrict e)
 {
 	switch (e->response_type) {
