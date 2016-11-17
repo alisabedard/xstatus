@@ -19,15 +19,15 @@ static void create_window(xcb_connection_t * xc)
 	xcb_screen_t * s = xstatus_get_screen(xc);
 	const int16_t y = s->height_in_pixels
 		- XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
-	const uint32_t v[] = {jb_get_pixel(xc, s->default_colormap,
-		XSTATUS_PANEL_BACKGROUND), true,
-	      XCB_EVENT_MASK_EXPOSURE};
 	const xcb_window_t w = xstatus_get_window(xc);
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, w,
 		s->root, 0, y, s->width_in_pixels, XSTATUS_CONST_HEIGHT,
 		XSTATUS_CONST_BORDER, XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 		XCB_COPY_FROM_PARENT, XCB_CW_BACK_PIXEL
-		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK, v);
+		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK,
+		(uint32_t[]){jb_get_pixel(xc, s->default_colormap,
+			XSTATUS_PANEL_BACKGROUND), true,
+			XCB_EVENT_MASK_EXPOSURE});
 	xcb_map_window(xc, w);
 }
 static struct XStatusButton *get_last_button(void)
