@@ -152,7 +152,7 @@ static void setup_font(xcb_connection_t * xc)
 		if (!xstatus_open_font(xc, "fixed")) // fallback
 			LIBJB_ERROR("Could not load any font");
 }
-static xcb_connection_t * setup_xdata(void)
+static xcb_connection_t * setup_x_data(void)
 {
 	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
 	create_window(xc);
@@ -163,7 +163,7 @@ static xcb_connection_t * setup_xdata(void)
 }
 void xstatus_start(char * restrict filename, const uint8_t delay)
 {
-	xcb_connection_t * xc = setup_xdata();
+	xcb_connection_t * xc = setup_x_data();
 	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
 		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
 		XSTATUS_BUTTON_BG);
