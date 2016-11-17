@@ -3,22 +3,17 @@
 #include "font.h"
 #include "libjb/util.h"
 #include "util.h"
-#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <sys/stat.h>
 #include <unistd.h>
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
 {
 	fd_t fd = open(filename, O_RDONLY|O_CREAT, 0644);
-	errno = 0;
 	if (jb_check(fd >= 0, "Could not open status file"))
 		return -1;
-	errno = 0;
 	ssize_t r = read(fd, buf, XSTATUS_CONST_BUFFER_SIZE);
 	jb_check(r != -1, "Could not read status file");
-	errno = 0;
 	close(fd);
 	return r;
 }
