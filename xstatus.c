@@ -13,7 +13,6 @@
 #include "util.h"
 #include <string.h>
 static struct XStatusButton * xstatus_head_button;
-static char * xstatus_filename;
 static void create_window(xcb_connection_t * xc)
 {
 	xcb_screen_t * s = xstatus_get_screen(xc);
@@ -44,25 +43,28 @@ static uint16_t xstatus_get_button_end(void)
 	xcb_rectangle_t * restrict g = &b->widget.geometry;
 	return g->x + g->width;
 }
-static uint16_t poll_status(xcb_connection_t * restrict xc)
+static uint16_t poll_status(xcb_connection_t * restrict xc,
+	const char * filename)
 {
 	uint16_t offset = xstatus_get_button_end() + XSTATUS_CONST_PAD;
 	offset = xstatus_draw_load(xc, offset);
 #ifdef XSTATUS_USE_TEMPERATURE
 	offset = draw_temp(xc, offset);
 #endif//XSTATUS_USE_TEMPERATURE
-	offset = draw_status_file(xc, offset, xstatus_filename);
+	offset = draw_status_file(xc, offset, filename);
 	return offset;
 }
-static void update(xcb_connection_t * xc)
+static void update(xcb_connection_t * restrict xc,
+	const char * restrict filename)
 {
 	const uint16_t width = xstatus_get_screen(xc)->width_in_pixels;
 	xcb_clear_area(xc, 0, xstatus_get_window(xc),
 		0, 0, width, XSTATUS_CONST_HEIGHT);
 #ifdef XSTATUS_USE_BATTERY_BAR
-	xstatus_draw_battery(xc, poll_status(xc), xstatus_draw_clock(xc));
+	xstatus_draw_battery(xc, poll_status(xc, filename),
+		xstatus_draw_clock(xc));
 #else//!XSTATUS_USE_BATTERY_BAR
-	poll_status(xc);
+	poll_status(xc, filename);
 	xstatus_draw_clock(xc);
 #endif//XSTATUS_USE_BATTERY_BAR
 }
@@ -119,13 +121,13 @@ static bool iter_buttons(const xcb_window_t ewin,
 // returns if update needed
 __attribute__((nonnull))
 static void handle_events(xcb_connection_t * restrict xc,
-	xcb_generic_event_t * restrict e)
+	xcb_generic_event_t * restrict e, const char * restrict filename)
 {
 	switch (e->response_type) {
 	case XCB_EXPOSE:
 		if(!iter_buttons(((xcb_expose_event_t *)e)->window,
 			xstatus_head_button->draw))
-			update(xc);
+			update(xc, filename);
 		break;
 	case XCB_BUTTON_PRESS:
 		iter_buttons(((xcb_button_press_event_t *)e)->event,
@@ -137,13 +139,15 @@ static void handle_events(xcb_connection_t * restrict xc,
 	free(e);
 }
 __attribute__((noreturn))
-static void event_loop(xcb_connection_t * xc, const uint8_t delay)
+static void event_loop(xcb_connection_t * restrict xc,
+	const uint8_t delay, const char * restrict filename)
 {
 	for (;;) {
 		xcb_generic_event_t * e;
 		if (jb_next_event_timed(xc, &e, delay * 1000000) && e)
-			handle_events(xc, e);
-		update(xc);
+			handle_events(xc, e, filename);
+		else
+			update(xc, filename);
 	}
 }
 static void setup_font(xcb_connection_t * xc)
@@ -168,6 +172,5 @@ void xstatus_start(char * restrict filename, const uint8_t delay)
 		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
 		XSTATUS_BUTTON_BG);
 	setup_buttons(xc);
-	xstatus_filename = filename;
-	event_loop(xc, delay);
+	event_loop(xc, delay, filename);
 }
