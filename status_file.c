@@ -48,6 +48,6 @@ uint16_t draw_status_file(xcb_connection_t * xc,
 	xcb_image_text_8(xc, s, xstatus_get_window(xc),
 		xstatus_get_gc(xc), x_offset + XSTATUS_CONST_WIDE_PAD,
 		xstatus_get_font_size().h, buf);
-	return xstatus_get_font_size().w * s + x_offset + XSTATUS_CONST_WIDE_PAD
-		+ XSTATUS_CONST_WIDE_PAD;
+	return xstatus_get_font_size().w * s + x_offset
+		+ XSTATUS_CONST_WIDE_PAD + XSTATUS_CONST_WIDE_PAD;
 }
