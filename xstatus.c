@@ -90,10 +90,10 @@ static uint16_t setup_buttons(xcb_connection_t * xc)
 	off = btn(xc, off, "Menu", XSTATUS_MENU_COMMAND);
 	off = btn(xc, off, "Terminal", XSTATUS_TERMINAL);
 	off = btn(xc, off, "Editor", XSTATUS_EDITOR_COMMAND);
-	{
-		char *browser=getenv("XSTATUS_BROWSER_COMMAND");
-		off=btn(xc, off, "Browser",
-			browser?browser:XSTATUS_BROWSER_COMMAND);
+	{ // * browser scope
+		char * browser=getenv("XSTATUS_BROWSER_COMMAND");
+		off = btn(xc, off, "Browser", browser ? browser
+			: XSTATUS_BROWSER_COMMAND);
 	}
 	off=btn(xc, off, "Mixer", XSTATUS_MIXER_COMMAND);
 	off=btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
