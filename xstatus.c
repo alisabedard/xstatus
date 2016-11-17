@@ -26,7 +26,7 @@ static void create_window(xcb_connection_t * xc)
 		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK,
 		(uint32_t[]){jb_get_pixel(xc, s->default_colormap,
 			XSTATUS_PANEL_BACKGROUND), true,
-			XCB_EVENT_MASK_EXPOSURE});
+		XCB_EVENT_MASK_EXPOSURE});
 	xcb_map_window(xc, w);
 }
 static struct XStatusButton *get_last_button(void)
