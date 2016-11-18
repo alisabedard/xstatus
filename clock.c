@@ -13,6 +13,6 @@ uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 	const uint16_t offset = xstatus_get_screen(xc)->width_in_pixels
 		- f.w * sz;
 	xcb_image_text_8(xc, sz, xstatus_get_window(xc),
-		xstatus_get_gc(xc),offset, f.h, buf);
+		xstatus_get_gc(xc), offset, f.h, buf);
 	return offset;
 }
