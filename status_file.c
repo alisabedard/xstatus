@@ -2,17 +2,20 @@
 #include "status_file.h"
 #include "config.h"
 #include "font.h"
+#include "libjb/file.h"
 #include "libjb/util.h"
 #include "util.h"
 #include <fcntl.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <unistd.h>
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
 {
-	fd_t fd = open(filename, O_RDONLY|O_CREAT, 0644);
-	if (jb_check(fd >= 0, "Could not open status file"))
+	fd_t fd = jb_open(filename, O_RDONLY | O_CREAT);
+	if (fd < 0)
 		return -1;
+	fchmod(fd, 0600);
 	ssize_t r = read(fd, buf, XSTATUS_CONST_BUFFER_SIZE);
 	jb_check(r != -1, "Could not read status file");
 	close(fd);
