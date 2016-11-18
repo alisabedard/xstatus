@@ -59,6 +59,14 @@ static void init_gcs(xcb_connection_t * restrict xc, const xcb_window_t w,
 	set_gc(xc, w, gc + BATTERY_GC_CRITICAL,
 		XSTATUS_BATTERY_CRITICAL_COLOR);
 }
+static void set_rectangle(xcb_rectangle_t * restrict rect,
+	const uint16_t start, const uint16_t end)
+{
+	*rect = (xcb_rectangle_t){.x=start,
+		.y = (XSTATUS_CONST_HEIGHT >> 2) + 1,
+		.height = XSTATUS_CONST_HEIGHT >> 1,
+		.width = end - start - XSTATUS_CONST_PAD};
+}
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
@@ -71,11 +79,8 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 		{ // gc_index scope
 			const uint8_t gc_index = get_gc(pct);
 			{ // rect scope
-				xcb_rectangle_t rect = {.x=start,
-					.y = (XSTATUS_CONST_HEIGHT >> 2) + 1,
-					.height = XSTATUS_CONST_HEIGHT >> 1,
-					.width = end - start
-						- XSTATUS_CONST_PAD};
+				xcb_rectangle_t rect;
+				set_rectangle(&rect, start, end);
 				xcb_poly_fill_rectangle(xc, w,
 					gc[BATTERY_GC_BACKGROUND], 1, &rect);
 				rect.width = rect.width * pct / 100;
