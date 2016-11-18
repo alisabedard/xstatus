@@ -12,7 +12,7 @@
 #include "temperature.h"
 #include "util.h"
 #include <string.h>
-static struct XStatusButton * xstatus_head_button;
+static struct XSButton * xstatus_head_button;
 static inline int16_t get_y(xcb_screen_t * restrict s)
 {
 	return s->height_in_pixels - XSTATUS_CONST_HEIGHT
@@ -32,9 +32,9 @@ static void create_window(xcb_connection_t * xc)
 		XCB_EVENT_MASK_EXPOSURE});
 	xcb_map_window(xc, w);
 }
-static struct XStatusButton *get_last_button(void)
+static struct XSButton *get_last_button(void)
 {
-	struct XStatusButton * i = xstatus_head_button;
+	struct XSButton * i = xstatus_head_button;
 	if(i)
 		while(i->next)
 			i=i->next;
@@ -42,9 +42,8 @@ static struct XStatusButton *get_last_button(void)
 }
 static uint16_t xstatus_get_button_end(void)
 {
-	struct XStatusButton * b = get_last_button();
-	xcb_rectangle_t * restrict g = &b->widget.geometry;
-	return g->x + g->width;
+	struct XSButton * restrict b = get_last_button();
+	return b->x + b->width;
 }
 static uint16_t poll_status(xcb_connection_t * restrict xc,
 	const char * filename)
@@ -71,22 +70,21 @@ static void update(xcb_connection_t * restrict xc,
 	xstatus_draw_clock(xc);
 #endif//XSTATUS_USE_BATTERY_BAR
 }
-static void system_cb(struct XStatusButton * b)
+static void system_cb(struct XSButton * b)
 {
 	const char *cmd = b->cb_data;
 	if (system(cmd))
 		LIBJB_WARN("Cannot execute %s", cmd);
 }
-static uint16_t btn(xcb_connection_t * xc, const uint16_t offset,
+static uint16_t btn(xcb_connection_t * xc, const int16_t offset,
 	char * restrict label, char * restrict cmd)
 {
-	struct XStatusButton * i = get_last_button();
-	struct XStatusButton * b = xstatus_get_button(xc, &(xcb_rectangle_t){
-		.x=offset, .width = xstatus_get_font_size().width
-		* strlen(label) + XSTATUS_CONST_WIDE_PAD,
-		.height=XSTATUS_CONST_HEIGHT}, label, system_cb, cmd);
+	struct XSButton * i = get_last_button();
+	struct XSButton * b = xstatus_create_button(xc, offset, label);
+	b->cb = system_cb;
+	b->cb_data = cmd;
 	*(i ? &i->next : &xstatus_head_button) = b;
-	return offset + b->widget.geometry.width + XSTATUS_CONST_PAD;
+	return offset + b->width + XSTATUS_CONST_PAD;
 }
 /* Returns x offset after all buttons added.  */
 static uint16_t initialize_buttons(xcb_connection_t * xc)
@@ -104,17 +102,17 @@ static uint16_t initialize_buttons(xcb_connection_t * xc)
 	off = btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
 	return off;
 }
-static struct XStatusButton * find_button(const xcb_window_t w)
+static struct XSButton * find_button(const xcb_window_t w)
 {
-	for(struct XStatusButton * i = xstatus_head_button; i; i=i->next)
-		if(i->widget.window==w)
+	for(struct XSButton * i = xstatus_head_button; i; i=i->next)
+		if(i->window==w)
 			return i;
 	return NULL;
 }
 static bool iterate_buttons(const xcb_window_t ewin,
-	void (*func)(struct XStatusButton * restrict))
+	void (*func)(struct XSButton * restrict))
 {
-	struct XStatusButton * b = find_button(ewin);
+	struct XSButton * b = find_button(ewin);
 	if (b) {
 		func(b);
 		return true;

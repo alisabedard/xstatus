@@ -1,4 +1,4 @@
-objs=${exe}.o util.o widget.o main.o font.o xdata.o button.o
+objs=${exe}.o util.o main.o font.o xdata.o button.o
 objs+=clock.o load.o status_file.o
 include config.mk
 cflags+=-std=c11

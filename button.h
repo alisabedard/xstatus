@@ -1,18 +1,18 @@
+// Copyright 2016, Jeffrey E. Bedard
 #ifndef XSTATUS_BUTTON_H
 #define XSTATUS_BUTTON_H
-#include <stdint.h>
-#include "widget.h"
-struct XStatusButton {
-	char * label;
-	void (*cb) (struct XStatusButton *);
-	void (*draw) (struct XStatusButton *);
+#include <xcb/xcb.h>
+struct XSButton {
+	struct XSButton * next;
+	void (*cb)(struct XSButton *);
+	void (*draw) (struct XSButton *);
 	void *cb_data;
+	char * label;
 	xcb_connection_t * xc;
-	struct XStatusButton * next; // optional linked list
-	struct XStatusWidget widget;
+	xcb_window_t window;
+	int16_t x;
+	uint16_t width;
 };
-struct XStatusButton * xstatus_get_button(xcb_connection_t * xc,
-	xcb_rectangle_t * restrict g,
-	char * restrict label, void (*cb)(struct XStatusButton *),
-	void *cb_data);
+struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
+	const int16_t x, char * label);
 #endif//XSTATUS_BUTTON_H

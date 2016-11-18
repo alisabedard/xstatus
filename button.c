@@ -6,39 +6,29 @@
 #include "xdata.h"
 #include <stdlib.h>
 #include <string.h>
-static void draw(struct XStatusButton * restrict b)
+static void xstatus_draw_button(struct XSButton * restrict b)
 {
-	const struct XStatusWidget * restrict w = &b->widget;
-	xcb_connection_t * xc = b->xc;
-	xcb_image_text_8(xc, strlen(b->label), w->window,
-		xstatus_get_button_gc(xc), XSTATUS_CONST_PAD,
+	xcb_image_text_8(b->xc, strlen(b->label), b->window,
+		xstatus_get_button_gc(b->xc), XSTATUS_CONST_PAD,
 		xstatus_get_font_size().height, b->label);
 }
-static void setup(struct XStatusButton * restrict b, xcb_connection_t * xc,
-	xcb_rectangle_t * restrict g, char * restrict label,
-	void (*cb)(struct XStatusButton *), void *cb_data)
+struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
+	const int16_t x, char * label)
 {
-	b->xc = xc;
+	struct XSButton * b = calloc(1, sizeof(struct XSButton));
+	b->window = xcb_generate_id(xc);
+	b->draw = xstatus_draw_button;
 	b->label = label;
-	b->draw = draw;
-	b->cb = cb;
-	b->cb_data = cb_data;
-	b->next = NULL;
-	struct XStatusWidget * w = &b->widget;
-	xstatus_setup_widget(xc, &b->widget, g,
-		jb_get_pixel(xc, xstatus_get_colormap(xc),
-		XSTATUS_BUTTON_BG),
-		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS);
-	w->geometry = *g;
-	draw(b);
-}
-struct XStatusButton * xstatus_get_button(xcb_connection_t * xc,
-	xcb_rectangle_t * restrict geometry,
-	char * restrict label, void (*cb)(struct XStatusButton *),
-	void *cb_data)
-{
-	struct XStatusButton * restrict b
-		= malloc(sizeof(struct XStatusButton));
-	setup(b, xc, geometry, label, cb, cb_data);
+	b->xc = xc;
+	const struct JBDim f = xstatus_get_font_size();
+	xcb_create_window(xc, XCB_COPY_FROM_PARENT, b->window,
+		xstatus_get_window(xc), b->x = x, 0,
+		b->width = f.w * strlen(label) + f.w,
+		f.h + XSTATUS_CONST_PAD, 0, 0, 0, XCB_CW_BACK_PIXEL
+		| XCB_CW_EVENT_MASK, (uint32_t[]){jb_get_pixel(xc,
+		xstatus_get_colormap(xc), XSTATUS_BUTTON_BG),
+		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS});
+	xcb_map_window(xc, b->window);
+	xstatus_draw_button(b);
 	return b;
 }
