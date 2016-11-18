@@ -32,13 +32,14 @@ static void create_window(xcb_connection_t * xc)
 		XCB_EVENT_MASK_EXPOSURE});
 	xcb_map_window(xc, w);
 }
+static struct XSButton * get_last_button_r(struct XSButton * i)
+{
+	return i->next ? get_last_button_r(i->next) : i;
+}
 static struct XSButton *get_last_button(void)
 {
-	struct XSButton * i = xstatus_head_button;
-	if(i)
-		while(i->next)
-			i=i->next;
-	return i;
+	return xstatus_head_button ? get_last_button_r(xstatus_head_button)
+		: NULL;
 }
 static uint16_t xstatus_get_button_end(void)
 {
