@@ -102,12 +102,14 @@ static uint16_t initialize_buttons(xcb_connection_t * xc)
 	off = btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
 	return off;
 }
+static struct XSButton * find_button_r(const xcb_window_t w,
+	struct XSButton * i)
+{
+	return i ? i->window == w ? i : find_button_r(w, i->next) : NULL;
+}
 static struct XSButton * find_button(const xcb_window_t w)
 {
-	for(struct XSButton * i = xstatus_head_button; i; i=i->next)
-		if(i->window==w)
-			return i;
-	return NULL;
+	return find_button_r(w, xstatus_head_button);
 }
 static bool iterate_buttons(const xcb_window_t ewin,
 	void (*func)(struct XSButton * restrict))
