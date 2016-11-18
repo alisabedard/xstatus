@@ -160,27 +160,26 @@ static void event_loop(xcb_connection_t * restrict xc,
 			update(xc, filename);
 	}
 }
-static void initialize_font(xcb_connection_t * xc)
+static void initialize_font(xcb_connection_t * restrict xc)
 {
 	if (!xstatus_open_font(xc, XSTATUS_FONT)) // default
 		if (!xstatus_open_font(xc, "fixed")) // fallback
 			LIBJB_ERROR("Could not load any font");
 }
-static xcb_connection_t * initialize_x_data(void)
+static void initialize_gcs(xcb_connection_t * restrict xc)
+{
+	xstatus_create_gc(xc, xstatus_get_gc(xc), xstatus_get_window(xc),
+		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
+	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
+		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
+		XSTATUS_BUTTON_BG);
+}
+void xstatus_start(char * restrict filename, const uint8_t delay)
 {
 	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
 	create_window(xc);
 	initialize_font(xc); // font needed for gc
-	xstatus_create_gc(xc, xstatus_get_gc(xc), xstatus_get_window(xc),
-		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
-	return xc;
-}
-void xstatus_start(char * restrict filename, const uint8_t delay)
-{
-	xcb_connection_t * xc = initialize_x_data();
-	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
-		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
-		XSTATUS_BUTTON_BG);
+	initialize_gcs(xc);
 	initialize_buttons(xc);
 	event_loop(xc, delay, filename);
 }
