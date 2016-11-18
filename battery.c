@@ -68,8 +68,8 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 		init_gcs(xc, w, gc);
 	{ // pct scope
 		const uint8_t pct = get_percent();
-		{ // a scope
-			const enum BATGCs a = get_gc(pct);
+		{ // gc_index scope
+			const enum BATGCs gc_index = get_gc(pct);
 			{ // g scope
 				xcb_rectangle_t g = {.x=start,
 					.y = (XSTATUS_CONST_HEIGHT >> 2) + 1,
@@ -79,9 +79,11 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 				xcb_poly_fill_rectangle(xc, w,
 					gc[BATTERY_GC_BACKGROUND], 1, &g);
 				g.width = g.width * pct / 100;
-				xcb_poly_fill_rectangle(xc, w, gc[a], 1, &g);
+				xcb_poly_fill_rectangle(xc, w,
+					gc[gc_index], 1, &g);
 			}
-			draw_percent(xc, gc[a], pct, start + (end-start)/2);
+			draw_percent(xc, gc[gc_index], pct,
+				start + (end-start) / 2);
 		}
 	}
 	xcb_flush(xc);
