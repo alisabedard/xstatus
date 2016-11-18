@@ -13,14 +13,17 @@
 #include "util.h"
 #include <string.h>
 static struct XStatusButton * xstatus_head_button;
+static inline int16_t get_y(xcb_screen_t * restrict s)
+{
+	return s->height_in_pixels - XSTATUS_CONST_HEIGHT
+		- XSTATUS_CONST_BORDER;
+}
 static void create_window(xcb_connection_t * xc)
 {
 	xcb_screen_t * s = xstatus_get_screen(xc);
-	const int16_t y = s->height_in_pixels
-		- XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
 	const xcb_window_t w = xstatus_get_window(xc);
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, w,
-		s->root, 0, y, s->width_in_pixels, XSTATUS_CONST_HEIGHT,
+		s->root, 0, get_y(s), s->width_in_pixels, XSTATUS_CONST_HEIGHT,
 		XSTATUS_CONST_BORDER, XCB_WINDOW_CLASS_COPY_FROM_PARENT,
 		XCB_COPY_FROM_PARENT, XCB_CW_BACK_PIXEL
 		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK,
@@ -97,8 +100,8 @@ static uint16_t setup_buttons(xcb_connection_t * xc)
 		off = btn(xc, off, "Browser", browser ? browser
 			: XSTATUS_BROWSER_COMMAND);
 	}
-	off=btn(xc, off, "Mixer", XSTATUS_MIXER_COMMAND);
-	off=btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
+	off = btn(xc, off, "Mixer", XSTATUS_MIXER_COMMAND);
+	off = btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
 	return off;
 }
 static struct XStatusButton * find_button(const xcb_window_t w)
@@ -118,6 +121,16 @@ static bool iter_buttons(const xcb_window_t ewin,
 	}
 	return false;
 }
+static void handle_expose_event(xcb_connection_t * restrict xc,
+	xcb_expose_event_t * restrict e, const char * restrict filename)
+{
+	if(!iter_buttons(e->window, xstatus_head_button->draw))
+		update(xc, filename);
+}
+static void handle_button_press_event(xcb_button_press_event_t * restrict e)
+{
+	iter_buttons(e->event, xstatus_head_button->cb);
+}
 // returns if update needed
 __attribute__((nonnull))
 static void handle_events(xcb_connection_t * restrict xc,
@@ -125,13 +138,10 @@ static void handle_events(xcb_connection_t * restrict xc,
 {
 	switch (e->response_type) {
 	case XCB_EXPOSE:
-		if(!iter_buttons(((xcb_expose_event_t *)e)->window,
-			xstatus_head_button->draw))
-			update(xc, filename);
+		handle_expose_event(xc, (xcb_expose_event_t *)e, filename);
 		break;
 	case XCB_BUTTON_PRESS:
-		iter_buttons(((xcb_button_press_event_t *)e)->event,
-			xstatus_head_button->cb);
+		handle_button_press_event((xcb_button_press_event_t *)e);
 		break;
 	default:
 		LOG("event: %d", e->response_type);
