@@ -15,6 +15,12 @@
 	"\t-h\t\tPrint this usage information.\n" \
 	"Copyright 2016, Jeffrey E. Bedard <jefbed@gmail.com>\n" \
 	"Project page:  https://github.com/jefbed/xstatus\n"
+__attribute__((noreturn))
+static void usage(void)
+{
+	fputs(XSTATUS_HELPTEXT, stderr);
+	exit(1);
+}
 int main(int argc, char ** argv)
 {
 	char *filename=XSTATUS_STATUS_FILE;
@@ -29,11 +35,8 @@ int main(int argc, char ** argv)
 			filename=optarg;
 			break;
 		case 'h':
-		default: {
-			const char helptext[] = XSTATUS_HELPTEXT;
-			write(2, helptext, sizeof(helptext));
-		}
-			exit(0);
+		default:
+			usage();
 		}
 	}
 	xstatus_start(filename, delay);
