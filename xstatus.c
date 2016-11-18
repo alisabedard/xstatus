@@ -22,13 +22,13 @@ static void create_window(xcb_connection_t * xc)
 {
 	xcb_screen_t * s = xstatus_get_screen(xc);
 	const xcb_window_t w = xstatus_get_window(xc);
+	const uint32_t vm = XCB_CW_BACK_PIXEL
+		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK;
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, w,
 		s->root, 0, get_y(s), s->width_in_pixels, XSTATUS_CONST_HEIGHT,
 		XSTATUS_CONST_BORDER, XCB_WINDOW_CLASS_COPY_FROM_PARENT,
-		XCB_COPY_FROM_PARENT, XCB_CW_BACK_PIXEL
-		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK,
-		(uint32_t[]){jb_get_pixel(xc, s->default_colormap,
-			XSTATUS_PANEL_BACKGROUND), true,
+		XCB_COPY_FROM_PARENT, vm, (uint32_t[]){ jb_get_pixel(xc,
+		s->default_colormap, XSTATUS_PANEL_BACKGROUND), true,
 		XCB_EVENT_MASK_EXPOSURE});
 	xcb_map_window(xc, w);
 }
@@ -108,14 +108,10 @@ static struct XSButton * find_button_r(const xcb_window_t w,
 {
 	return i ? i->window == w ? i : find_button_r(w, i->next) : NULL;
 }
-static struct XSButton * find_button(const xcb_window_t w)
-{
-	return find_button_r(w, xstatus_head_button);
-}
 static bool iterate_buttons(const xcb_window_t ewin,
 	void (*func)(struct XSButton * restrict))
 {
-	struct XSButton * b = find_button(ewin);
+	struct XSButton * b = find_button_r(ewin, xstatus_head_button);
 	if (b) {
 		func(b);
 		return true;
@@ -172,8 +168,8 @@ static void initialize_gcs(xcb_connection_t * restrict xc)
 	const xcb_window_t w = xstatus_get_window(xc);
 	xstatus_create_gc(xc, xstatus_get_gc(xc), w,
 		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
-	xstatus_create_gc(xc, xstatus_get_button_gc(xc), w, XSTATUS_BUTTON_FG,
-		XSTATUS_BUTTON_BG);
+	xstatus_create_gc(xc, xstatus_get_button_gc(xc), w,
+		XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
 }
 void xstatus_start(struct XStatusOptions * restrict opt)
 {
