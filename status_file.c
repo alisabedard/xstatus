@@ -4,11 +4,9 @@
 #include "font.h"
 #include "libjb/file.h"
 #include "libjb/util.h"
-#include "util.h"
-#include <fcntl.h>
+#include "xdata.h"
 #include <stdio.h>
 #include <sys/stat.h>
-#include <unistd.h>
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
 {
@@ -29,6 +27,13 @@ static void warn_no_data(const char * restrict fn)
 	fprintf(stderr, "No data in status file: %s\n", fn);
 	warned = true;
 }
+static void draw_text(xcb_connection_t * restrict xc, const int16_t x,
+	const int8_t len, char * buf)
+{
+	xcb_image_text_8(xc, len, xstatus_get_window(xc),
+		xstatus_get_gc(xc), x + XSTATUS_CONST_WIDE_PAD,
+		xstatus_get_font_size().h, buf);
+}
 // Returns offset for next widget
 uint16_t draw_status_file(xcb_connection_t * xc,
 	const uint16_t x_offset,
@@ -40,9 +45,7 @@ uint16_t draw_status_file(xcb_connection_t * xc,
 		warn_no_data(filename);
 		return x_offset;
 	}
-	xcb_image_text_8(xc, s, xstatus_get_window(xc),
-		xstatus_get_gc(xc), x_offset + XSTATUS_CONST_WIDE_PAD,
-		xstatus_get_font_size().h, buf);
+	draw_text(xc, x_offset, s, buf);
 	return xstatus_get_font_size().w * s + x_offset
 		+ XSTATUS_CONST_WIDE_PAD + XSTATUS_CONST_WIDE_PAD;
 }
