@@ -1,5 +1,9 @@
 #ifndef XSTATUS_XSTATUS_H
 #define XSTATUS_XSTATUS_H
 #include <stdint.h>
-void xstatus_start(char * restrict filename, const uint8_t delay);
+struct XStatusOptions {
+	char * filename;
+	uint8_t delay;
+};
+void xstatus_start(struct XStatusOptions * opt);
 #endif//!XSTATUS_XSTATUS_H

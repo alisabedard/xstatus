@@ -22,16 +22,16 @@ static void usage(void)
 	exit(1);
 }
 static void parse_command_line(int argc, char ** argv,
-	char ** filename, uint8_t * restrict delay)
+	struct XStatusOptions * restrict o)
 {
 	int8_t opt;
 	while((opt = getopt(argc, argv, "d:f:h")) != -1) {
 		switch(opt) {
 		case 'd':
-			*delay = atoi(optarg);
+			o->delay = atoi(optarg);
 			break;
 		case 'f':
-			*filename = optarg;
+			o->filename = optarg;
 			break;
 		case 'h':
 		default:
@@ -41,8 +41,8 @@ static void parse_command_line(int argc, char ** argv,
 }
 int main(int argc, char ** argv)
 {
-	char *filename=XSTATUS_STATUS_FILE;
-	uint8_t delay=1;
-	parse_command_line(argc, argv, &filename, &delay);
-	xstatus_start(filename, delay);
+	struct XStatusOptions o = {.filename = XSTATUS_STATUS_FILE,
+		.delay = 1};
+	parse_command_line(argc, argv, &o);
+	xstatus_start(&o);
 }
