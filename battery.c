@@ -67,6 +67,25 @@ static void set_rectangle(xcb_rectangle_t * restrict rect,
 		.height = XSTATUS_CONST_HEIGHT >> 1,
 		.width = end - start - XSTATUS_CONST_PAD};
 }
+static void draw_percent_full(xcb_connection_t * restrict xc,
+	const xcb_window_t w, const xcb_gc_t gc,
+	xcb_rectangle_t rect, const uint8_t pct)
+{
+	rect.width = rect.width * pct / 100;
+	// draw percent full:
+	xcb_poly_fill_rectangle(xc, w, gc, 1, &rect);
+}
+static void draw_rectangles(xcb_connection_t * restrict xc,
+	const xcb_window_t w, const xcb_gc_t gc, const xcb_gc_t bg_gc,
+	const uint16_t start, const uint16_t end, const uint8_t pct)
+{
+	xcb_rectangle_t rect;
+	set_rectangle(&rect, start, end);
+	// clear:
+	xcb_poly_fill_rectangle(xc, w, bg_gc, 1, &rect);
+	draw_percent_full(xc, w, gc, rect, pct);
+
+}
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
@@ -78,15 +97,8 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 		const uint8_t pct = get_percent();
 		{ // gc_index scope
 			const uint8_t gc_index = get_gc(pct);
-			{ // rect scope
-				xcb_rectangle_t rect;
-				set_rectangle(&rect, start, end);
-				xcb_poly_fill_rectangle(xc, w,
-					gc[BATTERY_GC_BACKGROUND], 1, &rect);
-				rect.width = rect.width * pct / 100;
-				xcb_poly_fill_rectangle(xc, w,
-					gc[gc_index], 1, &rect);
-			}
+			draw_rectangles(xc, w, gc[gc_index],
+				gc[BATTERY_GC_BACKGROUND], start, end, pct);
 			draw_percent(xc, gc[gc_index], pct,
 				start + (end-start) / 2);
 		}
