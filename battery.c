@@ -98,7 +98,8 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 		{ // gc_index scope
 			const uint8_t gc_index = get_gc(pct);
 			draw_rectangles(xc, w, gc[gc_index],
-				gc[BATTERY_GC_BACKGROUND], start, end, pct);
+				gc[BATTERY_GC_BACKGROUND],
+				start, end, pct);
 			draw_percent(xc, gc[gc_index], pct,
 				start + (end-start) / 2);
 		}
