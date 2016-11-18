@@ -89,7 +89,7 @@ static uint16_t btn(xcb_connection_t * xc, const uint16_t offset,
 	return offset + b->widget.geometry.width + XSTATUS_CONST_PAD;
 }
 /* Returns x offset after all buttons added.  */
-static uint16_t setup_buttons(xcb_connection_t * xc)
+static uint16_t initialize_buttons(xcb_connection_t * xc)
 {
 	uint16_t off = 0;
 	off = btn(xc, off, "Menu", XSTATUS_MENU_COMMAND);
@@ -111,7 +111,7 @@ static struct XStatusButton * find_button(const xcb_window_t w)
 			return i;
 	return NULL;
 }
-static bool iter_buttons(const xcb_window_t ewin,
+static bool iterate_buttons(const xcb_window_t ewin,
 	void (*func)(struct XStatusButton * restrict))
 {
 	struct XStatusButton * b = find_button(ewin);
@@ -124,12 +124,12 @@ static bool iter_buttons(const xcb_window_t ewin,
 static void handle_expose_event(xcb_connection_t * restrict xc,
 	xcb_expose_event_t * restrict e, const char * restrict filename)
 {
-	if(!iter_buttons(e->window, xstatus_head_button->draw))
+	if(!iterate_buttons(e->window, xstatus_head_button->draw))
 		update(xc, filename);
 }
 static void handle_button_press_event(xcb_button_press_event_t * restrict e)
 {
-	iter_buttons(e->event, xstatus_head_button->cb);
+	iterate_buttons(e->event, xstatus_head_button->cb);
 }
 // returns if update needed
 __attribute__((nonnull))
@@ -160,27 +160,27 @@ static void event_loop(xcb_connection_t * restrict xc,
 			update(xc, filename);
 	}
 }
-static void setup_font(xcb_connection_t * xc)
+static void initialize_font(xcb_connection_t * xc)
 {
 	if (!xstatus_open_font(xc, XSTATUS_FONT)) // default
 		if (!xstatus_open_font(xc, "fixed")) // fallback
 			LIBJB_ERROR("Could not load any font");
 }
-static xcb_connection_t * setup_x_data(void)
+static xcb_connection_t * initialize_x_data(void)
 {
 	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
 	create_window(xc);
-	setup_font(xc); // font needed for gc
+	initialize_font(xc); // font needed for gc
 	xstatus_create_gc(xc, xstatus_get_gc(xc), xstatus_get_window(xc),
 		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 	return xc;
 }
 void xstatus_start(char * restrict filename, const uint8_t delay)
 {
-	xcb_connection_t * xc = setup_x_data();
+	xcb_connection_t * xc = initialize_x_data();
 	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
 		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
 		XSTATUS_BUTTON_BG);
-	setup_buttons(xc);
+	initialize_buttons(xc);
 	event_loop(xc, delay, filename);
 }
