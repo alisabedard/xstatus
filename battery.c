@@ -6,21 +6,21 @@
 #include "libjb/util.h"
 #include "util.h"
 #include "xstatus.h"
-//#define TEST
+//#define XSTATUS_BATTERY_TEST
 // get percent value, maximum 100
 static uint8_t get_percent(void)
 {
-#ifdef TEST
+#ifdef XSTATUS_BATTERY_TEST
 	static int8_t p = 100;
 	p -= 10;
 	if (p < 0)
 		return p = 100;
 	return p;
-#else//!TEST
+#else//!XSTATUS_BATTERY_TEST
 	const uint8_t pct = xstatus_system_value(XSTATUS_SYSFILE_BATTERY);
 	LOG("Percent: %d\n", pct);
 	return JB_MIN(pct, 100);
-#endif//TEST
+#endif//XSTATUS_BATTERY_TEST
 }
 // index into gc array, keeps gc array private
 enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
