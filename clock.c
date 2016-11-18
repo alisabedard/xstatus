@@ -3,6 +3,12 @@
 #include "config.h"
 #include "font.h"
 #include "libjb/xcb.h"
+static uint16_t get_offset(xcb_connection_t * restrict xc,
+	const uint16_t font_width, const size_t sz)
+{
+	return xstatus_get_screen(xc)->width_in_pixels
+		- font_width * sz;
+}
 __attribute__((hot))
 uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 {
@@ -12,8 +18,7 @@ uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 	uint16_t offset;
 	{ // f scope
 		const struct JBDim f = xstatus_get_font_size();
-		offset = xstatus_get_screen(xc)->width_in_pixels
-			- f.w * sz;
+		offset = get_offset(xc, f.w, sz);
 		xcb_image_text_8(xc, sz, xstatus_get_window(xc),
 			xstatus_get_gc(xc), offset, f.h, buf);
 	}
