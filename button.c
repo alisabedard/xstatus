@@ -14,28 +14,39 @@ static void xstatus_draw_button(struct XSButton * restrict b)
 }
 static pixel_t get_bg(xcb_connection_t * restrict xc)
 {
-	return jb_get_pixel(xc, xstatus_get_colormap(xc), XSTATUS_BUTTON_BG);
+	static pixel_t p; // cache the result
+	return p ? p : (p = jb_get_pixel(xc, xstatus_get_colormap(xc),
+		XSTATUS_BUTTON_BG));
 }
-static uint16_t get_width(uint16_t fw, const char * label)
+static inline uint16_t get_width(uint16_t fw, const char * label)
 {
 	return fw * strlen(label) + fw;
+}
+static inline uint16_t get_height(uint16_t fh)
+{
+	return fh + XSTATUS_CONST_PAD;
+}
+static void create_window(struct XSButton * b)
+{
+	const struct JBDim f = xstatus_get_font_size();
+	b->width = get_width(f.w, b->label);
+	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+	const uint32_t em = XCB_EVENT_MASK_EXPOSURE
+		| XCB_EVENT_MASK_BUTTON_PRESS;
+	xcb_create_window(b->xc, 0, b->window, xstatus_get_window(b->xc),
+		b->x, 0, b->width, get_height(f.h), 0, 0, 0, vm,
+		(uint32_t[]){get_bg(b->xc), em});
+	xcb_map_window(b->xc, b->window);
 }
 struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
 	const int16_t x, char * label)
 {
 	struct XSButton * b = calloc(1, sizeof(struct XSButton));
-	b->window = xcb_generate_id(xc);
+	b->window = xcb_generate_id(b->xc = xc);
 	b->draw = xstatus_draw_button;
 	b->label = label;
-	b->xc = xc;
-	const struct JBDim f = xstatus_get_font_size();
-	xcb_create_window(xc, XCB_COPY_FROM_PARENT, b->window,
-		xstatus_get_window(xc), b->x = x, 0,
-		b->width = get_width(f.w, label),
-		f.h + XSTATUS_CONST_PAD, 0, 0, 0, XCB_CW_BACK_PIXEL
-		| XCB_CW_EVENT_MASK, (uint32_t[]){get_bg(xc),
-		XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS});
-	xcb_map_window(xc, b->window);
+	b->x = x;
+	create_window(b);
 	xstatus_draw_button(b);
 	return b;
 }
