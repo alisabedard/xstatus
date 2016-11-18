@@ -4,7 +4,12 @@
 #include "font.h"
 #include "util.h"
 #include <stdio.h>
-#include <string.h>
+static uint16_t get_offset(const uint16_t fw, const uint16_t offset,
+	const uint8_t len)
+{
+	return fw * len + offset + XSTATUS_CONST_WIDE_PAD
+		+ XSTATUS_CONST_PAD;
+}
 // Returns x offset for next item
 uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset)
 {
@@ -16,6 +21,5 @@ uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset)
 	sz = snprintf(buf, sz, "%dC", v);
 	xcb_image_text_8(xc, sz, xstatus_get_window(xc),
 		xstatus_get_gc(xc), offset + XSTATUS_CONST_WIDE_PAD, f.h, buf);
-	return f.w * strlen(buf) + offset + XSTATUS_CONST_WIDE_PAD
-		+ XSTATUS_CONST_PAD;
+	return get_offset(f.w, offset, sz);
 }
