@@ -166,10 +166,10 @@ static void initialize_font(xcb_connection_t * restrict xc)
 }
 static void initialize_gcs(xcb_connection_t * restrict xc)
 {
-	xstatus_create_gc(xc, xstatus_get_gc(xc), xstatus_get_window(xc),
+	const xcb_window_t w = xstatus_get_window(xc);
+	xstatus_create_gc(xc, xstatus_get_gc(xc), w,
 		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
-	xstatus_create_gc(xc, xstatus_get_button_gc(xc),
-		xstatus_get_window(xc), XSTATUS_BUTTON_FG,
+	xstatus_create_gc(xc, xstatus_get_button_gc(xc), w, XSTATUS_BUTTON_FG,
 		XSTATUS_BUTTON_BG);
 }
 void xstatus_start(struct XStatusOptions * restrict opt)
