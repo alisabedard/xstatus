@@ -34,6 +34,11 @@ static void draw_text(xcb_connection_t * restrict xc, const int16_t x,
 		xstatus_get_gc(xc), x + XSTATUS_CONST_WIDE_PAD,
 		xstatus_get_font_size().h, buf);
 }
+static uint16_t get_offset(const uint16_t x, const ssize_t len)
+{
+	return xstatus_get_font_size().w * len + x
+		+ XSTATUS_CONST_WIDE_PAD + XSTATUS_CONST_WIDE_PAD;
+}
 // Returns offset for next widget
 uint16_t draw_status_file(xcb_connection_t * xc,
 	const uint16_t x_offset,
@@ -46,6 +51,5 @@ uint16_t draw_status_file(xcb_connection_t * xc,
 		return x_offset;
 	}
 	draw_text(xc, x_offset, s, buf);
-	return xstatus_get_font_size().w * s + x_offset
-		+ XSTATUS_CONST_WIDE_PAD + XSTATUS_CONST_WIDE_PAD;
+	return get_offset(x_offset, s);
 }
