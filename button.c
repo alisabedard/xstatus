@@ -26,20 +26,26 @@ static inline uint8_t get_height(uint8_t fh)
 {
 	return fh + (XSTATUS_CONST_PAD >> 1);
 }
-static void create_window(struct XSButton * b)
+static xcb_rectangle_t get_geometry(struct XSButton * b)
 {
 	const struct JBDim f = xstatus_get_font_size();
-	b->width = get_width(f.w, b->label);
+	return (xcb_rectangle_t){.x = b->x,
+		.width = b->width = get_width(f.w, b->label),
+		.height = get_height(f.h)};
+}
+static void create_window(struct XSButton * b)
+{
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
 	const uint32_t em = XCB_EVENT_MASK_EXPOSURE
 		| XCB_EVENT_MASK_BUTTON_PRESS;
-	const xcb_rectangle_t g = {b->x, 0,
-		b->width, get_height(f.h)};
 	const xcb_window_t w = b->window;
 	xcb_connection_t * restrict xc = b->xc;
-	xcb_create_window(xc, 0, w, xstatus_get_window(b->xc),
-		g.x, g.y, g.width, g.height, 0, 0, 0, vm,
-		(uint32_t[]){get_bg(b->xc), em});
+	{ // g scope
+		const xcb_rectangle_t g = get_geometry(b);
+		xcb_create_window(xc, 0, w, xstatus_get_window(b->xc),
+			g.x, g.y, g.width, g.height, 0, 0, 0, vm,
+			(uint32_t[]){get_bg(b->xc), em});
+	}
 	xcb_map_window(xc, w);
 }
 struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
