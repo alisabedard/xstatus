@@ -6,8 +6,8 @@
 #include "libjb/util.h"
 #include "xdata.h"
 #include <stdio.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <sys/stat.h> // include per man page of fchmod()
+#include <unistd.h> // include per man page of read()
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
 {
