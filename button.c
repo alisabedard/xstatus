@@ -35,13 +35,13 @@ static xcb_rectangle_t get_geometry(struct XSButton * b)
 }
 static void create_window(struct XSButton * b)
 {
-	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-	const uint32_t em = XCB_EVENT_MASK_EXPOSURE
-		| XCB_EVENT_MASK_BUTTON_PRESS;
 	const xcb_window_t w = b->window;
 	xcb_connection_t * restrict xc = b->xc;
-	{ // g scope
+	{ // g scope, vm scope, em scope
 		const xcb_rectangle_t g = get_geometry(b);
+		const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+		const uint32_t em = XCB_EVENT_MASK_EXPOSURE
+			| XCB_EVENT_MASK_BUTTON_PRESS;
 		xcb_create_window(xc, 0, w, xstatus_get_window(b->xc),
 			g.x, g.y, g.width, g.height, 0, 0, 0, vm,
 			(uint32_t[]){get_bg(b->xc), em});
