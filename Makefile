@@ -13,6 +13,10 @@ exe=xstatus
 installdir=${DESTDIR}${PREFIX}
 ${exe}: libjb/libjb.a ${objs}
 	${CC} ${cflags} ${ldflags} ${objs} ${static} -o $@
+	strip -s -o xstatus_stripped xstatus
+	ls -l xstatus_stripped >> sz.log
+	rm -f xstatus_stripped
+	tail sz.log
 libjb/libjb.a:
 	cd libjb && ${MAKE} libjb.a
 include depend.mk
