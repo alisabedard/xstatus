@@ -20,5 +20,5 @@ uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset)
 		xcb_image_text_8(xc, sz, xstatus_get_window(xc),
 			xstatus_get_gc(xc), x, f.h, buf);
 	}
-	return f.w * sz + x;
+	return x + f.w * sz + XSTATUS_CONST_PAD;
 }
