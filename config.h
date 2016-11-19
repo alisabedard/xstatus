@@ -20,6 +20,7 @@ enum {
 #define XSTATUS_LOCK_COMMAND "slock&"
 #define XSTATUS_STATUS_FILE "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
+#define XSTATUS_TIME_BUFFER_SIZE 20
 #define XSTATUS_BUTTON_BG "grey10"
 #define XSTATUS_BUTTON_FG "green4"
 #define XSTATUS_PANEL_FOREGROUND "green3"

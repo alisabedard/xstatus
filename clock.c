@@ -9,13 +9,20 @@ static uint16_t get_offset(xcb_connection_t * restrict xc,
 	return xstatus_get_screen(xc)->width_in_pixels
 		- font_width * sz;
 }
+static uint8_t format(char * buf, uint8_t sz)
+{
+	 return strftime(buf, sz, XSTATUS_TIME_FORMAT,
+		 localtime(&(time_t){time(NULL)}));
+}
+#include <stdio.h>
 __attribute__((hot))
 uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 {
-	char buf[30];
-	const size_t sz = strftime(buf, sizeof buf,
-		XSTATUS_TIME_FORMAT, localtime(&(time_t){time(NULL)}));
+	uint8_t sz = XSTATUS_TIME_BUFFER_SIZE;
+	char buf[sz];
+	sz = format(buf, sz);
 	uint16_t offset;
+	fprintf(stderr, "size: %d, string: %s\n", sz, buf);
 	{ // f scope
 		const struct JBDim f = xstatus_get_font_size();
 		offset = get_offset(xc, f.w, sz);
