@@ -18,10 +18,12 @@ void xstatus_create_gc(xcb_connection_t * xc, const xcb_gc_t gc,
 uint32_t xstatus_system_value(const char *filename)
 {
 enum { XSTATUS_SYSTEM_VALUE_BUFFER_SIZE = 8 };
-	fd_t f = jb_open(filename, O_RDONLY);
 	char buf[XSTATUS_SYSTEM_VALUE_BUFFER_SIZE];
-	read(f, buf, XSTATUS_SYSTEM_VALUE_BUFFER_SIZE);
-	close(f);
+	{ // f scope
+		fd_t f = jb_open(filename, O_RDONLY);
+		read(f, buf, XSTATUS_SYSTEM_VALUE_BUFFER_SIZE);
+		close(f);
+	}
 	return atoi(buf);
 }
 #endif//XSTATUS_USE_BATTERY_BAR||XSTATUS_USE_TEMPERATURE
