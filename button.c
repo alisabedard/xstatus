@@ -18,13 +18,13 @@ static pixel_t get_bg(xcb_connection_t * restrict xc)
 	return p ? p : (p = jb_get_pixel(xc, xstatus_get_colormap(xc),
 		XSTATUS_BUTTON_BG));
 }
-static inline uint16_t get_width(uint16_t fw, const char * label)
+static inline uint16_t get_width(uint8_t fw, const char * label)
 {
 	return fw * strlen(label) + fw;
 }
-static inline uint16_t get_height(uint16_t fh)
+static inline uint8_t get_height(uint8_t fh)
 {
-	return fh + XSTATUS_CONST_PAD;
+	return fh + (XSTATUS_CONST_PAD >> 1);
 }
 static void create_window(struct XSButton * b)
 {
@@ -33,10 +33,14 @@ static void create_window(struct XSButton * b)
 	const uint32_t vm = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
 	const uint32_t em = XCB_EVENT_MASK_EXPOSURE
 		| XCB_EVENT_MASK_BUTTON_PRESS;
-	xcb_create_window(b->xc, 0, b->window, xstatus_get_window(b->xc),
-		b->x, 0, b->width, get_height(f.h), 0, 0, 0, vm,
+	const xcb_rectangle_t g = {b->x, 0,
+		b->width, get_height(f.h)};
+	const xcb_window_t w = b->window;
+	xcb_connection_t * restrict xc = b->xc;
+	xcb_create_window(xc, 0, w, xstatus_get_window(b->xc),
+		g.x, g.y, g.width, g.height, 0, 0, 0, vm,
 		(uint32_t[]){get_bg(b->xc), em});
-	xcb_map_window(b->xc, b->window);
+	xcb_map_window(xc, w);
 }
 struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
 	const int16_t x, char * label)
