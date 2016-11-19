@@ -15,19 +15,20 @@ static uint8_t format(char * buf, uint8_t sz)
 	 return strftime(buf, sz, XSTATUS_TIME_FORMAT,
 		 localtime(&(time_t){time(NULL)}));
 }
+static uint16_t draw_for_font_size(xcb_connection_t * restrict xc,
+	const struct JBDim font_size, char * buf, const uint8_t sz)
+{
+	uint16_t offset = get_offset(xc, font_size.w, sz);
+	xcb_image_text_8(xc, sz, xstatus_get_window(xc),
+		xstatus_get_gc(xc), offset, font_size.h, buf);
+	return offset;
+}
 __attribute__((hot))
 uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 {
 	uint8_t sz = XSTATUS_TIME_BUFFER_SIZE;
 	char buf[sz];
 	sz = format(buf, sz);
-	uint16_t offset;
 	LOG(stderr, "size: %d, string: %s\n", sz, buf);
-	{ // f scope
-		const struct JBDim f = xstatus_get_font_size();
-		offset = get_offset(xc, f.w, sz);
-		xcb_image_text_8(xc, sz, xstatus_get_window(xc),
-			xstatus_get_gc(xc), offset, f.h, buf);
-	}
-	return offset;
+	return draw_for_font_size(xc, xstatus_get_font_size(), buf, sz);
 }
