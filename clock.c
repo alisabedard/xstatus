@@ -2,6 +2,7 @@
 #include "clock.h"
 #include "config.h"
 #include "font.h"
+#include "libjb/log.h"
 #include "libjb/xcb.h"
 static uint16_t get_offset(xcb_connection_t * restrict xc,
 	const uint16_t font_width, const size_t sz)
@@ -14,7 +15,6 @@ static uint8_t format(char * buf, uint8_t sz)
 	 return strftime(buf, sz, XSTATUS_TIME_FORMAT,
 		 localtime(&(time_t){time(NULL)}));
 }
-#include <stdio.h>
 __attribute__((hot))
 uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 {
@@ -22,7 +22,7 @@ uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 	char buf[sz];
 	sz = format(buf, sz);
 	uint16_t offset;
-	fprintf(stderr, "size: %d, string: %s\n", sz, buf);
+	LOG(stderr, "size: %d, string: %s\n", sz, buf);
 	{ // f scope
 		const struct JBDim f = xstatus_get_font_size();
 		offset = get_offset(xc, f.w, sz);
