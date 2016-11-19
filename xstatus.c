@@ -171,12 +171,16 @@ static void initialize_gcs(xcb_connection_t * restrict xc)
 	xstatus_create_gc(xc, xstatus_get_button_gc(xc), w,
 		XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
 }
-void xstatus_start(struct XStatusOptions * restrict opt)
+static void initialize(xcb_connection_t * restrict xc)
 {
-	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
 	create_window(xc);
 	initialize_font(xc); // font needed for gc
 	initialize_gcs(xc);
 	initialize_buttons(xc);
+}
+void xstatus_start(struct XStatusOptions * restrict opt)
+{
+	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
+	initialize(xc);
 	event_loop(xc, opt->delay, opt->filename);
 }
