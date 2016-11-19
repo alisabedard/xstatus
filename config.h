@@ -8,7 +8,8 @@ enum {
 	XSTATUS_CONST_CRITICAL_PERCENT = 10,
 	XSTATUS_CONST_HEIGHT = 18,
 	XSTATUS_CONST_PAD = 4,
-	XSTATUS_CONST_WIDE_PAD = 8
+	XSTATUS_CONST_WIDE_PAD = 8,
+	XSTATUS_TIME_BUFFER_SIZE = 20
 };
 #define XSTATUS_FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
 #define XSTATUS_MENU_COMMAND "dmenu_run -b&"
@@ -20,7 +21,6 @@ enum {
 #define XSTATUS_LOCK_COMMAND "slock&"
 #define XSTATUS_STATUS_FILE "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
-#define XSTATUS_TIME_BUFFER_SIZE 20
 #define XSTATUS_BUTTON_BG "grey10"
 #define XSTATUS_BUTTON_FG "green4"
 #define XSTATUS_PANEL_FOREGROUND "green3"
