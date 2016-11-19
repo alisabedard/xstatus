@@ -42,7 +42,7 @@ static struct XSButton * get_last_button_r(struct XSButton * i)
 {
 	return i->next ? get_last_button_r(i->next) : i;
 }
-static struct XSButton *get_last_button(void)
+static struct XSButton * get_last_button(void)
 {
 	return xstatus_head_button ? get_last_button_r(xstatus_head_button)
 		: NULL;
