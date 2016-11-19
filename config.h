@@ -12,7 +12,7 @@ enum {
 };
 #define XSTATUS_FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
 #define XSTATUS_MENU_COMMAND "dmenu_run -b&"
-#define TCMD "xterm"
+#define TCMD "jbxvt"
 #define XSTATUS_TERMINAL TCMD "&"
 #define XSTATUS_BROWSER_COMMAND "firefox&"
 #define XSTATUS_EDITOR_COMMAND TCMD " -e vim&"
