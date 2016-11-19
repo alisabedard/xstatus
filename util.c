@@ -2,8 +2,6 @@
 #include "util.h"
 #include "font.h"
 #include "libjb/file.h"
-#include "libjb/util.h"
-#include "libjb/xcb.h"
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
