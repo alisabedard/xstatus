@@ -17,10 +17,10 @@ void xstatus_create_gc(xcb_connection_t * xc, const xcb_gc_t gc,
 #if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
 uint32_t xstatus_system_value(const char *filename)
 {
-#define BUF_SZ 8
 	fd_t f = jb_open(filename, O_RDONLY);
-	char buf[BUF_SZ] = {};
-	read(f, buf, BUF_SZ);
+enum { XS_BUF_SZ = 8 };
+	char buf[XS_BUF_SZ];
+	read(f, buf, XS_BUF_SZ);
 	close(f);
 	return atoi(buf);
 }
