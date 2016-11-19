@@ -35,7 +35,8 @@ static void create_window(xcb_connection_t * restrict xc)
 	xcb_create_window(xc, XCB_COPY_FROM_PARENT, w, s->root, g.x, g.y,
 		g.width, g.height, XSTATUS_CONST_BORDER,
 		XCB_WINDOW_CLASS_COPY_FROM_PARENT, XCB_COPY_FROM_PARENT,
-		vm, (uint32_t[]){get_bg(xc, s), true, XCB_EVENT_MASK_EXPOSURE});
+		vm, (uint32_t[]){get_bg(xc, s), true,
+		XCB_EVENT_MASK_EXPOSURE});
 	xcb_map_window(xc, w);
 }
 static struct XSButton * get_last_button_r(struct XSButton * i)
