@@ -7,6 +7,7 @@
 #include "xdata.h"
 #include <stdio.h>
 #include <sys/stat.h>
+#include <unistd.h>
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
 {
