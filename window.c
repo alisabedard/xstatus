@@ -17,19 +17,22 @@ static pixel_t get_bg(xcb_connection_t * restrict xc,
 static xcb_rectangle_t get_geometry(xcb_screen_t * restrict s)
 {
 	return (xcb_rectangle_t){0, get_y(s), s->width_in_pixels,
-			XSTATUS_CONST_HEIGHT};
+		XSTATUS_CONST_HEIGHT};
 }
 void xstatus_create_window(xcb_connection_t * restrict xc)
 {
 	const xcb_window_t w = xstatus_get_window(xc);
 	{ // * s, em, vm, and g scope
-		enum {vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
-			| XCB_CW_EVENT_MASK, em = XCM_EVENT_MASK_EXPOSURE};
+		enum {
+			vm = XCB_CW_BACK_PIXEL | XCB_CW_OVERRIDE_REDIRECT
+				| XCB_CW_EVENT_MASK,
+			em = XCB_EVENT_MASK_EXPOSURE,
+			cfp = XCB_COPY_FROM_PARENT
+		};
 		xcb_screen_t * s = xstatus_get_screen(xc);
 		const xcb_rectangle_t g = get_geometry(s);
-		xcb_create_window(xc, XCB_COPY_FROM_PARENT, w, s->root, g.x, g.y,
-			g.width, g.height, XSTATUS_CONST_BORDER,
-			XCB_WINDOW_CLASS_COPY_FROM_PARENT, XCB_COPY_FROM_PARENT,
+		xcb_create_window(xc, cfp, w, s->root, g.x, g.y, g.width,
+			g.height, XSTATUS_CONST_BORDER, cfp, cfp,
 			vm, (uint32_t[]){get_bg(xc, s), true, em});
 	}
 	xcb_map_window(xc, w);
