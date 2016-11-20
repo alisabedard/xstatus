@@ -65,8 +65,8 @@ bool xstatus_toolbar_handle_expose(const xcb_window_t event_window)
 {
 	return iterate_buttons(event_window, xstatus_head_button->draw);
 }
-void xstatus_toolbar_handle_button_press(xcb_button_press_event_t * restrict e)
+bool xstatus_toolbar_handle_button_press(const xcb_window_t event_window)
 {
-	iterate_buttons(e->event, xstatus_head_button->cb);
+	return iterate_buttons(event_window, xstatus_head_button->cb);
 }
 

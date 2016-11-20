@@ -1,7 +1,6 @@
 // Copyright 2016, Jeffrey E. Bedard
 #include "xstatus.h"
 #include "battery.h"
-#include "button.h"
 #include "clock.h"
 #include "config.h"
 #include "font.h"
@@ -13,7 +12,7 @@
 #include "toolbar.h"
 #include "util.h"
 #include "window.h"
-#include <string.h>
+#include "xdata.h"
 static uint16_t poll_status(xcb_connection_t * restrict xc,
 	const char * filename, const uint16_t widget_start)
 {
@@ -53,7 +52,7 @@ static void handle_events(xcb_connection_t * restrict xc,
 		break;
 	case XCB_BUTTON_PRESS:
 		xstatus_toolbar_handle_button_press(
-			(xcb_button_press_event_t *)e);
+			((xcb_button_press_event_t *)e)->event);
 		break;
 	default:
 		LOG("event: %d", e->response_type);
