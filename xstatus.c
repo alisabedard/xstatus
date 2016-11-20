@@ -11,34 +11,9 @@
 #include "status_file.h"
 #include "temperature.h"
 #include "util.h"
+#include "window.h"
 #include <string.h>
 static struct XSButton * xstatus_head_button;
-static inline int16_t get_y(xcb_screen_t * restrict s)
-{
-	return s->height_in_pixels - XSTATUS_CONST_HEIGHT
-		- XSTATUS_CONST_BORDER;
-}
-static pixel_t get_bg(xcb_connection_t * restrict xc,
-	xcb_screen_t * restrict s)
-{
-	return jb_get_pixel(xc, s->default_colormap,
-		XSTATUS_PANEL_BACKGROUND);
-}
-static void create_window(xcb_connection_t * restrict xc)
-{
-	const uint32_t vm = XCB_CW_BACK_PIXEL
-		| XCB_CW_OVERRIDE_REDIRECT | XCB_CW_EVENT_MASK;
-	const xcb_window_t w = xstatus_get_window(xc);
-	xcb_screen_t * s = xstatus_get_screen(xc);
-	const xcb_rectangle_t g = {0, get_y(s), s->width_in_pixels,
-		XSTATUS_CONST_HEIGHT};
-	xcb_create_window(xc, XCB_COPY_FROM_PARENT, w, s->root, g.x, g.y,
-		g.width, g.height, XSTATUS_CONST_BORDER,
-		XCB_WINDOW_CLASS_COPY_FROM_PARENT, XCB_COPY_FROM_PARENT,
-		vm, (uint32_t[]){get_bg(xc, s), true,
-		XCB_EVENT_MASK_EXPOSURE});
-	xcb_map_window(xc, w);
-}
 static struct XSButton * get_last_button_r(struct XSButton * i)
 {
 	return i->next ? get_last_button_r(i->next) : i;
@@ -180,7 +155,7 @@ static void initialize_gcs(xcb_connection_t * restrict xc)
 }
 static void initialize(xcb_connection_t * restrict xc)
 {
-	create_window(xc);
+	xstatus_create_window(xc);
 	initialize_font(xc); // font needed for gc
 	initialize_gcs(xc);
 	initialize_buttons(xc);
