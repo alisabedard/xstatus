@@ -38,13 +38,17 @@ static void create_window(struct XSButton * b)
 	const xcb_window_t w = b->window;
 	xcb_connection_t * restrict xc = b->xc;
 	{ // g scope, vm scope, em scope
+		enum {
+			VM = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK,
+			EM = XCB_EVENT_MASK_EXPOSURE
+				| XCB_EVENT_MASK_BUTTON_PRESS,
+			CFP = XCB_COPY_FROM_PARENT,
+			BORDER = 0
+		};
 		const xcb_rectangle_t g = get_geometry(b);
-		enum { vm = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK,
-			em = XCB_EVENT_MASK_EXPOSURE
-				| XCB_EVENT_MASK_BUTTON_PRESS };
-		xcb_create_window(xc, 0, w, xstatus_get_window(b->xc),
-			g.x, g.y, g.width, g.height, 0, 0, 0, vm,
-			(uint32_t[]){get_bg(b->xc), em});
+		xcb_create_window(xc, CFP, w, xstatus_get_window(b->xc),
+			g.x, g.y, g.width, g.height, BORDER,
+			CFP, CFP, VM, (uint32_t[]){get_bg(b->xc), EM});
 	}
 	xcb_map_window(xc, w);
 }
