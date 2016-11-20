@@ -8,17 +8,20 @@ static inline int16_t get_y(const uint16_t screen_height)
 {
 	return screen_height - XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
 }
-static pixel_t get_bg(xcb_connection_t * restrict xc,
+__attribute__((nonnull))
+static inline pixel_t get_bg(xcb_connection_t * restrict xc,
 	xcb_screen_t * restrict s)
 {
 	return jb_get_pixel(xc, s->default_colormap,
 		XSTATUS_PANEL_BACKGROUND);
 }
-static xcb_rectangle_t get_geometry(xcb_screen_t * restrict s)
+__attribute__((nonnull))
+static inline xcb_rectangle_t get_geometry(xcb_screen_t * restrict s)
 {
 	return (xcb_rectangle_t){0, get_y(s->height_in_pixels),
 		s->width_in_pixels, XSTATUS_CONST_HEIGHT};
 }
+__attribute__((nonnull))
 void xstatus_create_window(xcb_connection_t * restrict xc)
 {
 	const xcb_window_t w = xstatus_get_window(xc);
