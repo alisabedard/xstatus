@@ -46,9 +46,9 @@ static void create_window(struct XSButton * b)
 			BORDER = 0
 		};
 		const xcb_rectangle_t g = get_geometry(b);
-		xcb_create_window(xc, CFP, w, xstatus_get_window(b->xc),
+		xcb_create_window(xc, CFP, w, xstatus_get_window(xc),
 			g.x, g.y, g.width, g.height, BORDER,
-			CFP, CFP, VM, (uint32_t[]){get_bg(b->xc), EM});
+			CFP, CFP, VM, (uint32_t[]){get_bg(xc), EM});
 	}
 	xcb_map_window(xc, w);
 }
