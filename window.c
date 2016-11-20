@@ -3,6 +3,7 @@
 #include "config.h"
 #include "libjb/xcb.h"
 #include "xdata.h"
+__attribute__((const))
 static inline int16_t get_y(const uint16_t screen_height)
 {
 	return screen_height - XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
