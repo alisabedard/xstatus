@@ -3,10 +3,9 @@
 #include "config.h"
 #include "libjb/xcb.h"
 #include "xdata.h"
-static inline int16_t get_y(xcb_screen_t * restrict s)
+static inline int16_t get_y(const uint16_t screen_height)
 {
-	return s->height_in_pixels - XSTATUS_CONST_HEIGHT
-		- XSTATUS_CONST_BORDER;
+	return screen_height - XSTATUS_CONST_HEIGHT - XSTATUS_CONST_BORDER;
 }
 static pixel_t get_bg(xcb_connection_t * restrict xc,
 	xcb_screen_t * restrict s)
@@ -16,8 +15,8 @@ static pixel_t get_bg(xcb_connection_t * restrict xc,
 }
 static xcb_rectangle_t get_geometry(xcb_screen_t * restrict s)
 {
-	return (xcb_rectangle_t){0, get_y(s), s->width_in_pixels,
-		XSTATUS_CONST_HEIGHT};
+	return (xcb_rectangle_t){0, get_y(s->height_in_pixels),
+		s->width_in_pixels, XSTATUS_CONST_HEIGHT};
 }
 void xstatus_create_window(xcb_connection_t * restrict xc)
 {
