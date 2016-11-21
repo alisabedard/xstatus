@@ -53,12 +53,12 @@ static void initialize_gcs(xcb_connection_t * restrict xc,
 	SETGC(BACKGROUND); SETGC(AC); SETGC(BATTERY); SETGC(CRITICAL);
 #undef SETGC
 }
-static xcb_rectangle_t get_rectangle(const uint16_t start, const uint16_t end)
+static xcb_rectangle_t get_rectangle(const struct JBDim range)
 {
-	return (xcb_rectangle_t){.x=start,
+	return (xcb_rectangle_t){.x=range.start,
 		.y = (XSTATUS_CONST_HEIGHT >> 2) + 1,
 		.height = XSTATUS_CONST_HEIGHT >> 1,
-		.width = end - start - XSTATUS_CONST_PAD};
+		.width = range.end - range.start - XSTATUS_CONST_PAD};
 }
 __attribute__((const))
 static uint16_t get_width_for_percent(const uint16_t width, const uint8_t pct)
@@ -66,10 +66,10 @@ static uint16_t get_width_for_percent(const uint16_t width, const uint8_t pct)
 	return width * pct / 100;
 }
 static void draw_rectangles(xcb_connection_t * restrict xc,
-	const xcb_gc_t gc, const xcb_gc_t bg_gc,
-	const uint16_t start, const uint16_t end, const uint8_t pct)
+	const xcb_gc_t gc, const xcb_gc_t bg_gc, const struct JBDim range,
+	const uint8_t pct)
 {
-	xcb_rectangle_t rect = get_rectangle(start, end);
+	xcb_rectangle_t rect = get_rectangle(range);
 	const xcb_window_t w = xstatus_get_window(xc);
 	// clear:
 	xcb_poly_fill_rectangle(xc, w, bg_gc, 1, &rect);
@@ -79,29 +79,34 @@ static void draw_rectangles(xcb_connection_t * restrict xc,
 
 }
 __attribute__((const))
-static uint16_t get_x(const uint16_t start, const uint16_t end)
+static uint16_t get_x(const struct JBDim range)
 {
-	return start + (end-start) / 2;
+	return range.start + (range.end - range.start) / 2;
 }
-void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
-	const uint16_t end)
+static void draw_for_gc(xcb_connection_t * xc, const xcb_gc_t gc,
+	const xcb_gc_t bg_gc, const struct JBDim range, const uint8_t pct)
+{
+	draw_rectangles(xc, gc, bg_gc, range, pct);
+	draw_percent(xc, gc, pct, get_x(range));
+}
+static xcb_gc_t * get_gcs(xcb_connection_t * restrict xc)
 {
 	static xcb_gc_t gc[BATTERY_GC_SIZE];
 	if (!*gc)
 		initialize_gcs(xc, xstatus_get_window(xc), gc);
-	{ // pct scope
-		const int8_t pct = get_percent();
-		if (pct < 0) { // error getting percent
-			// likely no battery or non-linux
-			LOG("Coult not get percent, returning");
-			return;
-		}
-		{ // gc_index scope
-			const uint8_t gc_index = get_gc(pct);
-			draw_rectangles(xc, gc[gc_index],
-				gc[BATTERY_GC_BACKGROUND], start, end, pct);
-			draw_percent(xc, gc[gc_index], pct, get_x(start, end));
-		}
+	return gc;
+}
+void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
+	const uint16_t end)
+{
+	const int8_t pct = get_percent();
+	if (pct < 0) { // error getting percent
+		// likely no battery or non-linux
+		LOG("Coult not get percent, returning");
+		return;
 	}
+	xcb_gc_t * gc = get_gcs(xc);
+	draw_for_gc(xc, gc[get_gc(pct)], gc[BATTERY_GC_BACKGROUND],
+		(struct JBDim){.start = start, .end = end}, pct);
 	xcb_flush(xc);
 }
