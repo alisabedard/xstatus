@@ -6,9 +6,14 @@
 #include "libjb/util.h"
 #include "util.h"
 #include "xstatus.h"
+#define DEBUG_BATTERY
+#ifndef DEBUG_BATTERY
+#undef LOG
+#define LOG(...)
+#endif//!DEBUG_BATTERY
 //#define XSTATUS_BATTERY_TEST
-// get percent value, maximum 100
-static uint8_t get_percent(void)
+// get percent value, maximum 100, -1 on error
+static int8_t get_percent(void)
 {
 #ifdef XSTATUS_BATTERY_TEST
 	static int8_t p = 100;
@@ -17,7 +22,8 @@ static uint8_t get_percent(void)
 		return p = 100;
 	return p;
 #else//!XSTATUS_BATTERY_TEST
-	const uint8_t pct = xstatus_system_value(XSTATUS_SYSFILE_BATTERY);
+	// Use int16_t here to prevent overflow if on AC
+	const int16_t pct = xstatus_system_value(XSTATUS_SYSFILE_BATTERY);
 	LOG("Percent: %d\n", pct);
 	return JB_MIN(pct, 100);
 #endif//XSTATUS_BATTERY_TEST
@@ -94,7 +100,11 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	if (!*gc)
 		init_gcs(xc, w, gc);
 	{ // pct scope
-		const uint8_t pct = get_percent();
+		const int8_t pct = get_percent();
+		if (pct < 0) {// error getting percent
+			LOG("Coult not get percent, returning");
+			return;
+		}
 		{ // gc_index scope
 			const uint8_t gc_index = get_gc(pct);
 			draw_rectangles(xc, w, gc[gc_index],

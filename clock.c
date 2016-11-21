@@ -29,6 +29,6 @@ uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 	uint8_t sz = XSTATUS_TIME_BUFFER_SIZE;
 	char buf[sz];
 	sz = format(buf, sz);
-	LOG(stderr, "size: %d, string: %s\n", sz, buf);
+	LOG("size: %d, string: %s\n", sz, buf);
 	return draw_for_font_size(xc, xstatus_get_font_size(), buf, sz);
 }

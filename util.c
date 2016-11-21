@@ -12,16 +12,17 @@ void xstatus_create_gc(xcb_connection_t * xc, const xcb_gc_t gc,
 	jb_create_gc(xc, gc, win, fg, bg);
 	xcb_change_gc(xc, gc, XCB_GC_FONT, &(uint32_t){xstatus_get_font(xc)});
 }
-#if defined(XSTATUS_USE_BATTERY_BAR) || defined(XSTATUS_USE_TEMPERATURE)
-uint32_t xstatus_system_value(const char *filename)
+// returns -1 on error
+int32_t xstatus_system_value(const char *filename)
 {
-enum { XSTATUS_SYSTEM_VALUE_BUFFER_SIZE = 8 };
+	enum { XSTATUS_SYSTEM_VALUE_BUFFER_SIZE = 8 };
 	char buf[XSTATUS_SYSTEM_VALUE_BUFFER_SIZE];
 	{ // f scope
 		fd_t f = jb_open(filename, O_RDONLY);
+		if (f == -1)
+			return -1;
 		read(f, buf, XSTATUS_SYSTEM_VALUE_BUFFER_SIZE);
 		close(f);
 	}
 	return atoi(buf);
 }
-#endif//XSTATUS_USE_BATTERY_BAR||XSTATUS_USE_TEMPERATURE
