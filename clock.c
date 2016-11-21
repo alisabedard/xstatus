@@ -4,6 +4,11 @@
 #include "font.h"
 #include "libjb/log.h"
 #include "libjb/xcb.h"
+//#define XSTATUS_DEBUG_CLOCK
+#ifndef XSTATUS_DEBUG_CLOCK
+#undef LOG
+#define LOG(...)
+#endif//!XSTATUS_DEBUG_CLOCK
 static uint16_t get_offset(xcb_connection_t * restrict xc,
 	const uint16_t font_width, const size_t sz)
 {
