@@ -18,9 +18,7 @@ static uint16_t poll_status(xcb_connection_t * restrict xc,
 {
 	uint16_t offset = widget_start + XSTATUS_CONST_PAD;
 	offset = xstatus_draw_load(xc, offset);
-#ifdef XSTATUS_USE_TEMPERATURE
 	offset = draw_temp(xc, offset);
-#endif//XSTATUS_USE_TEMPERATURE
 	offset = draw_status_file(xc, offset, filename);
 	return offset;
 }
@@ -30,13 +28,8 @@ static void update(xcb_connection_t * restrict xc,
 	const uint16_t width = xstatus_get_screen(xc)->width_in_pixels;
 	xcb_clear_area(xc, 0, xstatus_get_window(xc),
 		0, 0, width, XSTATUS_CONST_HEIGHT);
-#ifdef XSTATUS_USE_BATTERY_BAR
 	xstatus_draw_battery(xc, poll_status(xc, filename, widget_start),
 		xstatus_draw_clock(xc));
-#else//!XSTATUS_USE_BATTERY_BAR
-	poll_status(xc, filename, widget_start);
-	xstatus_draw_clock(xc);
-#endif//XSTATUS_USE_BATTERY_BAR
 }
 // returns if update needed
 __attribute__((nonnull))

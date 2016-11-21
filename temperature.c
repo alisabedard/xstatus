@@ -4,13 +4,30 @@
 #include "font.h"
 #include "util.h"
 #include <stdio.h>
+static int32_t get_temp_raw(void)
+{
+	return xstatus_system_value(XSTATUS_SYSFILE_TEMPERATURE);
+}
 static uint8_t get_temp(void)
 {
-	return xstatus_system_value(XSTATUS_SYSFILE_TEMPERATURE) / 1000;
+	// may only fail once:
+	static bool get_temp_failed;
+	if (get_temp_failed)
+		return 0; // 0 inidicates unsupported
+	int32_t temp = get_temp_raw();
+	if (temp == -1) {
+		get_temp_failed = -1;
+		return 0;
+	}
+	return temp / 1000;
 }
 static uint8_t format(char * restrict buf, const uint8_t sz)
 {
-	return snprintf(buf, sz, "%dC", get_temp());
+	const uint8_t temp = get_temp();
+	if (temp)
+		return snprintf(buf, sz, "%dC", temp);
+	else
+		return 0;
 }
 // Returns x offset for next item
 uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset)

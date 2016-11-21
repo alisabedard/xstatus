@@ -4,27 +4,17 @@ CFG=config.mk
 # Defaults:
 OPT_STATIC_LIBJB=true
 OPT_DEBUG=false
-# Features that are not portable are kept optional
-# Features:
-OPT_TEMP=true
-OPT_BATTERY=true
 rm -f "$CFG"
-OPTSTR='Bbcdhjlst'
+OPTSTR='bdjh'
 while getopts $OPTSTR opt
 do
 	case $opt in
-	B) OPT_BATTERY=false;;
 	d) OPT_DEBUG=true;;
 	j) OPT_SHARED_LIBJB=true;;
-	l) OPT_LOAD=false;;
-	s) OPT_STATUS=false;;
-	t) OPT_TEMP=false;;
 	h|?)
 		ECHO="`which echo`"
 		for line in "./configure -[${OPTSTR}]" \
-		'  -B disable battery bar' \
 		'  -d enable debugging' \
-		'  -t disable temperature meter' \
 		'  -h help'; do echo $line; done
 		exit 1
 	esac
