@@ -45,8 +45,8 @@ static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
 	xstatus_create_gc(xc, *gc = xcb_generate_id(xc), w, fg,
 		XSTATUS_BATTERY_BACKGROUND_COLOR);
 }
-static void initialize_gcs(xcb_connection_t * restrict xc, const xcb_window_t w,
-	xcb_gc_t * restrict gc)
+static void initialize_gcs(xcb_connection_t * restrict xc,
+	const xcb_window_t w, xcb_gc_t * restrict gc)
 {
 #define SETGC(color) set_gc(xc, w, gc + BATTERY_GC_##color, \
 	XSTATUS_BATTERY_##color##_COLOR);
@@ -77,6 +77,11 @@ static void draw_rectangles(xcb_connection_t * restrict xc,
 	xcb_poly_fill_rectangle(xc, w, gc, 1, &rect);
 
 }
+__attribute__((const))
+static uint16_t get_x(const uint16_t start, const uint16_t end)
+{
+	return start + (end-start) / 2;
+}
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
@@ -94,10 +99,8 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 		{ // gc_index scope
 			const uint8_t gc_index = get_gc(pct);
 			draw_rectangles(xc, w, gc[gc_index],
-				gc[BATTERY_GC_BACKGROUND],
-				start, end, pct);
-			draw_percent(xc, gc[gc_index], pct,
-				start + (end-start) / 2);
+				gc[BATTERY_GC_BACKGROUND], start, end, pct);
+			draw_percent(xc, gc[gc_index], pct, get_x(start, end));
 		}
 	}
 	xcb_flush(xc);
