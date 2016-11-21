@@ -53,10 +53,9 @@ static void initialize_gcs(xcb_connection_t * restrict xc, const xcb_window_t w,
 	SETGC(BACKGROUND); SETGC(AC); SETGC(BATTERY); SETGC(CRITICAL);
 #undef SETGC
 }
-static void set_rectangle(xcb_rectangle_t * restrict rect,
-	const uint16_t start, const uint16_t end)
+static xcb_rectangle_t get_rectangle(const uint16_t start, const uint16_t end)
 {
-	*rect = (xcb_rectangle_t){.x=start,
+	return (xcb_rectangle_t){.x=start,
 		.y = (XSTATUS_CONST_HEIGHT >> 2) + 1,
 		.height = XSTATUS_CONST_HEIGHT >> 1,
 		.width = end - start - XSTATUS_CONST_PAD};
@@ -73,8 +72,7 @@ static void draw_rectangles(xcb_connection_t * restrict xc,
 	const xcb_window_t w, const xcb_gc_t gc, const xcb_gc_t bg_gc,
 	const uint16_t start, const uint16_t end, const uint8_t pct)
 {
-	xcb_rectangle_t rect;
-	set_rectangle(&rect, start, end);
+	xcb_rectangle_t rect = get_rectangle(start, end);
 	// clear:
 	xcb_poly_fill_rectangle(xc, w, bg_gc, 1, &rect);
 	draw_percent_full(xc, w, gc, rect, pct);

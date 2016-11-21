@@ -24,10 +24,14 @@ enum {
 #define XSTATUS_BUTTON_FG "green4"
 #define XSTATUS_PANEL_FOREGROUND "green3"
 #define XSTATUS_PANEL_BACKGROUND "black"
+/*------------------------------*/
+/* Note:  initialize_gcs() in battery.c depends on the following naming
+ * conventions for its macro-based mapping of foreground colors to gcs.  */
 #define XSTATUS_BATTERY_BACKGROUND_COLOR "black"
 #define XSTATUS_BATTERY_AC_COLOR "green"
 #define XSTATUS_BATTERY_BATTERY_COLOR "yellow"
 #define XSTATUS_BATTERY_CRITICAL_COLOR "red"
+/*------------------------------*/
 #define XSTATUS_SYSFILE_BATTERY "/sys/class/power_supply/BAT0/capacity"
 #define XSTATUS_SYSFILE_AC "/sys/class/power_supply/AC/online"
 #define XSTATUS_SYSFILE_TEMPERATURE \
