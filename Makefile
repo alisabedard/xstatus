@@ -29,4 +29,8 @@ install:
 	install -s xstatus ${installdir}/bin
 depend:
 	${CC} -E -MM *.c > depend.mk
+cppcheck:
+	cppcheck --enable=all --inconclusive --std=c11 \
+                . 2> cppcheck.log
+	echo 'Results written to cppcheck.log'
 #EOF
