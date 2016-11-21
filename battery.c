@@ -32,7 +32,7 @@ static int8_t get_percent(void)
 enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
 	BATTERY_GC_CRITICAL, BATTERY_GC_SIZE };
 // Selects a gc to use based on ac/battery status
-static enum BATGCs get_gc(const uint8_t pct)
+static uint8_t get_gc(const uint8_t pct)
 {
 	return xstatus_system_value(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : pct
 		< XSTATUS_CONST_CRITICAL_PERCENT
