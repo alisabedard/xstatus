@@ -1,5 +1,6 @@
 objs=${exe}.o util.o main.o font.o xdata.o button.o
 objs+=clock.o load.o status_file.o window.o toolbar.o
+objs+=battery.o temperature.o
 include config.mk
 cflags+=-std=c11
 cflags+=-D_XOPEN_SOURCE=700

@@ -107,20 +107,6 @@ if $OPT_DEBUG; then
 	EOF
 	echo done
 fi
-if $OPT_BATTERY; then
-	cat >> $CFG <<- EOF
-	CFLAGS+=-DXSTATUS_USE_BATTERY_BAR
-	objs+=battery.o
-	EOF
-	echo enabled battery
-fi
-if $OPT_TEMP; then
-	cat >> $CFG <<- EOF
-	CFLAGS+=-DXSTATUS_USE_TEMPERATURE
-	objs+=temperature.o
-	EOF
-	echo enabled temp
-fi
 if $OPT_STATIC_LIBJB; then
 	echo Using static libjb...
 	echo "static=libjb/libjb.a" >> ${CFG}
