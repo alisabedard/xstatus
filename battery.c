@@ -60,13 +60,10 @@ static xcb_rectangle_t get_rectangle(const uint16_t start, const uint16_t end)
 		.height = XSTATUS_CONST_HEIGHT >> 1,
 		.width = end - start - XSTATUS_CONST_PAD};
 }
-static void draw_percent_full(xcb_connection_t * restrict xc,
-	const xcb_window_t w, const xcb_gc_t gc,
-	xcb_rectangle_t rect, const uint8_t pct)
+__attribute__((const))
+static uint16_t get_width_for_percent(const uint16_t width, const uint8_t pct)
 {
-	rect.width = rect.width * pct / 100;
-	// draw percent full:
-	xcb_poly_fill_rectangle(xc, w, gc, 1, &rect);
+	return width * pct / 100;
 }
 static void draw_rectangles(xcb_connection_t * restrict xc,
 	const xcb_window_t w, const xcb_gc_t gc, const xcb_gc_t bg_gc,
@@ -75,7 +72,9 @@ static void draw_rectangles(xcb_connection_t * restrict xc,
 	xcb_rectangle_t rect = get_rectangle(start, end);
 	// clear:
 	xcb_poly_fill_rectangle(xc, w, bg_gc, 1, &rect);
-	draw_percent_full(xc, w, gc, rect, pct);
+	rect.width = get_width_for_percent(rect.width, pct);
+	// fill rectangle per percent full:
+	xcb_poly_fill_rectangle(xc, w, gc, 1, &rect);
 
 }
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
@@ -87,7 +86,8 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 		initialize_gcs(xc, w, gc);
 	{ // pct scope
 		const int8_t pct = get_percent();
-		if (pct < 0) {// error getting percent
+		if (pct < 0) { // error getting percent
+			// likely no battery or non-linux
 			LOG("Coult not get percent, returning");
 			return;
 		}
