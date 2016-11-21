@@ -76,7 +76,6 @@ static void draw_rectangles(xcb_connection_t * restrict xc,
 	rect.width = get_width_for_percent(rect.width, pct);
 	// fill rectangle per percent full:
 	xcb_poly_fill_rectangle(xc, w, gc, 1, &rect);
-
 }
 __attribute__((const))
 static uint16_t get_x(const struct JBDim range)
@@ -96,6 +95,13 @@ static xcb_gc_t * get_gcs(xcb_connection_t * restrict xc)
 		initialize_gcs(xc, xstatus_get_window(xc), gc);
 	return gc;
 }
+static void draw_for_percent(xcb_connection_t * restrict xc,
+	const struct JBDim range, const uint8_t pct)
+{
+	xcb_gc_t * gc = get_gcs(xc);
+	const uint8_t i = get_gc(pct);
+	draw_for_gc(xc, gc[i], gc[BATTERY_GC_BACKGROUND], range, pct);
+}
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
@@ -105,8 +111,6 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 		LOG("Could not get percent, returning");
 		return;
 	}
-	xcb_gc_t * gc = get_gcs(xc);
-	draw_for_gc(xc, gc[get_gc(pct)], gc[BATTERY_GC_BACKGROUND],
-		(struct JBDim){.start = start, .end = end}, pct);
+	draw_for_percent(xc, (struct JBDim){.start = start, .end = end}, pct);
 	xcb_flush(xc);
 }
