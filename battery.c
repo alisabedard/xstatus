@@ -38,13 +38,16 @@ static enum BATGCs get_gc(const uint8_t pct)
 		< XSTATUS_CONST_CRITICAL_PERCENT
 		? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
+static uint8_t format(char * buf, const uint8_t sz, const uint8_t pct)
+{
+	return snprintf(buf, sz, " %d%% ", pct);
+}
 static void draw_percent(xcb_connection_t * restrict xc, const xcb_gc_t gc,
 	const uint8_t pct, const int16_t x)
 {
 	enum {BUF_SZ = 7};
 	char buf[BUF_SZ];
-	const uint8_t l = snprintf(buf, BUF_SZ, " %d%% ", pct);
-	xcb_image_text_8(xc, l, xstatus_get_window(xc),
+	xcb_image_text_8(xc, format(buf, BUF_SZ, pct), xstatus_get_window(xc),
 		gc, x, xstatus_get_font_size().h, buf);
 }
 static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
