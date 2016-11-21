@@ -14,8 +14,9 @@ static uint8_t get_temp(void)
 	static bool get_temp_failed;
 	if (get_temp_failed)
 		return 0; // 0 indicates unsupported
+	// type must hold at least 100000, signed
 	int32_t temp = get_temp_raw();
-	if (temp == -1) {
+	if (temp == -1) { // could not open system file
 		get_temp_failed = true;
 		return 0;
 	}
