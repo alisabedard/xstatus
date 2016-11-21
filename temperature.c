@@ -13,10 +13,10 @@ static uint8_t get_temp(void)
 	// may only fail once:
 	static bool get_temp_failed;
 	if (get_temp_failed)
-		return 0; // 0 inidicates unsupported
+		return 0; // 0 indicates unsupported
 	int32_t temp = get_temp_raw();
 	if (temp == -1) {
-		get_temp_failed = -1;
+		get_temp_failed = true;
 		return 0;
 	}
 	return temp / 1000;
