@@ -15,18 +15,7 @@
 // get percent value, maximum 100, -1 on error
 static int8_t get_percent(void)
 {
-#ifdef XSTATUS_BATTERY_TEST
-	static int8_t p = 100;
-	p -= 10;
-	if (p < 0)
-		return p = 100;
-	return p;
-#else//!XSTATUS_BATTERY_TEST
-	// Use int16_t here to prevent overflow if on AC
-	const int16_t pct = xstatus_system_value(XSTATUS_SYSFILE_BATTERY);
-	LOG("Percent: %d\n", pct);
-	return JB_MIN(pct, 100);
-#endif//XSTATUS_BATTERY_TEST
+	return JB_MIN(xstatus_system_value(XSTATUS_SYSFILE_BATTERY), 100);
 }
 // index into gc array, keeps gc array private
 enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
