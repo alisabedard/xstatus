@@ -45,17 +45,13 @@ static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
 	xstatus_create_gc(xc, *gc = xcb_generate_id(xc), w, fg,
 		XSTATUS_BATTERY_BACKGROUND_COLOR);
 }
-static void init_gcs(xcb_connection_t * restrict xc, const xcb_window_t w,
+static void initialize_gcs(xcb_connection_t * restrict xc, const xcb_window_t w,
 	xcb_gc_t * restrict gc)
 {
-	set_gc(xc, w, gc + BATTERY_GC_BACKGROUND,
-		XSTATUS_BATTERY_BACKGROUND_COLOR);
-	set_gc(xc, w, gc + BATTERY_GC_AC,
-		XSTATUS_BATTERY_AC_COLOR);
-	set_gc(xc, w, gc + BATTERY_GC_BATTERY,
-		XSTATUS_BATTERY_BATTERY_COLOR);
-	set_gc(xc, w, gc + BATTERY_GC_CRITICAL,
-		XSTATUS_BATTERY_CRITICAL_COLOR);
+#define SETGC(color) set_gc(xc, w, gc + BATTERY_GC_##color, \
+	XSTATUS_BATTERY_##color##_COLOR);
+	SETGC(BACKGROUND); SETGC(AC); SETGC(BATTERY); SETGC(CRITICAL);
+#undef SETGC
 }
 static void set_rectangle(xcb_rectangle_t * restrict rect,
 	const uint16_t start, const uint16_t end)
@@ -90,7 +86,7 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	static xcb_gc_t gc[BATTERY_GC_SIZE];
 	const xcb_window_t w = xstatus_get_window(xc);
 	if (!*gc)
-		init_gcs(xc, w, gc);
+		initialize_gcs(xc, w, gc);
 	{ // pct scope
 		const int8_t pct = get_percent();
 		if (pct < 0) {// error getting percent
