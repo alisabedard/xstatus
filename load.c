@@ -4,7 +4,7 @@
 #include "font.h"
 #include <stdio.h>
 #include <stdlib.h>
-uint8_t format(char * restrict buf, const uint8_t sz)
+static uint8_t format(char * restrict buf, const uint8_t sz)
 {
 	double l;
 	getloadavg(&l, 1);
