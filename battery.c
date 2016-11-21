@@ -41,9 +41,9 @@ static enum BATGCs get_gc(const uint8_t pct)
 static void draw_percent(xcb_connection_t * restrict xc, const xcb_gc_t gc,
 	const uint8_t pct, const int16_t x)
 {
-	uint8_t l = 7;
-	char buf[l];
-	l = snprintf(buf, l, " %d%% ", pct);
+	enum {BUF_SZ = 7};
+	char buf[BUF_SZ];
+	const uint8_t l = snprintf(buf, BUF_SZ, " %d%% ", pct);
 	xcb_image_text_8(xc, l, xstatus_get_window(xc),
 		gc, x, xstatus_get_font_size().h, buf);
 }
