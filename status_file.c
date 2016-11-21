@@ -49,7 +49,7 @@ uint16_t draw_status_file(xcb_connection_t * xc,
 	const ssize_t s = poll_status_file(filename, buf) - 1;
 	if (s <= 0) { // empty or error
 		warn_no_data(filename);
-		return x_offset;
+		return x_offset + XSTATUS_CONST_PAD;
 	}
 	draw_text(xc, x_offset, s, buf);
 	return get_offset(x_offset, s);
