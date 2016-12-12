@@ -3,6 +3,7 @@
 #include "config.h"
 #include "font.h"
 #include "libjb/log.h"
+#include "libjb/macros.h"
 #include "libjb/util.h"
 #include "util.h"
 #include "xstatus.h"
