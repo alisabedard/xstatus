@@ -3,6 +3,7 @@ version=0.3
 libjb_cflags+=-Wall -Wextra
 libjb_cflags+=-D_XOPEN_SOURCE=700
 libjb_cflags+=-DJB_VERSION=${version}
+libjb_cflags+=-std=c11
 # Note:  Path ordering does matter.
 # For FreeBSD build:
 libjb_cflags+=-I/usr/local/include
@@ -16,7 +17,7 @@ libjb_ldflags+=-L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib
 libjb_cflags+=-I/usr/X11R6/include
 libjb_ldflags+=-L/usr/X11R6/lib -Wl,-R/usr/X11R6/lib
 # Libs:
-libjb_ldflags+=-lxcb
+libjb_ldflags+=-lxcb -lxcb-cursor
 libjb_cflags+=-fpic
 PREFIX=/usr
 prog=xstatus

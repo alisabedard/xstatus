@@ -2,7 +2,6 @@
 #ifndef LIBJB_XCB_H
 #define LIBJB_XCB_H
 #include <stdbool.h>
-#include <stdint.h>
 #include <xcb/xcb.h>
 typedef uint32_t pixel_t;
 /* Make sure there is no error on the xcb connection.  If there is,
@@ -16,6 +15,8 @@ xcb_gc_t jb_create_gc(xcb_connection_t * xc, xcb_gc_t gc,
 xcb_atom_t jb_get_atom(xcb_connection_t * x, const char * name);
 xcb_colormap_t jb_get_colormap(xcb_connection_t * xc,
 	const xcb_window_t win);
+xcb_cursor_t jb_get_cursor(xcb_connection_t * xc,
+	const char * restrict name);
 xcb_colormap_t jb_get_default_colormap(xcb_connection_t * xc);
 pixel_t jb_get_pixel(xcb_connection_t * x, const xcb_colormap_t cmap,
 	const char * color);
