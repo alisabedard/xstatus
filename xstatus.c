@@ -25,9 +25,13 @@ static uint16_t poll_status(xcb_connection_t * restrict xc,
 static void update(xcb_connection_t * restrict xc,
 	const char * restrict filename, const uint16_t widget_start)
 {
+	/* The following is disabled because it is causing flicker on
+	 * some X servers.  */
+#if 0
 	const uint16_t width = xstatus_get_screen(xc)->width_in_pixels;
 	xcb_clear_area(xc, 0, xstatus_get_window(xc),
 		0, 0, width, XSTATUS_CONST_HEIGHT);
+#endif
 	xstatus_draw_battery(xc, poll_status(xc, filename, widget_start),
 		xstatus_draw_clock(xc));
 }
