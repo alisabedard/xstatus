@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
-void xstatus_create_gc(xcb_connection_t * xc, const xcb_gc_t gc,
+void xstatus_create_gc(xcb_connection_t * xc, const xcb_gcontext_t gc,
 	const xcb_window_t win, const char * restrict fg,
 	const char * restrict bg)
 {

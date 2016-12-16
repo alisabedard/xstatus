@@ -17,7 +17,7 @@ static void invert(struct XSButton * restrict b)
 {
 	xcb_connection_t * xc = b->xc;
 	const xcb_window_t w = b->window;
-	const xcb_gc_t gc = xstatus_get_invert_gc(xc);
+	const xcb_gcontext_t gc = xstatus_get_invert_gc(xc);
 	const struct JBDim f = xstatus_get_font_size();
 	xcb_poly_fill_rectangle(xc, w, gc, 1, &(xcb_rectangle_t){0, 0,
 		b->width, f.h});
