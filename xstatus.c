@@ -25,13 +25,6 @@ static uint16_t poll_status(xcb_connection_t * restrict xc,
 static void update(xcb_connection_t * restrict xc,
 	const char * restrict filename, const uint16_t widget_start)
 {
-	/* The following is disabled because it is causing flicker on
-	 * some X servers.  */
-#if 0
-	const uint16_t width = xstatus_get_screen(xc)->width_in_pixels;
-	xcb_clear_area(xc, 0, xstatus_get_window(xc),
-		0, 0, width, XSTATUS_CONST_HEIGHT);
-#endif
 	xstatus_draw_battery(xc, poll_status(xc, filename, widget_start),
 		xstatus_draw_clock(xc));
 }
@@ -42,6 +35,20 @@ static void handle_events(xcb_connection_t * restrict xc,
 	const uint16_t widget_start)
 {
 	switch (e->response_type) {
+	case XCB_ENTER_NOTIFY:
+#if LOG_LEVEL > 8
+		LOG("enter");
+#endif//LOG_LEVEL
+		xstatus_toolbar_handle_button_enter(
+			((xcb_enter_notify_event_t*)e)->event);
+		break;
+	case XCB_LEAVE_NOTIFY:
+#if LOG_LEVEL > 8
+		LOG("leave");
+#endif//LOG_LEVEL
+		xstatus_toolbar_handle_button_leave(
+			((xcb_leave_notify_event_t*)e)->event);
+		break;
 	case XCB_EXPOSE:
 		if (!xstatus_toolbar_handle_expose(((xcb_expose_event_t*)e)
 			->window))
@@ -75,6 +82,13 @@ static void initialize_font(xcb_connection_t * restrict xc)
 		if (!xstatus_open_font(xc, "fixed")) // fallback
 			LIBJB_ERROR("Could not load any font");
 }
+static void setup_invert_gc(xcb_connection_t * restrict xc,
+	const xcb_window_t w)
+{
+	xcb_gcontext_t gc = xstatus_get_invert_gc(xc);
+	xcb_create_gc(xc, gc, w, XCB_GC_FUNCTION,
+		(uint32_t[]){XCB_GX_INVERT});
+}
 static void initialize_gcs(xcb_connection_t * restrict xc)
 {
 	const xcb_window_t w = xstatus_get_window(xc);
@@ -82,6 +96,7 @@ static void initialize_gcs(xcb_connection_t * restrict xc)
 		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
 	xstatus_create_gc(xc, xstatus_get_button_gc(xc), w,
 		XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
+	setup_invert_gc(xc, w);
 }
 static uint16_t initialize(xcb_connection_t * restrict xc)
 {

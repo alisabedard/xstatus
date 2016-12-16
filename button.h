@@ -6,6 +6,8 @@ struct XSButton {
 	struct XSButton * next;
 	void (*cb)(struct XSButton *);
 	void (*draw) (struct XSButton *);
+	void (*enter) (struct XSButton *);
+	void (*leave) (struct XSButton *);
 	void * cb_data;
 	char * label;
 	xcb_connection_t * xc;

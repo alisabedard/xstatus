@@ -69,4 +69,11 @@ bool xstatus_toolbar_handle_button_press(const xcb_window_t event_window)
 {
 	return iterate_buttons(event_window, xstatus_head_button->cb);
 }
-
+bool xstatus_toolbar_handle_button_enter(const xcb_window_t event_window)
+{
+	return iterate_buttons(event_window, xstatus_head_button->enter);
+}
+bool xstatus_toolbar_handle_button_leave(const xcb_window_t event_window)
+{
+	return iterate_buttons(event_window, xstatus_head_button->leave);
+}

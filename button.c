@@ -6,11 +6,22 @@
 #include "xdata.h"
 #include <stdlib.h>
 #include <string.h>
-static void xstatus_draw_button(struct XSButton * restrict b)
+static void draw(struct XSButton * restrict b)
 {
-	xcb_image_text_8(b->xc, strlen(b->label), b->window,
-		xstatus_get_button_gc(b->xc), XSTATUS_CONST_PAD,
+	xcb_connection_t * xc = b->xc;
+	xcb_image_text_8(xc, strlen(b->label), b->window,
+		xstatus_get_button_gc(xc), XSTATUS_CONST_PAD,
 		xstatus_get_font_size().height, b->label);
+}
+static void invert(struct XSButton * restrict b)
+{
+	xcb_connection_t * xc = b->xc;
+	const xcb_window_t w = b->window;
+	const xcb_gc_t gc = xstatus_get_invert_gc(xc);
+	const struct JBDim f = xstatus_get_font_size();
+	xcb_poly_fill_rectangle(xc, w, gc, 1, &(xcb_rectangle_t){0, 0,
+		b->width, f.h});
+	xcb_flush(xc);
 }
 static pixel_t get_bg(xcb_connection_t * restrict xc)
 {
@@ -41,7 +52,9 @@ static void create_window(struct XSButton * b)
 		enum {
 			VM = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK,
 			EM = XCB_EVENT_MASK_EXPOSURE
-				| XCB_EVENT_MASK_BUTTON_PRESS,
+				| XCB_EVENT_MASK_BUTTON_PRESS
+				| XCB_EVENT_MASK_ENTER_WINDOW
+				| XCB_EVENT_MASK_LEAVE_WINDOW,
 			CFP = XCB_COPY_FROM_PARENT,
 			BORDER = 0
 		};
@@ -57,10 +70,12 @@ struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
 {
 	struct XSButton * b = calloc(1, sizeof(struct XSButton));
 	b->window = xcb_generate_id(b->xc = xc);
-	b->draw = xstatus_draw_button;
 	b->label = label;
+	b->draw = draw;
+	b->enter = invert;
+	b->leave = invert;
 	b->x = x;
 	create_window(b);
-	xstatus_draw_button(b);
+	draw(b);
 	return b;
 }
