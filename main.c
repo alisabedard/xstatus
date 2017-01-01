@@ -1,4 +1,4 @@
-// Copyright 2016, Jeffrey E. Bedard
+// Copyright 2017, Jeffrey E. Bedard
 #include "xstatus.h"
 #include "config.h"
 #include <stdio.h>
@@ -13,7 +13,7 @@
 	"\t-f FILE\t\tSet FILE to be continuously polled and" \
 	" displayed.\n" \
 	"\t-h\t\tPrint this usage information.\n" \
-	"Copyright 2016, Jeffrey E. Bedard <jefbed@gmail.com>\n" \
+	"Copyright 2017, Jeffrey E. Bedard <jefbed@gmail.com>\n" \
 	"Project page:  https://github.com/jefbed/xstatus\n"
 __attribute__((noreturn))
 static void usage(void)

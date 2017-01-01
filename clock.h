@@ -1,4 +1,4 @@
-// Copyright 2016, Jeffrey E. Bedard
+// Copyright 2017, Jeffrey E. Bedard
 #ifndef XSTATUS_CLOCK_H
 #define XSTATUS_CLOCK_H
 #include "xdata.h"

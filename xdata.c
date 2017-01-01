@@ -1,4 +1,4 @@
-// Copyright 2016, Jeffrey E. Bedard
+// Copyright 2017, Jeffrey E. Bedard
 #include "xdata.h"
 #include "libjb/xcb.h"
 xcb_screen_t * xstatus_get_screen(xcb_connection_t * xc)

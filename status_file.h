@@ -1,4 +1,4 @@
-// Copyright 2016, Jeffrey E. Bedard
+// Copyright 2017, Jeffrey E. Bedard
 #ifndef XSTATUS_STATUS_FILE_H
 #define XSTATUS_STATUS_FILE_H
 #include <stdint.h>
