@@ -22,8 +22,10 @@ int32_t xstatus_system_value(const char * filename)
 		fd_t f = jb_open(filename, O_RDONLY);
 		if (f == -1)
 			return -1;
-		read(f, buf, BUFSZ);
-		close(f);
+		const ssize_t ret = read(f, buf, BUFSZ);
+		close(f); // clean up file descriptor
+		if (ret <= 0)
+			return -1; // error or nothing read
 	}
 	return atoi(buf);
 }
