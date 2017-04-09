@@ -14,7 +14,7 @@ void xstatus_create_gc(xcb_connection_t * xc, const xcb_gcontext_t gc,
 		&(uint32_t){xstatus_get_font(xc)});
 }
 // returns -1 on error
-int32_t xstatus_system_value(const char *filename)
+int32_t xstatus_system_value(const char * filename)
 {
 	enum { BUFSZ = 8 };
 	char buf[BUFSZ];
