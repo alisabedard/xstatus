@@ -3,6 +3,7 @@
 #include "button.h"
 #include "config.h"
 #include "libjb/log.h"
+#include "libjb/util.h"
 #include <stdlib.h>
 static struct XSButton * xstatus_head_button;
 static struct XSButton * get_last_button_r(struct XSButton * i)
@@ -16,9 +17,12 @@ static struct XSButton * get_last_button(void)
 }
 static void system_cb(struct XSButton * b)
 {
+	jb_system(b->cb_data);
+#if 0
 	const char *cmd = b->cb_data;
 	if (system(cmd))
 		LIBJB_WARN("Cannot execute %s", cmd);
+#endif
 }
 static uint16_t btn(xcb_connection_t * xc, const int16_t offset,
 	char * restrict label, char * restrict cmd)
