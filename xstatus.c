@@ -68,13 +68,13 @@ static void event_loop(xcb_connection_t * restrict xc,
 	const uint8_t delay, const char * restrict filename,
 	const uint16_t widget_start)
 {
-	xcb_generic_event_t * e;
-event_loop:
-	if (jb_next_event_timed(xc, &e, delay * 1000000) && e)
-		handle_events(xc, e, filename, widget_start);
-	else
-		update(xc, filename, widget_start);
-	goto event_loop;
+	for (;;) {
+		xcb_generic_event_t * e;
+		if (jb_next_event_timed(xc, &e, delay * 1000000) && e)
+			handle_events(xc, e, filename, widget_start);
+		else
+			update(xc, filename, widget_start);
+	}
 }
 static void initialize_font(xcb_connection_t * restrict xc)
 {
