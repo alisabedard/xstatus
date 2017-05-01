@@ -32,8 +32,8 @@ static uint8_t format(char * buf, const uint8_t sz, const uint8_t pct)
 {
 	return snprintf(buf, sz, " %d%% ", pct);
 }
-static void draw_percent(xcb_connection_t * restrict xc, const xcb_gcontext_t gc,
-	const uint8_t pct, const int16_t x)
+static void draw_percent(xcb_connection_t * restrict xc,
+	const xcb_gcontext_t gc, const uint8_t pct, const int16_t x)
 {
 	enum {BUF_SZ = 7};
 	char buf[BUF_SZ];
@@ -62,13 +62,14 @@ static xcb_rectangle_t get_rectangle(const struct JBDim range)
 		.width = range.end - range.start - XSTATUS_CONST_PAD};
 }
 __attribute__((const))
-static uint16_t get_width_for_percent(const uint16_t width, const uint8_t pct)
+static uint16_t get_width_for_percent(const uint16_t width,
+	const uint8_t pct)
 {
 	return width * pct / 100;
 }
 static void draw_rectangles(xcb_connection_t * restrict xc,
-	const xcb_gcontext_t gc, const xcb_gcontext_t bg_gc, const struct JBDim range,
-	const uint8_t pct)
+	const xcb_gcontext_t gc, const xcb_gcontext_t bg_gc,
+	const struct JBDim range, const uint8_t pct)
 {
 	xcb_rectangle_t rect = get_rectangle(range);
 	const xcb_window_t w = xstatus_get_window(xc);

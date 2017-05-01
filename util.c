@@ -19,7 +19,7 @@ int32_t xstatus_system_value(const char * filename)
 	enum { BUFSZ = 8 };
 	char buf[BUFSZ];
 	{ // f scope
-		fd_t f = jb_open(filename, O_RDONLY);
+		fd_t f = open(filename, O_RDONLY);
 		if (f == -1)
 			return -1;
 		const ssize_t ret = read(f, buf, BUFSZ);
