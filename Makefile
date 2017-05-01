@@ -6,8 +6,8 @@ cflags+=-std=c11
 cflags+=-D_XOPEN_SOURCE=700
 cflags+=-D_DEFAULT_SOURCE
 cflags+=-D_BSD_SOURCE
+ldflags+=${LDFLAGS}
 ldflags+=-lxcb -lxcb-cursor
-ldlags+=${LDFLAGS}
 cflags+=${CFLAGS}
 PREFIX=/usr
 exe=xstatus
