@@ -7,11 +7,6 @@
 #include "libjb/util.h"
 #include "util.h"
 #include "xstatus.h"
-//#define XSTATUS_DEBUG_BATTERY
-#ifndef XSTATUS_DEBUG_BATTERY
-#undef LOG
-#define LOG(...)
-#endif//!XSTATUS_DEBUG_BATTERY
 //#define XSTATUS_BATTERY_TEST
 // get percent value, maximum 100, -1 on error
 static int8_t get_percent(void)
