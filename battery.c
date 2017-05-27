@@ -108,11 +108,9 @@ void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
 	const int8_t pct = get_percent();
-	if (pct < 0) { // error getting percent
-		// likely no battery or non-linux
-		LOG("Could not get percent, returning");
-		return;
+	if (pct >= 0) {
+		draw_for_percent(xc, (struct JBDim){.start = start,
+			.end = end}, pct);
+		xcb_flush(xc);
 	}
-	draw_for_percent(xc, (struct JBDim){.start = start, .end = end}, pct);
-	xcb_flush(xc);
 }
