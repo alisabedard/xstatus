@@ -14,7 +14,7 @@ enum {
 #define XSTATUS_MENU_COMMAND "dmenu_run -b&"
 #define XSTATUS_TCMD "jbxvt"
 #define XSTATUS_TERMINAL XSTATUS_TCMD
-#define XSTATUS_BROWSER_COMMAND "firefox"
+#define XSTATUS_BROWSER_COMMAND "chromium"
 #define XSTATUS_EDITOR_COMMAND XSTATUS_TCMD " -e vim"
 #define XSTATUS_MIXER_COMMAND XSTATUS_TCMD " -e alsamixer"
 #define XSTATUS_LOCK_COMMAND "slock"
