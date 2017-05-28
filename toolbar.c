@@ -27,7 +27,7 @@ static uint16_t btn(xcb_connection_t * xc, const int16_t offset,
 	b->cb = system_cb;
 	b->cb_data = cmd;
 	*(i ? &i->next : &xstatus_head_button) = b;
-	return offset + b->width + XSTATUS_CONST_PAD;
+	return offset + b->widget.width + XSTATUS_CONST_PAD;
 }
 /* Returns x offset after all buttons added.  */
 uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
@@ -48,7 +48,8 @@ uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
 static struct XSButton * find_button_r(const xcb_window_t w,
 	struct XSButton * i)
 {
-	return i ? i->window == w ? i : find_button_r(w, i->next) : NULL;
+	return i ? i->widget.window == w ? i
+		: find_button_r(w, i->next) : NULL;
 }
 static bool iterate_buttons(const xcb_window_t ewin,
 	void (*func)(struct XSButton * restrict))

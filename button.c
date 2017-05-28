@@ -1,26 +1,28 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "button.h"
+#include <stdlib.h>
+#include <string.h>
 #include "config.h"
 #include "font.h"
 #include "libjb/xcb.h"
 #include "xdata.h"
-#include <stdlib.h>
-#include <string.h>
+static inline uint8_t get_font_height(void)
+{
+	return xstatus_get_font_size().height;
+}
 static void draw(struct XSButton * restrict b)
 {
-	xcb_connection_t * xc = b->xc;
-	xcb_image_text_8(xc, strlen(b->label), b->window,
+	xcb_connection_t * xc = b->widget.connection;
+	xcb_image_text_8(xc, strlen(b->label), b->widget.window,
 		xstatus_get_button_gc(xc), XSTATUS_CONST_PAD,
-		xstatus_get_font_size().height, b->label);
+		get_font_height(), b->label);
 }
 static void invert(struct XSButton * restrict b)
 {
-	xcb_connection_t * xc = b->xc;
-	const xcb_window_t w = b->window;
-	const xcb_gcontext_t gc = xstatus_get_invert_gc(xc);
-	const struct JBDim f = xstatus_get_font_size();
-	xcb_poly_fill_rectangle(xc, w, gc, 1, &(xcb_rectangle_t){0, 0,
-		b->width, f.h});
+	xcb_connection_t * xc = b->widget.connection;
+	xcb_poly_fill_rectangle(xc, b->widget.window,
+		xstatus_get_invert_gc(xc), 1, &(xcb_rectangle_t){0, 0,
+		b->widget.width, get_font_height()});
 	xcb_flush(xc);
 }
 static pixel_t get_bg(xcb_connection_t * restrict xc)
@@ -40,14 +42,14 @@ static inline uint8_t get_height(uint8_t fh)
 static xcb_rectangle_t get_geometry(struct XSButton * b)
 {
 	const struct JBDim f = xstatus_get_font_size();
-	return (xcb_rectangle_t){.x = b->x,
-		.width = b->width = get_width(f.w, b->label),
+	return (xcb_rectangle_t){.x = b->widget.x,
+		.width = b->widget.width = get_width(f.w, b->label),
 		.height = get_height(f.h)};
 }
 static void create_window(struct XSButton * b)
 {
-	const xcb_window_t w = b->window;
-	xcb_connection_t * restrict xc = b->xc;
+	const xcb_window_t w = b->widget.window;
+	xcb_connection_t * restrict xc = b->widget.connection;
 	{ // g scope, vm scope, em scope
 		enum {
 			VM = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK,
@@ -69,12 +71,13 @@ struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
 	const int16_t x, char * label)
 {
 	struct XSButton * b = calloc(1, sizeof(struct XSButton));
-	b->window = xcb_generate_id(b->xc = xc);
+	b->widget.connection = xc;
+	b->widget.window = xcb_generate_id(xc);
 	b->label = label;
 	b->draw = draw;
 	b->enter = invert;
 	b->leave = invert;
-	b->x = x;
+	b->widget.x = x;
 	create_window(b);
 	draw(b);
 	return b;
