@@ -4,5 +4,5 @@
 #include "xdata.h"
 // Returns x offset for next item
 uint16_t xstatus_draw_load(xcb_connection_t * xc, const uint16_t x)
-	__attribute__((nonnull));
+	__attribute__((nonnull(1),warn_unused_result));
 #endif//!XSTATUS_LOAD_H
