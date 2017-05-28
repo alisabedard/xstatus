@@ -25,8 +25,8 @@ static uint16_t poll_status(xcb_connection_t * restrict xc,
 static void update(xcb_connection_t * restrict xc,
 	const char * restrict filename, const uint16_t widget_start)
 {
-	xstatus_draw_battery(xc, poll_status(xc, filename, widget_start),
-		xstatus_draw_clock(xc));
+	xstatus_draw_battery(xc, (struct JBDim){.start = poll_status(xc,
+		filename, widget_start), .end = xstatus_draw_clock(xc)});
 }
 // returns if update needed
 __attribute__((nonnull))

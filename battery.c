@@ -81,12 +81,10 @@ static xcb_gcontext_t * get_gcs(xcb_connection_t * restrict xc)
 		initialize_gcs(xc, xstatus_get_window(xc), gc);
 	return gc;
 }
-void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
-	const uint16_t end)
+void xstatus_draw_battery(xcb_connection_t * xc, const struct JBDim range)
 {
 	const int8_t pct = get_percent();
 	if (pct >= 0) {
-		const struct JBDim range = {.start = start, .end = end};
 		xcb_gcontext_t * gcs = get_gcs(xc);
 		struct XSWidget widget = {xc, xstatus_get_window(xc),
 			gcs[get_gc(pct)], gcs[BATTERY_GC_BACKGROUND],
