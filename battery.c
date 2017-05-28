@@ -41,13 +41,11 @@ static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
 	xstatus_create_gc(xc, *gc = xcb_generate_id(xc), w, fg,
 		XSTATUS_BATTERY_BACKGROUND_COLOR);
 }
-static void initialize_gcs(xcb_connection_t * restrict xc,
-	const xcb_window_t w, xcb_gcontext_t * restrict gc)
+static void initialize_gcs(struct XSWidget * widget, xcb_gcontext_t * gc)
 {
-#define SETGC(color) set_gc(xc, w, gc + BATTERY_GC_##color, \
-	XSTATUS_BATTERY_##color##_COLOR);
+#define SETGC(color) set_gc(widget->connection, widget->window, \
+	gc + BATTERY_GC_##color, XSTATUS_BATTERY_##color##_COLOR);
 	SETGC(BACKGROUND); SETGC(AC); SETGC(BATTERY); SETGC(CRITICAL);
-#undef SETGC
 }
 static xcb_rectangle_t get_rectangle(const struct JBDim range)
 {
@@ -73,21 +71,22 @@ static uint16_t get_x(const struct JBDim range)
 {
 	return range.start + (range.end - range.start) / 2;
 }
-static xcb_gcontext_t * get_gcs(xcb_connection_t * restrict xc)
+static xcb_gcontext_t * get_gcs(struct XSWidget * widget)
 {
 	static xcb_gcontext_t gc[BATTERY_GC_SIZE];
 	if (!*gc)
-		initialize_gcs(xc, xstatus_get_window(xc), gc);
+		initialize_gcs(widget, gc);
 	return gc;
 }
 void xstatus_draw_battery(xcb_connection_t * xc, const struct JBDim range)
 {
 	const int8_t pct = get_percent();
 	if (pct >= 0) {
-		xcb_gcontext_t * gcs = get_gcs(xc);
 		struct XSWidget widget = {xc, xstatus_get_window(xc),
-			gcs[get_gc(pct)], gcs[BATTERY_GC_BACKGROUND],
 			.x = get_x(range)};
+		xcb_gcontext_t * gcs = get_gcs(&widget);
+		widget.foreground = gcs[get_gc(pct)];
+		widget.background = gcs[BATTERY_GC_BACKGROUND];
 		draw_rectangles(&widget, range, pct);
 		draw_percent(&widget, pct);
 		xcb_flush(xc);
