@@ -4,7 +4,7 @@
 #include "font.h"
 #include <stdio.h>
 #include <stdlib.h>
-__attribute__((nonnull))
+__attribute__((nonnull(1)))
 static uint8_t format(char * restrict buf, const uint8_t sz)
 {
 	double l;
@@ -12,7 +12,6 @@ static uint8_t format(char * restrict buf, const uint8_t sz)
 	return snprintf(buf, sz, "%.2f", l);
 }
 // Returns x offset for next item
-__attribute__((nonnull))
 uint16_t xstatus_draw_load(xcb_connection_t * xc, const uint16_t x)
 {
 	const struct JBDim f = xstatus_get_font_size();
