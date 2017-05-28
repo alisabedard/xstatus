@@ -14,18 +14,13 @@ void xstatus_create_gc(xcb_connection_t * xc, const xcb_gcontext_t gc,
 		&(uint32_t){xstatus_get_font(xc)});
 }
 // returns -1 on error
-int32_t xstatus_system_value(const char * filename)
+int xstatus_system_value(const char * filename)
 {
-	enum { BUFSZ = 8 };
-	char buf[BUFSZ];
-	{ // f scope
-		fd_t f = open(filename, O_RDONLY);
-		if (f == -1)
-			return -1;
-		const ssize_t ret = read(f, buf, BUFSZ);
-		close(f); // clean up file descriptor
-		if (ret <= 0)
-			return -1; // error or nothing read
-	}
-	return atoi(buf);
+	ssize_t sz = 8;
+	char buf[sz];
+	fd_t f = open(filename, O_RDONLY);
+	sz = read(f, buf, sz); // Read if we can
+	close(f); // Clean up
+	// This check is all-inclusive:
+	return sz > 0 ? atoi(buf) : -1;
 }
