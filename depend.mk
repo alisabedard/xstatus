@@ -1,5 +1,5 @@
-battery.o: battery.c battery.h config.h font.h libjb/JBDim.h libjb/log.h \
- libjb/macros.h libjb/util.h util.h libjb/xcb.h xdata.h xstatus.h
+battery.o: battery.c battery.h libjb/JBDim.h XSWidget.h config.h font.h \
+ libjb/macros.h util.h libjb/xcb.h xdata.h
 button.o: button.c button.h config.h font.h libjb/JBDim.h libjb/xcb.h \
  xdata.h
 clock.o: clock.c clock.h xdata.h config.h font.h libjb/JBDim.h \
@@ -16,6 +16,6 @@ util.o: util.c util.h libjb/xcb.h xdata.h font.h libjb/JBDim.h \
  libjb/file.h
 window.o: window.c window.h config.h libjb/xcb.h xdata.h
 xdata.o: xdata.c xdata.h libjb/xcb.h
-xstatus.o: xstatus.c xstatus.h battery.h clock.h xdata.h config.h font.h \
- libjb/JBDim.h libjb/log.h libjb/xcb.h load.h status_file.h temperature.h \
- toolbar.h util.h window.h
+xstatus.o: xstatus.c xstatus.h battery.h libjb/JBDim.h clock.h xdata.h \
+ config.h font.h libjb/log.h libjb/xcb.h load.h status_file.h \
+ temperature.h toolbar.h util.h window.h

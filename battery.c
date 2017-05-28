@@ -1,13 +1,12 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "battery.h"
+#include <stdio.h>
 #include "XSWidget.h"
 #include "config.h"
 #include "font.h"
-#include "libjb/log.h"
 #include "libjb/macros.h"
-#include "libjb/util.h"
 #include "util.h"
-#include "xstatus.h"
+#include "xdata.h"
 //#define XSTATUS_BATTERY_TEST
 // get percent value, maximum 100, -1 on error
 static int8_t get_percent(void)
