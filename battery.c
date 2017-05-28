@@ -57,12 +57,6 @@ static xcb_rectangle_t get_rectangle(const struct JBDim range)
 		.height = XSTATUS_CONST_HEIGHT >> 1,
 		.width = range.end - range.start - XSTATUS_CONST_PAD};
 }
-__attribute__((const))
-static uint16_t get_width_for_percent(const uint16_t width,
-	const uint8_t pct)
-{
-	return width * pct / 100;
-}
 static void draw_rectangles(struct XSWidget * widget, const struct JBDim
 	range, const uint8_t pct)
 {
@@ -71,7 +65,7 @@ static void draw_rectangles(struct XSWidget * widget, const struct JBDim
 	xcb_connection_t * xc = widget->connection;
 	// clear:
 	xcb_poly_fill_rectangle(xc, w, widget->background, 1, &rect);
-	rect.width = get_width_for_percent(rect.width, pct);
+	rect.width *= pct / 100.0;
 	// fill rectangle per percent full:
 	xcb_poly_fill_rectangle(xc, w, widget->foreground, 1, &rect);
 }
