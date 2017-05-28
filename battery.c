@@ -80,14 +80,6 @@ static uint16_t get_x(const struct JBDim range)
 {
 	return range.start + (range.end - range.start) / 2;
 }
-static void draw_for_gc(xcb_connection_t * xc, const xcb_gcontext_t gc,
-	const xcb_gcontext_t bg_gc, const struct JBDim range, const uint8_t pct)
-{
-	struct XSWidget widget = {xc, xstatus_get_window(xc), gc, bg_gc,
-		.x = get_x(range)};
-	draw_rectangles(&widget, range, pct);
-	draw_percent(&widget, pct);
-}
 static xcb_gcontext_t * get_gcs(xcb_connection_t * restrict xc)
 {
 	static xcb_gcontext_t gc[BATTERY_GC_SIZE];
@@ -95,20 +87,18 @@ static xcb_gcontext_t * get_gcs(xcb_connection_t * restrict xc)
 		initialize_gcs(xc, xstatus_get_window(xc), gc);
 	return gc;
 }
-static void draw_for_percent(xcb_connection_t * restrict xc,
-	const struct JBDim range, const uint8_t pct)
-{
-	xcb_gcontext_t * gc = get_gcs(xc);
-	const uint8_t i = get_gc(pct);
-	draw_for_gc(xc, gc[i], gc[BATTERY_GC_BACKGROUND], range, pct);
-}
 void xstatus_draw_battery(xcb_connection_t * xc, const uint16_t start,
 	const uint16_t end)
 {
 	const int8_t pct = get_percent();
 	if (pct >= 0) {
-		draw_for_percent(xc, (struct JBDim){.start = start,
-			.end = end}, pct);
+		const struct JBDim range = {.start = start, .end = end};
+		xcb_gcontext_t * gcs = get_gcs(xc);
+		struct XSWidget widget = {xc, xstatus_get_window(xc),
+			gcs[get_gc(pct)], gcs[BATTERY_GC_BACKGROUND],
+			.x = get_x(range)};
+		draw_rectangles(&widget, range, pct);
+		draw_percent(&widget, pct);
 		xcb_flush(xc);
 	}
 }
