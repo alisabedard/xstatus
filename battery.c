@@ -1,5 +1,6 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "battery.h"
+#include "XSWidget.h"
 #include "config.h"
 #include "font.h"
 #include "libjb/log.h"
@@ -27,13 +28,13 @@ static uint8_t format(char * buf, const uint8_t sz, const uint8_t pct)
 {
 	return snprintf(buf, sz, " %d%% ", pct);
 }
-static void draw_percent(xcb_connection_t * restrict xc,
-	const xcb_gcontext_t gc, const uint8_t pct, const int16_t x)
+static void draw_percent(struct XSWidget * widget, const uint8_t pct)
 {
 	enum {BUF_SZ = 7};
 	char buf[BUF_SZ];
-	xcb_image_text_8(xc, format(buf, BUF_SZ, pct), xstatus_get_window(xc),
-		gc, x, xstatus_get_font_size().h, buf);
+	xcb_image_text_8(widget->connection, format(buf, BUF_SZ, pct),
+		widget->window, widget->foreground, widget->x,
+		xstatus_get_font_size().h, buf);
 }
 static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
 	xcb_gcontext_t * restrict gc, const char * restrict fg)
@@ -62,17 +63,17 @@ static uint16_t get_width_for_percent(const uint16_t width,
 {
 	return width * pct / 100;
 }
-static void draw_rectangles(xcb_connection_t * restrict xc,
-	const xcb_gcontext_t gc, const xcb_gcontext_t bg_gc,
-	const struct JBDim range, const uint8_t pct)
+static void draw_rectangles(struct XSWidget * widget, const struct JBDim
+	range, const uint8_t pct)
 {
 	xcb_rectangle_t rect = get_rectangle(range);
-	const xcb_window_t w = xstatus_get_window(xc);
+	const xcb_window_t w = widget->window;
+	xcb_connection_t * xc = widget->connection;
 	// clear:
-	xcb_poly_fill_rectangle(xc, w, bg_gc, 1, &rect);
+	xcb_poly_fill_rectangle(xc, w, widget->background, 1, &rect);
 	rect.width = get_width_for_percent(rect.width, pct);
 	// fill rectangle per percent full:
-	xcb_poly_fill_rectangle(xc, w, gc, 1, &rect);
+	xcb_poly_fill_rectangle(xc, w, widget->foreground, 1, &rect);
 }
 __attribute__((const))
 static uint16_t get_x(const struct JBDim range)
@@ -82,8 +83,10 @@ static uint16_t get_x(const struct JBDim range)
 static void draw_for_gc(xcb_connection_t * xc, const xcb_gcontext_t gc,
 	const xcb_gcontext_t bg_gc, const struct JBDim range, const uint8_t pct)
 {
-	draw_rectangles(xc, gc, bg_gc, range, pct);
-	draw_percent(xc, gc, pct, get_x(range));
+	struct XSWidget widget = {xc, xstatus_get_window(xc), gc, bg_gc,
+		.x = get_x(range)};
+	draw_rectangles(&widget, range, pct);
+	draw_percent(&widget, pct);
 }
 static xcb_gcontext_t * get_gcs(xcb_connection_t * restrict xc)
 {
