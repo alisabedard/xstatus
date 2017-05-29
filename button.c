@@ -2,27 +2,24 @@
 #include "button.h"
 #include <stdlib.h>
 #include <string.h>
+#include "XSTextWidget.h"
 #include "config.h"
 #include "font.h"
 #include "libjb/xcb.h"
+#include "text_widget.h"
 #include "xdata.h"
-static inline uint8_t get_font_height(void)
-{
-	return xstatus_get_font_size().height;
-}
 static void draw(struct XSButton * restrict b)
 {
 	xcb_connection_t * xc = b->widget.connection;
-	xcb_image_text_8(xc, strlen(b->label), b->widget.window,
-		xstatus_get_button_gc(xc), XSTATUS_CONST_PAD,
-		get_font_height(), b->label);
+	xcb_image_text_8(xc, b->length, b->widget.window, b->gc,
+		XSTATUS_CONST_PAD, b->font_size.height, b->label);
 }
 static void invert(struct XSButton * restrict b)
 {
 	xcb_connection_t * xc = b->widget.connection;
 	xcb_poly_fill_rectangle(xc, b->widget.window,
 		xstatus_get_invert_gc(xc), 1, &(xcb_rectangle_t){0, 0,
-		b->widget.width, get_font_height()});
+		b->widget.width, b->font_size.height});
 	xcb_flush(xc);
 }
 static pixel_t get_bg(xcb_connection_t * restrict xc)
@@ -41,10 +38,9 @@ static inline uint8_t get_height(uint8_t fh)
 }
 static xcb_rectangle_t get_geometry(struct XSButton * b)
 {
-	const struct JBDim f = xstatus_get_font_size();
-	return (xcb_rectangle_t){.x = b->widget.x,
-		.width = b->widget.width = get_width(f.w, b->label),
-		.height = get_height(f.h)};
+	return (xcb_rectangle_t){.x = b->widget.x, .width = b->widget.width =
+		get_width(b->font_size.width, b->label), .height =
+			get_height(b->font_size.height)};
 }
 static void create_window(struct XSButton * b)
 {
@@ -74,10 +70,14 @@ struct XSButton * xstatus_create_button(xcb_connection_t * restrict xc,
 	b->widget.connection = xc;
 	b->widget.window = xcb_generate_id(xc);
 	b->label = label;
+	if (label)
+		b->length = strlen(label);
 	b->draw = draw;
 	b->enter = invert;
 	b->leave = invert;
+	b->font_size = xstatus_get_font_size();
 	b->widget.x = x;
+	b->gc = xstatus_get_button_gc(xc);
 	create_window(b);
 	draw(b);
 	return b;
