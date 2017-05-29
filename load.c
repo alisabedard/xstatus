@@ -1,9 +1,9 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "load.h"
-#include "config.h"
-#include "font.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "XSTextWidget.h"
+#include "text_widget.h"
 __attribute__((nonnull(1)))
 static uint8_t format(char * restrict buf, const uint8_t sz)
 {
@@ -14,13 +14,8 @@ static uint8_t format(char * restrict buf, const uint8_t sz)
 // Returns x offset for next item
 uint16_t xstatus_draw_load(xcb_connection_t * xc, const uint16_t x)
 {
-	const struct JBDim f = xstatus_get_font_size();
-	uint8_t sz=6;
-	{ // buf scope
-		char buf[sz];
-		sz = format(buf, sz);
-		xcb_image_text_8(xc, sz, xstatus_get_window(xc),
-			xstatus_get_gc(xc), x, f.h, buf);
-	}
-	return x + f.w * sz + XSTATUS_CONST_PAD;
+	enum { BUFSZ = 6 };
+	char buf[BUFSZ];
+	struct XSTextWidget w = {xc, buf, format(buf, BUFSZ), x};
+	return xstatus_draw_text_widget(&w);
 }
