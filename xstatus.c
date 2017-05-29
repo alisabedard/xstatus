@@ -13,6 +13,11 @@
 #include "util.h"
 #include "window.h"
 #include "xdata.h"
+struct XSUpdate {
+	xcb_connection_t * connection;
+	struct XStatusOptions * options;
+	uint16_t widget_start;
+};
 static uint16_t poll_status(xcb_connection_t * restrict xc,
 	const char * filename, const uint16_t widget_start)
 {
@@ -64,16 +69,17 @@ static void handle_events(xcb_connection_t * restrict xc,
 	free(e);
 }
 __attribute__((noreturn))
-static void event_loop(xcb_connection_t * restrict xc,
-	const uint8_t delay, const char * restrict filename,
-	const uint16_t widget_start)
+static void event_loop(struct XSUpdate * restrict u)
 {
+	xcb_connection_t * xc = u->connection;
 	for (;;) {
 		xcb_generic_event_t * e;
-		if (jb_next_event_timed(xc, &e, delay * 1000000) && e)
-			handle_events(xc, e, filename, widget_start);
+		if (jb_next_event_timed(xc, &e, u->options->delay * 1000000)
+			&& e)
+			handle_events(xc, e, u->options->filename,
+				u->widget_start);
 		else
-			update(xc, filename, widget_start);
+			update(xc, u->options->filename, u->widget_start);
 	}
 }
 static void initialize_font(xcb_connection_t * restrict xc)
@@ -108,5 +114,6 @@ static uint16_t initialize(xcb_connection_t * restrict xc)
 void xstatus_start(struct XStatusOptions * restrict opt)
 {
 	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
-	event_loop(xc, opt->delay, opt->filename, initialize(xc));
+	event_loop(&(struct XSUpdate) {.connection = xc, .options = opt,
+		.widget_start = initialize(xc)});
 }
