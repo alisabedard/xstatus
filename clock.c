@@ -1,7 +1,9 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "clock.h"
+#include "XSTextWidget.h"
 #include "config.h"
 #include "font.h"
+#include "text_widget.h"
 static uint8_t format(char * buf, uint8_t sz)
 {
 	 return strftime(buf, sz, XSTATUS_TIME_FORMAT,
@@ -10,13 +12,10 @@ static uint8_t format(char * buf, uint8_t sz)
 __attribute__((hot))
 uint16_t xstatus_draw_clock(xcb_connection_t * xc)
 {
-	uint8_t sz = XSTATUS_TIME_BUFFER_SIZE;
-	char buf[sz];
-	struct JBDim font_size = xstatus_get_font_size();
-	sz = format(buf, sz);
-	const uint16_t offset = xstatus_get_screen(xc)->width_in_pixels
-		- font_size.width * sz;
-	xcb_image_text_8(xc, sz, xstatus_get_window(xc), xstatus_get_gc(xc),
-		offset, font_size.height, buf);
-	return offset;
+	char buf[XSTATUS_TIME_BUFFER_SIZE];
+	struct XSTextWidget w = {xc, buf, format(buf, XSTATUS_TIME_BUFFER_SIZE),
+		xstatus_get_screen(xc)->width_in_pixels};
+	w.offset -= xstatus_get_font_size().width * w.buffer_size;
+	xstatus_draw_text_widget(&w);
+	return w.offset;
 }
