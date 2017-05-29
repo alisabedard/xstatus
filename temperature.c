@@ -4,10 +4,6 @@
 #include "font.h"
 #include "util.h"
 #include <stdio.h>
-static int32_t get_temp_raw(void)
-{
-	return xstatus_system_value(XSTATUS_SYSFILE_TEMPERATURE);
-}
 static uint8_t get_temp(void)
 {
 	// may only fail once:
@@ -15,7 +11,7 @@ static uint8_t get_temp(void)
 	if (get_temp_failed)
 		return 0; // 0 indicates unsupported
 	// type must hold at least 100000, signed
-	int32_t temp = get_temp_raw();
+	int32_t temp = xstatus_system_value(XSTATUS_SYSFILE_TEMPERATURE);
 	if (temp == -1) { // could not open system file
 		get_temp_failed = true;
 		return 0;
