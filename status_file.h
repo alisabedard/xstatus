@@ -4,5 +4,5 @@
 #include <stdint.h>
 #include <xcb/xcb.h>
 // Returns offset for next widget
-int draw_status_file(xcb_connection_t * xc, int x, const char * filename);
+int draw_status_file(xcb_connection_t * xc, short x, const char * filename);
 #endif//!XSTATUS_STATUS_FILE_H

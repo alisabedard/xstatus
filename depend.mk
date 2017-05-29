@@ -1,17 +1,19 @@
 battery.o: battery.c battery.h libjb/JBDim.h XSWidget.h config.h font.h \
  libjb/macros.h util.h libjb/xcb.h xdata.h
-button.o: button.c button.h config.h font.h libjb/JBDim.h libjb/xcb.h \
- xdata.h
-clock.o: clock.c clock.h xdata.h config.h font.h libjb/JBDim.h \
- libjb/log.h libjb/xcb.h
+button.o: button.c button.h XSWidget.h config.h font.h libjb/JBDim.h \
+ libjb/xcb.h xdata.h
+clock.o: clock.c clock.h xdata.h config.h font.h libjb/JBDim.h
 font.o: font.c font.h libjb/JBDim.h libjb/log.h libjb/xcb.h
 load.o: load.c load.h xdata.h config.h font.h libjb/JBDim.h
 main.o: main.c xstatus.h config.h
-status_file.o: status_file.c status_file.h config.h font.h libjb/JBDim.h \
- libjb/file.h libjb/util.h xdata.h
+status_file.o: status_file.c status_file.h XSTextWidget.h config.h font.h \
+ libjb/JBDim.h libjb/file.h text_widget.h xdata.h
 temperature.o: temperature.c temperature.h config.h font.h libjb/JBDim.h \
  util.h libjb/xcb.h xdata.h
-toolbar.o: toolbar.c toolbar.h button.h config.h libjb/log.h libjb/util.h
+text_widget.o: text_widget.c text_widget.h XSTextWidget.h font.h \
+ libjb/JBDim.h xdata.h
+toolbar.o: toolbar.c toolbar.h button.h XSWidget.h config.h libjb/log.h \
+ libjb/util.h
 util.o: util.c util.h libjb/xcb.h xdata.h font.h libjb/JBDim.h \
  libjb/file.h
 window.o: window.c window.h config.h libjb/xcb.h xdata.h

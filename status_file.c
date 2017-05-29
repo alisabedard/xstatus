@@ -8,6 +8,7 @@
 #include "config.h"
 #include "font.h"
 #include "libjb/file.h"
+#include "text_widget.h"
 #include "xdata.h"
 static ssize_t poll_status_file(const char * restrict filename,
 	char * restrict buf)
@@ -26,26 +27,19 @@ static void warn_no_data(const char * restrict fn)
 	fprintf(stderr, "No data in status file: %s\n", fn);
 	warned = true;
 }
-static void draw_text(struct XSTextWidget * restrict w)
-{
-	xcb_connection_t * xc = w->connection;
-	xcb_image_text_8(xc, w->buffer_size, xstatus_get_window(xc),
-		xstatus_get_gc(xc), w->offset + (XSTATUS_CONST_PAD << 1),
-		w->font_size.height, w->buffer);
-}
 // Returns offset for next widget
-int draw_status_file(xcb_connection_t * xc, int x, const char * filename)
+int draw_status_file(xcb_connection_t * xc, short x, const char * filename)
 {
 	char buf[XSTATUS_CONST_BUFFER_SIZE];
-	const ssize_t s = poll_status_file(filename, buf) - 1;
-	if (s <= 0) { // empty or error
-		warn_no_data(filename);
-		return x + XSTATUS_CONST_PAD;
-	}
+	const uint8_t pad = XSTATUS_CONST_PAD << 1;
 	struct XSTextWidget w = {.connection = xc, .buffer = buf,
-		.buffer_size = s, .offset = x,
-		.font_size = xstatus_get_font_size()};
-	draw_text(&w);
-	return w.font_size.width * w.buffer_size + w.offset
-		+ (XSTATUS_CONST_PAD << 2);
+		.buffer_size = poll_status_file(filename, buf) - 1,
+		.offset = x + pad};
+	const bool valid = w.buffer_size > 0;
+	if (valid)
+		xstatus_draw_text_widget(&w);
+	else
+		warn_no_data(filename);
+	return valid ? xstatus_get_font_size().width * w.buffer_size
+		+ w.offset + pad : w.offset;
 }
