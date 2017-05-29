@@ -1,10 +1,12 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "battery.h"
 #include <stdio.h>
+#include "XSTextWidget.h"
 #include "XSWidget.h"
 #include "config.h"
 #include "font.h"
 #include "libjb/macros.h"
+#include "text_widget.h"
 #include "util.h"
 #include "xdata.h"
 //#define XSTATUS_BATTERY_TEST
@@ -31,9 +33,9 @@ static void draw_percent(struct XSWidget * widget, const uint8_t pct)
 {
 	enum {BUF_SZ = 7};
 	char buf[BUF_SZ];
-	xcb_image_text_8(widget->connection, format(buf, BUF_SZ, pct),
-		widget->window, widget->foreground, widget->x,
-		xstatus_get_font_size().h, buf);
+	struct XSTextWidget w = {widget->connection, buf, format(buf, BUF_SZ,
+		pct), widget->x};
+	xstatus_draw_text_widget(&w);
 }
 static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
 	xcb_gcontext_t * restrict gc, const char * restrict fg)
