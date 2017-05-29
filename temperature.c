@@ -1,9 +1,11 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "temperature.h"
+#include <stdio.h>
+#include "XSTextWidget.h"
 #include "config.h"
 #include "font.h"
+#include "text_widget.h"
 #include "util.h"
-#include <stdio.h>
 static uint8_t get_temp(void)
 {
 	// may only fail once:
@@ -27,13 +29,8 @@ static uint8_t format(char * restrict buf, const uint8_t sz)
 uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset)
 {
 	uint8_t sz = 4;
-	const struct JBDim f = xstatus_get_font_size();
 	const int16_t x = offset + XSTATUS_CONST_PAD;
-	{ // buf scope
-		char buf[sz];
-		sz = format(buf, sz);
-		xcb_image_text_8(xc, sz, xstatus_get_window(xc),
-			xstatus_get_gc(xc), x, f.h, buf);
-	}
-	return x + f.w * sz;
+	char buf[sz];
+	sz = format(buf, sz);
+	return xstatus_draw_text_widget(&(struct XSTextWidget){xc, buf, sz, x});
 }

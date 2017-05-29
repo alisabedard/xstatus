@@ -19,27 +19,24 @@ static ssize_t poll_status_file(const char * restrict filename,
 	close(fd);
 	return r;
 }
-static void warn_no_data(const char * restrict fn)
+// ret is a pass-through return value to allow chained calling
+static short warn_no_data(const char * restrict fn, short ret)
 {
 	static bool warned;
-	if (warned)
-		return;
-	fprintf(stderr, "No data in status file: %s\n", fn);
-	warned = true;
+	if (!warned) {
+		fprintf(stderr, "No data in status file: %s\n", fn);
+		warned = true;
+	}
+	return ret;
 }
 // Returns offset for next widget
-int draw_status_file(xcb_connection_t * xc, short x, const char * filename)
+short draw_status_file(void * xc, short x, const char * filename)
 {
 	char buf[XSTATUS_CONST_BUFFER_SIZE];
 	const uint8_t pad = XSTATUS_CONST_PAD << 1;
 	struct XSTextWidget w = {.connection = xc, .buffer = buf,
 		.buffer_size = poll_status_file(filename, buf) - 1,
 		.offset = x + pad};
-	const bool valid = w.buffer_size > 0;
-	if (valid)
-		xstatus_draw_text_widget(&w);
-	else
-		warn_no_data(filename);
-	return valid ? xstatus_get_font_size().width * w.buffer_size
-		+ w.offset + pad : w.offset;
+	return w.buffer_size > 0 ? xstatus_draw_text_widget(&w) :
+		warn_no_data(filename, w.offset);
 }
