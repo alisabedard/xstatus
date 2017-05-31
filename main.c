@@ -21,12 +21,16 @@ static void usage(void)
 	fputs(XSTATUS_HELPTEXT, stderr);
 	exit(1);
 }
-static void parse_command_line(int argc, char ** argv,
-	struct XStatusOptions * restrict o)
+static int8_t next_option(int argc, char ** argv)
 {
-	int8_t opt;
-	while((opt = getopt(argc, argv, "d:f:h")) != -1) {
+	return getopt(argc, argv, "d:f:h");
+}
+static void parse_command_line_r(int argc, char ** argv,
+	struct XStatusOptions * restrict o, int8_t opt)
+{
 		switch(opt) {
+		case -1:
+			return;
 		case 'd':
 			o->delay = atoi(optarg);
 			break;
@@ -37,7 +41,12 @@ static void parse_command_line(int argc, char ** argv,
 		default:
 			usage();
 		}
-	}
+		parse_command_line_r(argc, argv, o, next_option(argc, argv));
+}
+static void parse_command_line(int argc, char ** argv,
+	struct XStatusOptions * restrict o)
+{
+	parse_command_line_r(argc, argv, o, next_option(argc, argv));
 }
 int main(int argc, char ** argv)
 {
