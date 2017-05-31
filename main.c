@@ -1,7 +1,6 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "xstatus.h"
 #include "config.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #define XSTATUS_HELPTEXT \
@@ -18,7 +17,7 @@
 __attribute__((noreturn))
 static void usage(void)
 {
-	fputs(XSTATUS_HELPTEXT, stderr);
+	write(1, XSTATUS_HELPTEXT, sizeof(XSTATUS_HELPTEXT));
 	exit(1);
 }
 static int8_t next_option(int argc, char ** argv)
