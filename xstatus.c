@@ -13,11 +13,6 @@
 #include "util.h"
 #include "window.h"
 #include "xdata.h"
-struct XSUpdate {
-	xcb_connection_t * connection;
-	struct XStatusOptions * options;
-	uint16_t widget_start;
-};
 static uint16_t poll_status(xcb_connection_t * restrict xc,
 	const char * filename, const uint16_t widget_start)
 {
@@ -68,20 +63,6 @@ static void handle_events(xcb_connection_t * restrict xc,
 	}
 	free(e);
 }
-__attribute__((noreturn))
-static void event_loop(struct XSUpdate * restrict u)
-{
-	xcb_connection_t * xc = u->connection;
-	for (;;) {
-		xcb_generic_event_t * e;
-		if (jb_next_event_timed(xc, &e, u->options->delay * 1000000)
-			&& e)
-			handle_events(xc, e, u->options->filename,
-				u->widget_start);
-		else
-			update(xc, u->options->filename, u->widget_start);
-	}
-}
 static void initialize_font(xcb_connection_t * restrict xc)
 {
 	if (!xstatus_open_font(xc, XSTATUS_FONT)) // default
@@ -104,16 +85,19 @@ static void initialize_gcs(xcb_connection_t * restrict xc)
 		XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
 	setup_invert_gc(xc, w);
 }
-static uint16_t initialize(xcb_connection_t * restrict xc)
-{
-	xstatus_create_window(xc);
-	initialize_font(xc); // font needed for gc
-	initialize_gcs(xc);
-	return xstatus_initialize_toolbar(xc);
-}
 void xstatus_start(struct XStatusOptions * restrict opt)
 {
 	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
-	event_loop(&(struct XSUpdate) {.connection = xc, .options = opt,
-		.widget_start = initialize(xc)});
+	xstatus_create_window(xc);
+	initialize_font(xc); // font needed for gc
+	initialize_gcs(xc);
+	const uint16_t start = xstatus_initialize_toolbar(xc);
+	for (;;) {
+		xcb_generic_event_t * e;
+		if (jb_next_event_timed(xc, &e, opt->delay * 1000000) && e)
+			handle_events(xc, e, opt->filename, start);
+		else
+			update(xc, opt->filename, start);
+
+	}
 }
