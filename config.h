@@ -10,8 +10,8 @@ enum {
 	XSTATUS_CONST_PAD = 4,
 	XSTATUS_TIME_BUFFER_SIZE = 20
 };
-#define XSTATUS_FONT "-*-terminus-*-*-*-*-14-*-*-*-*-*-*-*"
-#define XSTATUS_MENU_COMMAND "dmenu_run -b&"
+#define XSTATUS_FONT "lucidasans-10"
+#define XSTATUS_FM_COMMAND "dolphin"
 #define XSTATUS_TCMD "jbxvt"
 #define XSTATUS_TERMINAL XSTATUS_TCMD
 #define XSTATUS_BROWSER_COMMAND "chromium"

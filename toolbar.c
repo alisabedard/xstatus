@@ -33,7 +33,7 @@ static uint16_t btn(xcb_connection_t * xc, const int16_t offset,
 uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
 {
 	uint16_t off = 0;
-	off = btn(xc, off, "Menu", XSTATUS_MENU_COMMAND);
+	off = btn(xc, off, "Files", XSTATUS_FM_COMMAND);
 	off = btn(xc, off, "Terminal", XSTATUS_TERMINAL);
 	off = btn(xc, off, "Editor", XSTATUS_EDITOR_COMMAND);
 	{ // * browser scope
