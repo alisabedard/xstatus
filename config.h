@@ -11,12 +11,11 @@ enum {
 	XSTATUS_TIME_BUFFER_SIZE = 20
 };
 #define XSTATUS_FONT "lucidasanstypewriter-10"
-#define XSTATUS_FM_COMMAND "dolphin"
-#define XSTATUS_TCMD "jbxvt"
-#define XSTATUS_TERMINAL XSTATUS_TCMD
-#define XSTATUS_BROWSER_COMMAND "chromium"
-#define XSTATUS_EDITOR_COMMAND XSTATUS_TCMD " -e vim"
-#define XSTATUS_MIXER_COMMAND XSTATUS_TCMD " -e alsamixer"
+#define XSTATUS_FM_COMMAND "thunar"
+#define XSTATUS_TERMINAL_COMMAND "xterm"
+#define XSTATUS_BROWSER_COMMAND "firefox"
+#define XSTATUS_EDITOR_COMMAND "gvim"
+#define XSTATUS_MIXER_COMMAND "pavucontrol"
 #define XSTATUS_LOCK_COMMAND "slock"
 #define XSTATUS_STATUS_FILE "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
