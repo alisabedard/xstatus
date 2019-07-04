@@ -10,13 +10,18 @@ enum {
 	XSTATUS_CONST_PAD = 4,
 	XSTATUS_TIME_BUFFER_SIZE = 20
 };
-#define XSTATUS_FONT "lucidasanstypewriter-10"
+// Comment out the following line to enable all toolbar buttons:
+#define XSTATUS_MINIMAL_TOOLBAR
+#define XSTATUS_FONT "9x15"
+// Comment out a command to disable its corresponding button:
 #define XSTATUS_FM_COMMAND "thunar"
 #define XSTATUS_TERMINAL_COMMAND "xterm"
 #define XSTATUS_BROWSER_COMMAND "firefox"
-#define XSTATUS_EDITOR_COMMAND "gvim"
+//#define XSTATUS_EDITOR_COMMAND "gvim"
 #define XSTATUS_MIXER_COMMAND "pavucontrol"
 #define XSTATUS_LOCK_COMMAND "slock"
+/* Set the file from which you wish to read message lines.
+ * The display starts with the top line of the file.  */
 #define XSTATUS_STATUS_FILE "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
 #define XSTATUS_BUTTON_BG "grey10"

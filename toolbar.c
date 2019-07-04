@@ -34,19 +34,33 @@ uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
 {
 	uint16_t off = 0;
 #ifdef XSTATUS_MINIMAL_TOOLBAR
+#ifdef XSTATUS_TERMINAL_COMMAND
 	off=btn(xc,off,"vt",XSTATUS_TERMINAL_COMMAND);
+#endif//XSTATUS_TERMINAL_COMMAND
+#ifdef XSTATUS_LOCK_COMMAND
 	off=btn(xc,off,"lk",XSTATUS_LOCK_COMMAND);
+#endif//XSTATUS_LOCK_COMMAND
 #else//!XSTATUS_MINIMAL_TOOLBAR
+#ifdef XSTATUS_FM_COMMAND
 	off = btn(xc, off, "Files", XSTATUS_FM_COMMAND);
+#endif//XSTATUS_FM_COMMAND
 	off = btn(xc, off, "Terminal", XSTATUS_TERMINAL_COMMAND);
+#ifdef XSTATUS_EDITOR_COMMAND
 	off = btn(xc, off, "Editor", XSTATUS_EDITOR_COMMAND);
+#endif//XSTATUS_EDITOR_COMMAND
+#ifdef XSTATUS_BROWSER_COMMAND
 	{ // * browser scope
 		char * browser=getenv("XSTATUS_BROWSER_COMMAND");
 		off = btn(xc, off, "Browser", browser ? browser
 			: XSTATUS_BROWSER_COMMAND);
 	}
+#endif//XSTATUS_BROWSER_COMMAND
+#ifdef XSTATUS_MIXER_COMMAND
 	off = btn(xc, off, "Mixer", XSTATUS_MIXER_COMMAND);
+#endif//XSTATUS_MIXER_COMMAND
+#ifdef XSTATUS_LOCK_COMMAND
 	off = btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
+#endif//XSTATUS_LOCK_COMMAND
 
 #endif//XSTATUS_MINIMAL_TOOLBAR
 	return off;
