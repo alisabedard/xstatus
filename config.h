@@ -11,15 +11,16 @@ enum {
 	XSTATUS_TIME_BUFFER_SIZE = 20
 };
 // Comment out the following line to enable all toolbar buttons:
-#define XSTATUS_MINIMAL_TOOLBAR
+//#define XSTATUS_MINIMAL_TOOLBAR
 #define XSTATUS_FONT "9x15"
 // Comment out a command to disable its corresponding button:
 #define XSTATUS_FM_COMMAND "thunar"
-#define XSTATUS_TERMINAL_COMMAND "xterm"
+#define XSTATUS_TERMINAL_COMMAND "jbxvt"
 #define XSTATUS_BROWSER_COMMAND "firefox"
 //#define XSTATUS_EDITOR_COMMAND "gvim"
 #define XSTATUS_MIXER_COMMAND "pavucontrol"
 #define XSTATUS_LOCK_COMMAND "slock"
+#define XSTATUS_MAIL_COMMAND "thunderbird"
 /* Set the file from which you wish to read message lines.
  * The display starts with the top line of the file.  */
 #define XSTATUS_STATUS_FILE "/tmp/xstatus"

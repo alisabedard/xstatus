@@ -55,6 +55,9 @@ uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
 			: XSTATUS_BROWSER_COMMAND);
 	}
 #endif//XSTATUS_BROWSER_COMMAND
+#ifdef XSTATUS_MAIL_COMMAND
+        off=btn(xc,off,"Mail",XSTATUS_MAIL_COMMAND);
+#endif//XSTATUS_MAIL_COMMAND
 #ifdef XSTATUS_MIXER_COMMAND
 	off = btn(xc, off, "Mixer", XSTATUS_MIXER_COMMAND);
 #endif//XSTATUS_MIXER_COMMAND
