@@ -1,0 +1,10 @@
+*.o
+*.log
+*.out
+profile
+scratch
+xstatus
+cachegrind.*
+config.mk
+*~
+.*.swp
