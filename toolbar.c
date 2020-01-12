@@ -44,7 +44,9 @@ uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
 #ifdef XSTATUS_FM_COMMAND
 	off = btn(xc, off, "Files", XSTATUS_FM_COMMAND);
 #endif//XSTATUS_FM_COMMAND
+#ifdef XSTATUS_TERMINAL_COMMAND
 	off = btn(xc, off, "Terminal", XSTATUS_TERMINAL_COMMAND);
+#endif//XSTATUS_TERMINAL_COMMMAND
 #ifdef XSTATUS_EDITOR_COMMAND
 	off = btn(xc, off, "Editor", XSTATUS_EDITOR_COMMAND);
 #endif//XSTATUS_EDITOR_COMMAND
