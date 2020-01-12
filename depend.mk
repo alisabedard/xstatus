@@ -4,7 +4,7 @@ button.o: button.c button.h XSWidget.h libjb/JBDim.h XSTextWidget.h \
  config.h font.h libjb/xcb.h text_widget.h xdata.h
 clock.o: clock.c clock.h xdata.h XSTextWidget.h config.h font.h \
  libjb/JBDim.h text_widget.h
-font.o: font.c font.h libjb/JBDim.h libjb/xcb.h
+font.o: font.c font.h libjb/JBDim.h libjb/xcb.h xdata.h
 load.o: load.c load.h xdata.h XSTextWidget.h text_widget.h
 main.o: main.c xstatus.h config.h
 status_file.o: status_file.c status_file.h XSTextWidget.h libjb/file.h \
