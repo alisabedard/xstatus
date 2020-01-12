@@ -14,15 +14,18 @@ enum {
 //#define XSTATUS_MINIMAL_TOOLBAR
 #define XSTATUS_FONT "9x15"
 // Comment out a command to disable its corresponding button:
-#define XSTATUS_FM_COMMAND "thunar"
-#define XSTATUS_TERMINAL_COMMAND "jbxvt"
+//#define XSTATUS_FM_COMMAND "thunar"
+//#define XSTATUS_TERMINAL_COMMAND "xterm"
+//#define XSTATUS_TERMINAL_COMMAND "jbxvt"
 #define XSTATUS_BROWSER_COMMAND "firefox"
-//#define XSTATUS_EDITOR_COMMAND "gvim"
-#define XSTATUS_MIXER_COMMAND "pavucontrol"
-#define XSTATUS_LOCK_COMMAND "slock"
-#define XSTATUS_MAIL_COMMAND "thunderbird"
+#define XSTATUS_EDITOR_COMMAND "gvim"
+#define XSTATUS_MIXER_COMMAND "xterm -e alsamixer"
+//#define XSTATUS_MIXER_COMMAND "pavucontrol"
+//#define XSTATUS_LOCK_COMMAND "slock"
+//#define XSTATUS_MAIL_COMMAND "thunderbird"
 /* Set the file from which you wish to read message lines.
  * The display starts with the top line of the file.  */
+// Comment out XSTATUS_STATUS_FILE to disable this feature
 #define XSTATUS_STATUS_FILE "/tmp/xstatus"
 #define XSTATUS_TIME_FORMAT "%a %d %b %T"
 #define XSTATUS_BUTTON_BG "grey10"
