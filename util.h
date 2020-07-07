@@ -3,7 +3,7 @@
 #define XSTATUS_UTIL_H
 #include <stdbool.h>
 #include "libjb/xcb.h"
-#include "xdata.h"
+#include "XSXData.h"
 void xstatus_create_gc(xcb_connection_t * xc, const xcb_gcontext_t gc,
 	const xcb_window_t win, const char * restrict fg,
 	const char * restrict bg);

@@ -10,11 +10,11 @@ static uint8_t format(char * buf, uint8_t sz)
 		 localtime(&(time_t){time(NULL)}));
 }
 __attribute__((hot))
-uint16_t xstatus_draw_clock(xcb_connection_t * xc)
+uint16_t xstatus_draw_clock(struct XSXData * x)
 {
 	char buf[XSTATUS_TIME_BUFFER_SIZE];
-	struct XSTextWidget w = {xc, buf, format(buf, XSTATUS_TIME_BUFFER_SIZE),
-		xstatus_get_screen(xc)->width_in_pixels};
+	struct XSTextWidget w = {x->xc, buf,
+          format(buf, XSTATUS_TIME_BUFFER_SIZE), x->screen->width_in_pixels};
 	w.offset -= xstatus_get_font_size().width * w.buffer_size;
 	xstatus_draw_text_widget(&w);
 	return w.offset;

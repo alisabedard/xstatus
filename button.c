@@ -7,7 +7,7 @@
 #include "font.h"
 #include "libjb/xcb.h"
 #include "text_widget.h"
-#include "xdata.h"
+#include "XSXData.h"
 static void draw(struct XSButton * restrict b)
 {
 	xcb_connection_t * xc = b->widget.connection;

@@ -8,7 +8,7 @@
 #include "libjb/macros.h"
 #include "text_widget.h"
 #include "util.h"
-#include "xdata.h"
+#include "XSXData.h"
 //#define XSTATUS_BATTERY_TEST
 // get percent value, maximum 100, -1 on error
 static int8_t get_percent(void)

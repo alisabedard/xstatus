@@ -12,7 +12,7 @@
 #include "toolbar.h"
 #include "util.h"
 #include "window.h"
-#include "xdata.h"
+#include "XSXData.h"
 static uint16_t poll_status(xcb_connection_t * restrict xc,
 	const char * filename, const uint16_t widget_start)
 {

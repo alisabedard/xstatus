@@ -2,7 +2,7 @@
 #include "window.h"
 #include "config.h"
 #include "libjb/xcb.h"
-#include "xdata.h"
+#include "XSXData.h"
 __attribute__((const))
 static inline int16_t get_y(const uint16_t screen_height)
 {

@@ -3,7 +3,7 @@
 #include "XSTextWidget.h"
 #include "config.h"
 #include "font.h"
-#include "xdata.h"
+#include "XSXData.h"
 short xstatus_draw_text_widget(struct XSTextWidget * widget)
 {
 	xcb_connection_t * xc = widget->connection;

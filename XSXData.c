@@ -1,5 +1,5 @@
 // Copyright 2017, Jeffrey E. Bedard
-#include "xdata.h"
+#include "XSXData.h"
 #include "libjb/xcb.h"
 void init_XSXData(xcb_connection_t * xc, struct XSXData * i) {
   i->xc = xc;

@@ -2,7 +2,7 @@
 #include "font.h"
 #include <stdlib.h>
 #include "libjb/xcb.h"
-#include "xdata.h"
+#include "XSXData.h"
 static struct JBDim font_size;
 struct JBDim xstatus_get_font_size(void)
 {
