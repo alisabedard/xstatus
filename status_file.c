@@ -31,11 +31,12 @@ static short warn_no_data(const char * restrict fn, short ret)
 	return ret;
 }
 // Returns offset for next widget
-short draw_status_file(void * xc, short x, const char * filename)
+short draw_status_file(struct XSXData * restrict xdata,
+    short x, const char * filename)
 {
 	char buf[XSTATUS_CONST_BUFFER_SIZE];
 	enum { PAD = XSTATUS_CONST_PAD << 1 };
-	struct XSTextWidget w = {.connection = xc, .buffer = buf,
+	struct XSTextWidget w = {.x = xdata, .buffer = buf,
 		.buffer_size = poll_status_file(filename, buf) - 1,
 		.offset = x + PAD};
 	return w.buffer_size > 0 ? xstatus_draw_text_widget(&w) :

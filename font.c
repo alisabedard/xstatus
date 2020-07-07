@@ -1,6 +1,7 @@
 // Copyright 2017, Jeffrey E. Bedard
 #include "font.h"
 #include <stdlib.h>
+#include "libjb/log.h"
 #include "libjb/xcb.h"
 #include "XSXData.h"
 static struct JBDim font_size;
@@ -21,14 +22,13 @@ static void finish_query(xcb_connection_t * restrict xc,
 	font_size = charinfo_to_size(&r->max_bounds);
 	free(r);
 }
-// returns true if successful
-bool xstatus_open_font(xcb_connection_t * restrict xc,
+void xstatus_open_font(struct XSXData * restrict x,
 	const char * restrict fn)
 {
-	xcb_font_t f = xstatus_get_font(xc);
-	if(!jb_open_font(xc, f, fn))
-		return false;
-	finish_query(xc, xcb_query_font(xc, f));
-	return true;
+	if(!jb_open_font(x->xc, x->font, fn)
+          || !jb_open_font(x->xc, x->font, "fixed"))
+			LIBJB_ERROR("Could not load any font");
+        // set up font_size
+	finish_query(x->xc, xcb_query_font(x->xc, x->font));
 }
 

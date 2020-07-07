@@ -26,11 +26,12 @@ static uint8_t format(char * restrict buf, const uint8_t sz)
 	return temp ? snprintf(buf, sz, "%dC", temp) : 0;
 }
 // Returns x offset for next item
-uint16_t draw_temp(xcb_connection_t * xc, const uint16_t offset)
+uint16_t draw_temp(struct XSXData * restrict xdata, const uint16_t offset)
 {
 	uint8_t sz = 4;
 	const int16_t x = offset + XSTATUS_CONST_PAD;
 	char buf[sz];
 	sz = format(buf, sz);
-	return xstatus_draw_text_widget(&(struct XSTextWidget){xc, buf, sz, x});
+	return xstatus_draw_text_widget(&(struct XSTextWidget){
+          xdata, buf, sz, x});
 }

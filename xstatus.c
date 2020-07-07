@@ -22,15 +22,15 @@ static uint16_t poll_status(xcb_connection_t * restrict xc,
 	offset = draw_status_file(xc, offset, filename);
 	return offset;
 }
-static void update(xcb_connection_t * restrict xc,
+static void update(struct XSXData * restrict x,
 	const char * restrict filename, const uint16_t widget_start)
 {
-	xstatus_draw_battery(xc, (struct JBDim){.start = poll_status(xc,
-		filename, widget_start), .end = xstatus_draw_clock(xc)});
+	xstatus_draw_battery(x, (struct JBDim){.start = poll_status(x->xc,
+		filename, widget_start), .end = xstatus_draw_clock(x)});
 }
 // returns if update needed
 __attribute__((nonnull))
-static void handle_events(xcb_connection_t * restrict xc,
+static void handle_events(struct XSXData * restrict x,
 	xcb_generic_event_t * restrict e, const char * restrict filename,
 	const uint16_t widget_start)
 {
@@ -52,7 +52,7 @@ static void handle_events(xcb_connection_t * restrict xc,
 	case XCB_EXPOSE:
 		if (!xstatus_toolbar_handle_expose(((xcb_expose_event_t*)e)
 			->window))
-			update(xc, filename, widget_start);
+			update(x, filename, widget_start);
 		break;
 	case XCB_BUTTON_PRESS:
 		xstatus_toolbar_handle_button_press(
@@ -63,41 +63,37 @@ static void handle_events(xcb_connection_t * restrict xc,
 	}
 	free(e);
 }
-static void initialize_font(xcb_connection_t * restrict xc)
+static inline void xstatus_create_gc(struct XSXData * restrict x,
+  const xcb_gcontext_t gc, const char * restrict fg, const char * restrict bg)
 {
-	if (!xstatus_open_font(xc, XSTATUS_FONT)) // default
-		if (!xstatus_open_font(xc, "fixed")) // fallback
-			LIBJB_ERROR("Could not load any font");
+	jb_create_gc(x->xc, gc, x->window, fg, bg);
+	xcb_change_gc(x->xc, gc, XCB_GC_FONT, &x->font);
 }
-static void setup_invert_gc(xcb_connection_t * restrict xc,
-	const xcb_window_t w)
+
+static void initialize_gcs(struct XSXData * restrict x)
 {
-	xcb_gcontext_t gc = xstatus_get_invert_gc(xc);
-	xcb_create_gc(xc, gc, w, XCB_GC_FUNCTION,
-		(uint32_t[]){XCB_GX_INVERT});
-}
-static void initialize_gcs(xcb_connection_t * restrict xc)
-{
-	const xcb_window_t w = xstatus_get_window(xc);
-	xstatus_create_gc(xc, xstatus_get_gc(xc), w,
+	xstatus_create_gc(x, x->gc, 
 		XSTATUS_PANEL_FOREGROUND, XSTATUS_PANEL_BACKGROUND);
-	xstatus_create_gc(xc, xstatus_get_button_gc(xc), w,
+	xstatus_create_gc(x, x->button_gc, 
 		XSTATUS_BUTTON_FG, XSTATUS_BUTTON_BG);
-	setup_invert_gc(xc, w);
+	xcb_create_gc(x->xc, x->invert_gc, x->window, XCB_GC_FUNCTION,
+		(uint32_t[]){XCB_GX_INVERT});
 }
 void xstatus_start(struct XStatusOptions * restrict opt)
 {
+  struct XSXData x;
 	xcb_connection_t * xc = jb_get_xcb_connection(NULL, NULL);
-	xstatus_create_window(xc);
-	initialize_font(xc); // font needed for gc
-	initialize_gcs(xc);
+        init_XSXData(xc, &x);
+	xstatus_create_window(&x);
+	xstatus_open_font(&x, XSTATUS_FONT);
+	initialize_gcs(&x);
 	const uint16_t start = xstatus_initialize_toolbar(xc);
 	for (;;) {
 		xcb_generic_event_t * e;
 		if (jb_next_event_timed(xc, &e, opt->delay * 1000000) && e)
-			handle_events(xc, e, opt->filename, start);
+			handle_events(&x, e, opt->filename, start);
 		else
-			update(xc, opt->filename, start);
+			update(&x, opt->filename, start);
 
 	}
 }

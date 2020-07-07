@@ -1,4 +1,4 @@
-objs=${exe}.o util.o main.o font.o xdata.o button.o
+objs=${exe}.o util.o main.o font.o XSXData.o button.o
 objs+=clock.o load.o status_file.o window.o toolbar.o
 objs+=battery.o temperature.o text_widget.o
 include config.mk

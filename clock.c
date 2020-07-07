@@ -13,7 +13,7 @@ __attribute__((hot))
 uint16_t xstatus_draw_clock(struct XSXData * x)
 {
 	char buf[XSTATUS_TIME_BUFFER_SIZE];
-	struct XSTextWidget w = {x->xc, buf,
+	struct XSTextWidget w = {x, buf,
           format(buf, XSTATUS_TIME_BUFFER_SIZE), x->screen->width_in_pixels};
 	w.offset -= xstatus_get_font_size().width * w.buffer_size;
 	xstatus_draw_text_widget(&w);
