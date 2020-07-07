@@ -2,6 +2,15 @@
 #ifndef XS_XDATA_H
 #define XS_XDATA_H
 #include <xcb/xcb.h>
+struct XSXData {
+  xcb_connection_t * xc;
+  xcb_screen_t * screen;
+  xcb_colormap_t colormap;
+  xcb_font_t font;
+  xcb_gcontext_t alert_gc, button_gc, gc, invert_gc;
+  xcb_window_t window;
+};
+void init_XSXData(xcb_connection_t * xc, struct XSXData * i);
 xcb_colormap_t xstatus_get_colormap(xcb_connection_t * xc);
 xcb_gcontext_t xstatus_get_button_gc(xcb_connection_t * xc);
 xcb_gcontext_t xstatus_get_gc(xcb_connection_t * xc);
