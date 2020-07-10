@@ -12,10 +12,10 @@ static uint8_t format(char * restrict buf, const uint8_t sz)
 	return snprintf(buf, sz, "%.2f", l);
 }
 // Returns x offset for next item
-uint16_t xstatus_draw_load(xcb_connection_t * xc, const uint16_t x)
+uint16_t xstatus_draw_load(struct XSXData * restrict xdata, const uint16_t x)
 {
 	enum { BUFSZ = 6 };
 	char buf[BUFSZ];
-	struct XSTextWidget w = {xc, buf, format(buf, BUFSZ), x};
+	struct XSTextWidget w = {xdata, buf, format(buf, BUFSZ), x};
 	return xstatus_draw_text_widget(&w);
 }

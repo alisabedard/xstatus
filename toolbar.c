@@ -38,55 +38,55 @@ static void system_cb(struct XSButton * b)
         jb_system(cmd);
     }
 }
-static uint16_t btn(xcb_connection_t * xc, const int16_t offset,
+static uint16_t btn(struct XSXData * X, const int16_t offset,
     char * restrict label, char * restrict cmd)
 {
     struct XSButton * i = get_last_button();
-    struct XSButton * b = xstatus_create_button(xc, offset, label);
+    struct XSButton * b = createButton(X, label, offset);
     b->cb = system_cb;
     b->cb_data = cmd;
     *(i ? &i->next : &xstatus_head_button) = b;
-    return offset + b->widget.width + XSTATUS_CONST_PAD;
+    return offset + b->widget.Geometry[2] + XSTATUS_CONST_PAD;
 }
 /* Returns x offset after all buttons added.  */
-uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
+uint16_t xstatus_initialize_toolbar(struct XSXData * X)
 {
     uint16_t off = 0;
 #ifdef XSTATUS_MINIMAL_TOOLBAR
 #ifdef XSTATUS_TERMINAL_COMMAND
-    off=btn(xc,off,"vt",XSTATUS_TERMINAL_COMMAND);
+    off=btn(X,off,"vt",XSTATUS_TERMINAL_COMMAND);
 #endif//XSTATUS_TERMINAL_COMMAND
 #ifdef XSTATUS_LOCK_COMMAND
-    off=btn(xc,off,"lk",XSTATUS_LOCK_COMMAND);
+    off=btn(X,off,"lk",XSTATUS_LOCK_COMMAND);
 #endif//XSTATUS_LOCK_COMMAND
 #else//!XSTATUS_MINIMAL_TOOLBAR
 #ifdef XSTATUS_FM_COMMAND
-    off = btn(xc, off, "Files", XSTATUS_FM_COMMAND);
+    off = btn(X, off, "Files", XSTATUS_FM_COMMAND);
 #endif//XSTATUS_FM_COMMAND
 #ifdef XSTATUS_TERMINAL_COMMAND
-    off = btn(xc, off, "Terminal", XSTATUS_TERMINAL_COMMAND);
+    off = btn(X, off, "Terminal", XSTATUS_TERMINAL_COMMAND);
 #endif//XSTATUS_TERMINAL_COMMMAND
 #ifdef XSTATUS_EDITOR_COMMAND
-    off = btn(xc, off, "Editor", XSTATUS_EDITOR_COMMAND);
+    off = btn(X, off, "Editor", XSTATUS_EDITOR_COMMAND);
 #endif//XSTATUS_EDITOR_COMMAND
 #ifdef XSTATUS_BROWSER_COMMAND
     { // * browser scope
         char * browser=getenv("XSTATUS_BROWSER_COMMAND");
-        off = btn(xc, off, "Browser", browser ? browser
+        off = btn(X, off, "Browser", browser ? browser
             : XSTATUS_BROWSER_COMMAND);
     }
 #endif//XSTATUS_BROWSER_COMMAND
 #ifdef XSTATUS_MAIL_COMMAND
-    off=btn(xc,off,"Mail",XSTATUS_MAIL_COMMAND);
+    off=btn(X,off,"Mail",XSTATUS_MAIL_COMMAND);
 #endif//XSTATUS_MAIL_COMMAND
 #ifdef XSTATUS_MIXER_COMMAND
-    off = btn(xc, off, "Mixer", XSTATUS_MIXER_COMMAND);
+    off = btn(X, off, "Mixer", XSTATUS_MIXER_COMMAND);
 #endif//XSTATUS_MIXER_COMMAND
 #ifdef XSTATUS_LOCK_COMMAND
-    off = btn(xc, off, "Lock", XSTATUS_LOCK_COMMAND);
+    off = btn(X, off, "Lock", XSTATUS_LOCK_COMMAND);
 #endif//XSTATUS_LOCK_COMMAND
 #ifdef XSTATUS_LOGOUT_COMMAND
-    off = btn(xc, off, "Logout", XSTATUS_LOGOUT_COMMAND);
+    off = btn(X, off, "Logout", XSTATUS_LOGOUT_COMMAND);
 #endif//XSTATUS_LOGOUT_COMMAND
 
 #endif//XSTATUS_MINIMAL_TOOLBAR
@@ -95,7 +95,7 @@ uint16_t xstatus_initialize_toolbar(xcb_connection_t * xc)
 static struct XSButton * find_button_r(const xcb_window_t w,
     struct XSButton * i)
 {
-    return i ? i->widget.window == w ? i
+    return i ? i->widget.Window == w ? i
     : find_button_r(w, i->next) : NULL;
 }
 static bool iterate_buttons(const xcb_window_t ewin,

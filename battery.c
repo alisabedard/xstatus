@@ -3,12 +3,13 @@
 #include <stdio.h>
 #include "XSTextWidget.h"
 #include "XSWidget.h"
+#include "XSXData.h"
 #include "config.h"
 #include "font.h"
 #include "libjb/macros.h"
 #include "text_widget.h"
 #include "util.h"
-#include "XSXData.h"
+#include "xstatus.h"
 //#define XSTATUS_BATTERY_TEST
 // get percent value, maximum 100, -1 on error
 static int8_t get_percent(void)
@@ -33,19 +34,19 @@ static void draw_percent(struct XSWidget * widget, const uint8_t pct)
 {
   enum {BUF_SZ = 7};
   char buf[BUF_SZ];
-  struct XSTextWidget w = {widget->connection, buf, format(buf, BUF_SZ,
-    pct), widget->x};
+  struct XSTextWidget w = {widget->X, buf, format(buf, BUF_SZ,
+    pct), widget->Geometry[0]};
   xstatus_draw_text_widget(&w);
 }
-static void set_gc(xcb_connection_t * restrict xc, const xcb_window_t w,
+static void set_gc(struct XSXData * restrict X, const xcb_window_t w,
   xcb_gcontext_t * restrict gc, const char * restrict fg)
 {
-  xstatus_create_gc(xc, *gc = xcb_generate_id(xc), w, fg,
+  xstatus_create_gc(X, *gc = xcb_generate_id(X->xc), fg,
     XSTATUS_BATTERY_BACKGROUND_COLOR);
 }
 static void initialize_gcs(struct XSWidget * widget, xcb_gcontext_t * gc)
 {
-#define SETGC(color) set_gc(widget->connection, widget->window, \
+#define SETGC(color) set_gc(widget->X, widget->Window, \
   gc + BATTERY_GC_##color, XSTATUS_BATTERY_##color##_COLOR);
   SETGC(BACKGROUND); SETGC(AC); SETGC(BATTERY); SETGC(CRITICAL);
 }
@@ -60,13 +61,13 @@ static void draw_rectangles(struct XSWidget * widget, const struct JBDim
   range, const uint8_t pct)
 {
   xcb_rectangle_t rect = get_rectangle(range);
-  const xcb_window_t w = widget->window;
-  xcb_connection_t * xc = widget->connection;
+  const xcb_window_t w = widget->Window;
+  xcb_connection_t * xc = widget->X->xc;
   // clear:
-  xcb_poly_fill_rectangle(xc, w, widget->background, 1, &rect);
+  xcb_poly_fill_rectangle(xc, w, widget->X->background, 1, &rect);
   rect.width *= pct / 100.0;
   // fill rectangle per percent full:
-  xcb_poly_fill_rectangle(xc, w, widget->foreground, 1, &rect);
+  xcb_poly_fill_rectangle(xc, w, widget->X->foreground, 1, &rect);
 }
 __attribute__((const))
 static uint16_t get_x(const struct JBDim range)
@@ -80,18 +81,18 @@ static xcb_gcontext_t * get_gcs(struct XSWidget * widget)
     initialize_gcs(widget, gc);
   return gc;
 }
-void xstatus_draw_battery(struct XSXData * restrict x,
+void xstatus_draw_battery(struct XSXData * restrict X,
   const struct JBDim range)
 {
   const int8_t pct = get_percent();
   if (pct >= 0) {
-    struct XSWidget widget = {x->xc, x->window,
-      .x = get_x(range)};
+    struct XSWidget widget = {X, X->window,
+      .Geometry = {get_x(range)}};
     xcb_gcontext_t * gcs = get_gcs(&widget);
-    widget.foreground = gcs[get_gc(pct)];
-    widget.background = gcs[BATTERY_GC_BACKGROUND];
+    widget.X->foreground = gcs[get_gc(pct)];
+    widget.X->background = gcs[BATTERY_GC_BACKGROUND];
     draw_rectangles(&widget, range, pct);
     draw_percent(&widget, pct);
-    xcb_flush(x->xc);
+    xcb_flush(X->xc);
   }
 }
