@@ -72,8 +72,7 @@ struct XSButton * createButton(struct XSXData * restrict XData,
   b->widget.X = XData;
   b->widget.Window = xcb_generate_id(XData->xc);
   b->label = Label;
-  if (Label)
-    b->length = strlen(Label);
+  b->length = strlen(Label);
   b->draw = draw;
   b->enter = invert;
   b->leave = invert;
