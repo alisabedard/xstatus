@@ -21,7 +21,7 @@ enum {
 #define XSTATUS_EDITOR_COMMAND "gvim"
 #define XSTATUS_MIXER_COMMAND "xterm -e alsamixer"
 //#define XSTATUS_MIXER_COMMAND "pavucontrol"
-//#define XSTATUS_LOCK_COMMAND "slock"
+#define XSTATUS_LOCK_COMMAND "slock"
 //#define XSTATUS_MAIL_COMMAND "thunderbird"
 #define XSTATUS_LOGOUT_COMMAND "__EXIT__"
 /* Set the file from which you wish to read message lines.
