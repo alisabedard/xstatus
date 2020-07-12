@@ -44,8 +44,6 @@ static void handle_events(struct XSXData * restrict x,
       ((xcb_enter_notify_event_t*)e)->event);
     break;
   case XCB_EXPOSE:
-    if (!xstatus_toolbar_handle_expose(((xcb_expose_event_t*)e)
-        ->window))
       update(x, filename, widget_start);
     break;
   case XCB_BUTTON_PRESS:
