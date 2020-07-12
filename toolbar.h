@@ -7,7 +7,6 @@
 /* Returns x offset after all buttons added.  */
 uint16_t xstatus_initialize_toolbar(struct XSXData * X);
 bool xstatus_toolbar_handle_button_enter(const xcb_window_t event_window);
-bool xstatus_toolbar_handle_button_leave(const xcb_window_t event_window);
 // returns true if event was processed:
 bool xstatus_toolbar_handle_button_press(const xcb_window_t event_window);
 // returns true if event was processed:

@@ -36,18 +36,12 @@ static void handle_events(struct XSXData * restrict x,
 {
   switch (e->response_type) {
   case XCB_ENTER_NOTIFY:
+  case XCB_LEAVE_NOTIFY:
 #if LOG_LEVEL > 8
-    LOG("enter");
+    LOG("enter/leave");
 #endif//LOG_LEVEL
     xstatus_toolbar_handle_button_enter(
       ((xcb_enter_notify_event_t*)e)->event);
-    break;
-  case XCB_LEAVE_NOTIFY:
-#if LOG_LEVEL > 8
-    LOG("leave");
-#endif//LOG_LEVEL
-    xstatus_toolbar_handle_button_leave(
-      ((xcb_leave_notify_event_t*)e)->event);
     break;
   case XCB_EXPOSE:
     if (!xstatus_toolbar_handle_expose(((xcb_expose_event_t*)e)
