@@ -11,7 +11,7 @@
 static void draw(struct XSButton * restrict b)
 {
   xcb_connection_t * xc = b->widget.X->xc;
-  xcb_image_text_8(xc, b->length, b->widget.Window, b->widget.X->gc,
+  xcb_image_text_8(xc, b->length, b->widget.Window, b->widget.X->button_gc,
     XSTATUS_CONST_PAD, b->font_size.height, b->label);
 }
 static void invert(struct XSButton * restrict b)
