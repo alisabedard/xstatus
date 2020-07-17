@@ -22,7 +22,7 @@ static uint16_t poll_status(struct XSXData * restrict x,
   offset = draw_status_file(x, offset, filename);
   return offset;
 }
-static void update(struct XSXData * restrict x,
+static inline void update(struct XSXData * restrict x,
   const char * restrict filename, const uint16_t widget_start)
 {
   drawBattery(x, (struct JBDim){.start = poll_status(x,
@@ -45,6 +45,7 @@ static void handle_events(struct XSXData * restrict x,
     break;
   case XCB_EXPOSE:
       update(x, filename, widget_start);
+      xstatus_toolbar_handle_expose(((xcb_expose_event_t *)e)->window);
     break;
   case XCB_BUTTON_PRESS:
     xstatus_toolbar_handle_button_press(
