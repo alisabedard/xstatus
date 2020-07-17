@@ -40,38 +40,38 @@ uint16_t xstatus_initialize_toolbar(struct XSXData * X)
 #ifdef XSTATUS_MINIMAL_TOOLBAR
 #ifdef XSTATUS_TERMINAL_COMMAND
   Offset=addButton(X,Offset,"vt",system_cb, XSTATUS_TERMINAL_COMMAND);
-#endif//system_cb, XSTATUS_TERMINAL_COMMAND
+#endif//XSTATUS_TERMINAL_COMMAND
 #ifdef XSTATUS_LOCK_COMMAND
   Offset=addButton(X,Offset,"lk",system_cb, XSTATUS_LOCK_COMMAND);
-#endif//system_cb, XSTATUS_LOCK_COMMAND
+#endif//XSTATUS_LOCK_COMMAND
 #else//!system_cb, XSTATUS_MINIMAL_TOOLBAR
 #ifdef XSTATUS_FM_COMMAND
   Offset = addButton(X, Offset, "Files", system_cb, XSTATUS_FM_COMMAND);
-#endif//system_cb, XSTATUS_FM_COMMAND
+#endif//XSTATUS_FM_COMMAND
 #ifdef XSTATUS_TERMINAL_COMMAND
   Offset = addButton(X, Offset, "Terminal", system_cb,
     XSTATUS_TERMINAL_COMMAND);
-#endif//system_cb, XSTATUS_TERMINAL_COMMMAND
+#endif//XSTATUS_TERMINAL_COMMMAND
 #ifdef XSTATUS_EDITOR_COMMAND
   Offset = addButton(X, Offset, "Editor", system_cb, XSTATUS_EDITOR_COMMAND);
-#endif//system_cb, XSTATUS_EDITOR_COMMAND
+#endif//XSTATUS_EDITOR_COMMAND
 #ifdef XSTATUS_BROWSER_COMMAND
   Offset = addButton(X, Offset, "Browser", system_cb, XSTATUS_BROWSER_COMMAND);
-#endif//system_cb, XSTATUS_BROWSER_COMMAND
+#endif//XSTATUS_BROWSER_COMMAND
 #ifdef XSTATUS_MAIL_COMMAND
   Offset=addButton(X,Offset,"Mail", system_cb, XSTATUS_MAIL_COMMAND);
-#endif//system_cb, XSTATUS_MAIL_COMMAND
+#endif//XSTATUS_MAIL_COMMAND
 #ifdef XSTATUS_MIXER_COMMAND
   Offset = addButton(X, Offset, "Mixer", system_cb, XSTATUS_MIXER_COMMAND);
-#endif//system_cb, XSTATUS_MIXER_COMMAND
+#endif//XSTATUS_MIXER_COMMAND
 #ifdef XSTATUS_LOCK_COMMAND
   Offset = addButton(X, Offset, "Lock", system_cb, XSTATUS_LOCK_COMMAND);
-#endif//system_cb, XSTATUS_LOCK_COMMAND
+#endif//XSTATUS_LOCK_COMMAND
 #ifdef XSTATUS_LOGOUT_COMMAND
   Offset = addButton(X, Offset, "Logout", exit_cb, XSTATUS_LOGOUT_COMMAND);
-#endif//system_cb, XSTATUS_LOGOUT_COMMAND
+#endif//XSTATUS_LOGOUT_COMMAND
 
-#endif//system_cb, XSTATUS_MINIMAL_TOOLBAR
+#endif//XSTATUS_MINIMAL_TOOLBAR
   return Offset;
 }
 static struct XSButton * find_button_r(const xcb_window_t w,
