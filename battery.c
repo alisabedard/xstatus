@@ -38,7 +38,7 @@ static void draw_percent(struct XSWidget * widget, const uint8_t pct)
     pct), widget->Geometry[0]};
   xstatus_draw_text_widget(&w);
 }
-static void set_gc(struct XSXData * restrict X, const xcb_window_t w,
+static void set_gc(struct XSXData * restrict X,
   xcb_gcontext_t * restrict gc, const char * restrict fg)
 {
   xstatus_create_gc(X, *gc = xcb_generate_id(X->xc), fg,
@@ -46,7 +46,7 @@ static void set_gc(struct XSXData * restrict X, const xcb_window_t w,
 }
 static void initialize_gcs(struct XSWidget * widget, xcb_gcontext_t * gc)
 {
-#define SETGC(color) set_gc(widget->X, widget->Window, \
+#define SETGC(color) set_gc(widget->X, \
   gc + BATTERY_GC_##color, XSTATUS_BATTERY_##color##_COLOR);
   SETGC(BACKGROUND); SETGC(AC); SETGC(BATTERY); SETGC(CRITICAL);
 }
