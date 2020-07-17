@@ -6,20 +6,22 @@ cflags+=-std=c11
 cflags+=-D_XOPEN_SOURCE=700
 cflags+=-D_DEFAULT_SOURCE
 cflags+=-D_BSD_SOURCE
+cflags+=-Wall -W -Werror -g
 ldflags+=${LDFLAGS}
 ldflags+=-lxcb -lxcb-cursor
 CFLAGS+=${cflags}
 PREFIX=/usr
 exe=xstatus
 installdir=${DESTDIR}${PREFIX}
-${exe}: libjb/libjb.a ${objs}
+all:
+	cd libjb && ${MAKE} libjb.a
+	make ${exe}
+${exe}: ${objs} libjb/libjb.a
 	${CC} ${cflags} ${ldflags} ${objs} ${static} -o $@
 	strip -s -o xstatus_stripped xstatus
 	ls -l xstatus_stripped >> sz.log
 	rm -f xstatus_stripped
 	tail sz.log
-libjb/libjb.a:
-	cd libjb && ${MAKE} libjb.a
 include depend.mk
 clean:
 	cd libjb && ${MAKE} clean
