@@ -1,2 +1,3 @@
 Make XSTextWidget contain XSWidget.
+Rename all symbols per LLVM guidelines.
 
