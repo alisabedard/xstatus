@@ -26,7 +26,7 @@ static void update(struct XSXData * restrict x,
   const char * restrict filename, const uint16_t widget_start)
 {
   drawBattery(x, (struct JBDim){.start = poll_status(x,
-      filename, widget_start), .end = xstatus_draw_clock(x)});
+      filename, widget_start), .end = drawClock(x)});
 }
 // returns if update needed
 __attribute__((nonnull))

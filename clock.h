@@ -2,5 +2,5 @@
 #ifndef XSTATUS_CLOCK_H
 #define XSTATUS_CLOCK_H
 #include "XSXData.h"
-uint16_t xstatus_draw_clock(struct XSXData * x);
+uint16_t drawClock(struct XSXData * x);
 #endif//!XSTATUS_CLOCK_H

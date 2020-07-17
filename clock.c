@@ -10,7 +10,7 @@ static uint8_t format(char * buf, uint8_t sz)
 		 localtime(&(time_t){time(NULL)}));
 }
 __attribute__((hot))
-uint16_t xstatus_draw_clock(struct XSXData * x)
+uint16_t drawClock(struct XSXData * x)
 {
 	char buf[XSTATUS_TIME_BUFFER_SIZE];
 	struct XSTextWidget w = {x, buf,
