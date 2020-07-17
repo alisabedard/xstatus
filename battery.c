@@ -81,7 +81,7 @@ static xcb_gcontext_t * get_gcs(struct XSWidget * widget)
     initialize_gcs(widget, gc);
   return gc;
 }
-void xstatus_draw_battery(struct XSXData * restrict X,
+void drawBattery(struct XSXData * restrict X,
   const struct JBDim range)
 {
   const int8_t pct = get_percent();

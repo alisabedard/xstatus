@@ -3,6 +3,6 @@
 #define XSTATUS_BATTERY_H
 #include "libjb/JBDim.h"
 #include "XSXData.h"
-void xstatus_draw_battery(struct XSXData * restrict X,
+void drawBattery(struct XSXData * restrict X,
   const struct JBDim range);
 #endif//!XSTATUS_BATTERY_H
