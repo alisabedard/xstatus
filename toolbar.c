@@ -14,7 +14,7 @@ static struct XSButton * get_last_button(void)
   return xstatus_head_button ? get_last_button_r(xstatus_head_button)
   : NULL;
 }
-static void exit_cb(struct XSButton * b)
+static void exit_cb(struct XSButton * b __attribute__((unused)))
 {
   exit(0);
 }
@@ -84,17 +84,20 @@ void xstatus_toolbar_handle_expose(const xcb_window_t EventWindow)
 {
   struct XSButton * B;
   B = find_button_r(EventWindow, xstatus_head_button);
-  B->draw(B);
+  if (B)
+    B->draw(B);
 }
 void xstatus_toolbar_handle_button_press(const xcb_window_t EventWindow)
 {
   struct XSButton * B;
   B = find_button_r(EventWindow, xstatus_head_button);
-  B->cb(B);
+  if (B)
+    B->cb(B);
 }
 void xstatus_toolbar_handle_button_enter(const xcb_window_t EventWindow)
 {
   struct XSButton * B;
   B = find_button_r(EventWindow, xstatus_head_button);
-  B->enter(B);
+  if (B)
+    B->enter(B);
 }
