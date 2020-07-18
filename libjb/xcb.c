@@ -167,34 +167,21 @@ xcb_gcontext_t jb_create_gc(xcb_connection_t * xc, xcb_gcontext_t gc,
 bool jb_next_event_timed(xcb_connection_t * x,
   xcb_generic_event_t ** e, const uint32_t delay)
 {
-#if 0
-  jb_check_x(x);
-  int fd = xcb_get_file_descriptor(x);
-  fd_set r;
-  FD_ZERO(&r);
-  FD_SET(fd, &r);
-  if (select(fd + 1, &r, NULL, NULL, &(struct timeval){
-    .tv_usec = delay}))
-    // event occurred before timeout:
-    *e = xcb_poll_for_event(x);
-  return *e != NULL;
-#endif
-
-//#if 0
-  jb_check_x(x);
-  if ((*e = xcb_poll_for_event(x)))
-    return true;
-  int fd = xcb_get_file_descriptor(x);
-  fd_set r;
-  FD_ZERO(&r);
-  FD_SET(fd, &r);
-  if (!select(fd + 1, &r, NULL, NULL, &(struct timeval){
-    .tv_usec = delay}))
-    return false; // timeout
-  // event occurred before timeout:
+  bool Value;
+  fd_set Set;
   *e = xcb_poll_for_event(x);
-  return true;
-//#endif
+  if (e)
+    Value = true;
+  else {
+    fd_t const FD = xcb_get_file_descriptor(x);
+    FD_ZERO(&Set);
+    FD_SET(FD, &Set);
+    Value=select(FD + 1, &Set, NULL, NULL, &(struct timeval){
+      .tv_usec = delay});
+    if (Value) // event occurred before timeout:
+      *e = xcb_poll_for_event(x);
+  }
+  return Value;
 }
 /* Open font specified by name.  Initialized fid must be supplied.
  * If font cannot be opened, try 'fixed' before failing.  */
