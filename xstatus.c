@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017-2020, Jeffrey E. Bedard
 #include "xstatus.h"
 #include "battery.h"
 #include "clock.h"
@@ -83,8 +83,13 @@ void xstatus_start(struct XStatusOptions * restrict opt)
   const uint16_t start = xstatus_initialize_toolbar(&X);
   for (;;) {
     xcb_generic_event_t * e;
-    if (jb_next_event_timed(xc, &e, opt->delay * 1000000) && e)
-      handle_events(&X, e, opt->filename, start);
+    if (jb_wait_until_event(xc, opt->delay * 1000000)) {
+//    if (jb_next_event_timed(xc, &e, opt->delay * 1000000) && e){
+ //     handle_events(&X, e, opt->filename, start);
+      // Proceed to process all queued events:
+      while ((e=xcb_poll_for_event(xc)))
+        handle_events(&X, e, opt->filename, start);
+      }
     else
       update(&X, opt->filename, start);
 
