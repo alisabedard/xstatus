@@ -164,24 +164,25 @@ xcb_gcontext_t jb_create_gc(xcb_connection_t * xc, xcb_gcontext_t gc,
     (uint32_t[]){fgpx, bgpx});
   return gc;
 }
+bool jb_wait_until_event(xcb_connection_t * x,
+  const uint32_t delay) {
+  fd_set Set;
+  fd_t const FD = xcb_get_file_descriptor(x);
+  FD_ZERO(&Set);
+  FD_SET(FD, &Set);
+  // Value=
+  return select(FD + 1, &Set, NULL, NULL, &(struct timeval){
+    .tv_usec = delay});
+}
 bool jb_next_event_timed(xcb_connection_t * x,
   xcb_generic_event_t ** e, const uint32_t delay)
 {
-  bool Value;
-  fd_set Set;
   *e = xcb_poll_for_event(x);
-  if (e)
-    Value = true;
-  else {
-    fd_t const FD = xcb_get_file_descriptor(x);
-    FD_ZERO(&Set);
-    FD_SET(FD, &Set);
-    Value=select(FD + 1, &Set, NULL, NULL, &(struct timeval){
-      .tv_usec = delay});
-    if (Value) // event occurred before timeout:
+  if (!*e) {
+    if(jb_wait_until_event(x,delay))
       *e = xcb_poll_for_event(x);
   }
-  return Value;
+  return *e != NULL;
 }
 /* Open font specified by name.  Initialized fid must be supplied.
  * If font cannot be opened, try 'fixed' before failing.  */

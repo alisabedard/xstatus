@@ -49,6 +49,8 @@ pixel_t jb_set_named_fg(xcb_connection_t * xc, const xcb_gcontext_t gc,
 	const char * color);
 void jb_set_window_name(xcb_connection_t * xc, const xcb_window_t win,
 	char * name);
+bool jb_wait_until_event(xcb_connection_t * x,
+  const uint32_t delay);
 bool jb_xcb_cookie_has_error(xcb_connection_t * x,
 	const xcb_void_cookie_t c);
 #ifdef __cplusplus
