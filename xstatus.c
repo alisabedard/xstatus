@@ -25,8 +25,7 @@ static uint16_t poll_status(struct XSXData * restrict x,
 static inline void update(struct XSXData * restrict x,
   const char * restrict filename, const uint16_t widget_start)
 {
-  drawBattery(x, (struct JBDim){.start = poll_status(x,
-      filename, widget_start), .end = drawClock(x)});
+  drawBattery(x, poll_status(x, filename, widget_start), drawClock(x));
 }
 // returns if update needed
 __attribute__((nonnull))

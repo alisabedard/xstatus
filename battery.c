@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017-2020, Jeffrey E. Bedard
 #include "battery.h"
 #include <stdio.h>
 #include "XSTextWidget.h"
@@ -20,79 +20,80 @@ static int8_t get_percent(void)
 enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
   BATTERY_GC_CRITICAL, BATTERY_GC_SIZE };
 // Selects a gc to use based on ac/battery status
-static uint8_t get_gc(const uint8_t pct)
+static uint8_t getGC(const uint8_t Percent)
 {
-  return xstatus_system_value(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : pct
+  return xstatus_system_value(XSTATUS_SYSFILE_AC) ? BATTERY_GC_AC : Percent
   < XSTATUS_CONST_CRITICAL_PERCENT
   ? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
-static uint8_t format(char * buf, const uint8_t sz, const uint8_t pct)
+static uint8_t format(char * buf, const uint8_t sz, const uint8_t Percent)
 {
-  return snprintf(buf, sz, " %d%% ", pct);
+  return snprintf(buf, sz, " %d%% ", Percent);
 }
-static void draw_percent(struct XSWidget * widget, const uint8_t pct)
+static void drawPercent(struct XSWidget * widget, const uint8_t Percent)
 {
   enum {BUF_SZ = 7};
   char buf[BUF_SZ];
   struct XSTextWidget w = {widget->X, buf, format(buf, BUF_SZ,
-    pct), widget->Geometry[0]};
+    Percent), widget->Geometry[0]};
   xstatus_draw_text_widget(&w);
 }
-static void set_gc(struct XSXData * restrict X,
+static void setGC(struct XSXData * restrict X,
   xcb_gcontext_t * restrict gc, const char * restrict fg)
 {
   xstatus_create_gc(X, *gc = xcb_generate_id(X->xc), fg,
     XSTATUS_BATTERY_BACKGROUND_COLOR);
 }
-static void initialize_gcs(struct XSWidget * widget, xcb_gcontext_t * gc)
+static void initializeGCs(struct XSWidget * widget, xcb_gcontext_t * gc)
 {
-#define SETGC(color) set_gc(widget->X, \
+#define SETGC(color) setGC(widget->X, \
   gc + BATTERY_GC_##color, XSTATUS_BATTERY_##color##_COLOR);
   SETGC(BACKGROUND); SETGC(AC); SETGC(BATTERY); SETGC(CRITICAL);
 }
-static xcb_rectangle_t get_rectangle(const struct JBDim range)
+static xcb_rectangle_t getRectangle(int16_t const XStart,
+  int16_t const XEnd)
 {
-  return (xcb_rectangle_t){.x=range.start,
+  return (xcb_rectangle_t){.x=XStart,
     .y = (XSTATUS_CONST_HEIGHT >> 2) + 1,
     .height = XSTATUS_CONST_HEIGHT >> 1,
-    .width = range.end - range.start - XSTATUS_CONST_PAD};
+    .width = XEnd - XStart - XSTATUS_CONST_PAD};
 }
-static void draw_rectangles(struct XSWidget * widget, const struct JBDim
-  range, const uint8_t pct)
+static void drawRectangles(struct XSWidget * widget, int16_t const XStart,
+  int16_t XEnd, const uint8_t Percent)
 {
-  xcb_rectangle_t rect = get_rectangle(range);
+  xcb_rectangle_t rect = getRectangle(XStart, XEnd);
   const xcb_window_t w = widget->Window;
   xcb_connection_t * xc = widget->X->xc;
   // clear:
   xcb_poly_fill_rectangle(xc, w, widget->X->background, 1, &rect);
-  rect.width *= pct / 100.0;
+  rect.width *= Percent / 100.0;
   // fill rectangle per percent full:
   xcb_poly_fill_rectangle(xc, w, widget->X->foreground, 1, &rect);
 }
-__attribute__((const))
-static uint16_t get_x(const struct JBDim range)
-{
-  return range.start + (range.end - range.start) / 2;
-}
-static xcb_gcontext_t * get_gcs(struct XSWidget * widget)
+static xcb_gcontext_t * getGCs(struct XSWidget * widget)
 {
   static xcb_gcontext_t gc[BATTERY_GC_SIZE];
   if (!*gc)
-    initialize_gcs(widget, gc);
+    initializeGCs(widget, gc);
   return gc;
 }
-void drawBattery(struct XSXData * restrict X,
-  const struct JBDim range)
+void drawBattery(struct XSXData * restrict X, int16_t XStart,
+  int16_t const XEnd)
 {
-  const int8_t pct = get_percent();
-  if (pct >= 0) {
+  const int8_t Percent = get_percent();
+  if (Percent >= 0) {
+
+    //  int16_t const range.start + (range.end - range.start) / 2;
     struct XSWidget widget = {X, X->window,
-      .Geometry = {get_x(range)}};
-    xcb_gcontext_t * gcs = get_gcs(&widget);
-    widget.X->foreground = gcs[get_gc(pct)];
-    widget.X->background = gcs[BATTERY_GC_BACKGROUND];
-    draw_rectangles(&widget, range, pct);
-    draw_percent(&widget, pct);
+      .Geometry = {
+        // Set the center position for drawing the percentage text:
+        XStart+(XEnd-XStart)/2
+      }};
+    xcb_gcontext_t * GCs = getGCs(&widget);
+    widget.X->foreground = GCs[getGC(Percent)];
+    widget.X->background = GCs[BATTERY_GC_BACKGROUND];
+    drawRectangles(&widget, XStart, XEnd, Percent);
+    drawPercent(&widget, Percent);
     xcb_flush(X->xc);
   }
 }
