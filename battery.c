@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include "XSTextWidget.h"
 #include "XSWidget.h"
-#include "XSXData.h"
 #include "config.h"
-#include "font.h"
 #include "libjb/macros.h"
 #include "text_widget.h"
 #include "util.h"
