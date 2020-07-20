@@ -26,15 +26,11 @@ static uint8_t getGC(const uint8_t Percent)
   < XSTATUS_CONST_CRITICAL_PERCENT
   ? BATTERY_GC_CRITICAL : BATTERY_GC_BATTERY;
 }
-static uint8_t format(char * buf, const uint8_t sz, const uint8_t Percent)
-{
-  return snprintf(buf, sz, " %d%% ", Percent);
-}
 static void drawPercent(struct XSWidget * widget, const uint8_t Percent)
 {
   enum {BUF_SZ = 7};
   char buf[BUF_SZ];
-  struct XSTextWidget w = {widget->X, buf, format(buf, BUF_SZ,
+  struct XSTextWidget w = {widget->X, buf, snprintf(buf, BUF_SZ, " %d%% ",
     Percent), widget->Geometry[0]};
   xstatus_draw_text_widget(&w);
 }
