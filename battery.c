@@ -4,7 +4,6 @@
 #include "XSTextWidget.h"
 #include "XSWidget.h"
 #include "config.h"
-#include "libjb/macros.h"
 #include "text_widget.h"
 #include "util.h"
 #include "xstatus.h"
@@ -12,7 +11,8 @@
 // get percent value, maximum 100, -1 on error
 static int8_t get_percent(void)
 {
-  return JB_MIN(xstatus_system_value(XSTATUS_SYSFILE_BATTERY), 100);
+  int const Value = xstatus_system_value(XSTATUS_SYSFILE_BATTERY);
+  return Value < 100 ? Value : 100;
 }
 // index into gc array, keeps gc array private
 enum BATGCs { BATTERY_GC_BACKGROUND, BATTERY_GC_AC, BATTERY_GC_BATTERY,
