@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "status_file.h"
 #include <sys/stat.h> // include per man page of fchmod()
 #include <unistd.h> // include per man page of read()

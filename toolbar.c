@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "toolbar.h"
 #include "button.h"
 #include "config.h"

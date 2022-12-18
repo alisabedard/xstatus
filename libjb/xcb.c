@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "xcb.h"
 // Include here to check syntax:
 #include "JBDim.h"

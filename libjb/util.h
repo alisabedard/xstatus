@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef LIBJB_UTIL_H
 #define LIBJB_UTIL_H
 #ifdef __cplusplus

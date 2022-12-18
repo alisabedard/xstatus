@@ -1,4 +1,4 @@
-// Copyright 2017-2020, Jeffrey E. Bedard
+// Copyright 2017-2020, Alisa Bedard
 #include "xstatus.h"
 #include "battery.h"
 #include "clock.h"
@@ -59,7 +59,7 @@ void xstatus_create_gc(struct XSXData * restrict x,
   const xcb_gcontext_t gc, const char * restrict fg, const char * restrict bg)
 {
   jb_create_gc(x->xc, gc, x->window, fg, bg);
-  xcb_change_gc(x->xc, gc, XCB_GC_FONT, &x->font);
+  xcb_change_gc(x->xc, gc, XCB_GC_FONT, &x->FontData.Font);
 }
 
 static void initialize_gcs(struct XSXData * restrict x)

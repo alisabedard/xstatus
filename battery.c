@@ -1,4 +1,4 @@
-// Copyright 2017-2020, Jeffrey E. Bedard
+// Copyright 2017-2020, Alisa Bedard
 #include "battery.h"
 #include <stdio.h>
 #include "XSTextWidget.h"

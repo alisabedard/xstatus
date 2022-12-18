@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef XSTATUS_UTIL_H
 #define XSTATUS_UTIL_H
 // returns -1 on error

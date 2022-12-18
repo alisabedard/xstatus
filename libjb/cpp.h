@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard <jefbed@gmail.com>
+// Copyright 2017, Alisa Bedard <jefbed@gmail.com>
 // This is a header for C++-specific extensions
 #ifdef __cplusplus
 #ifndef LIBJB_CPP_H

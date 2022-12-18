@@ -1,7 +1,7 @@
 ; libconvert.scm
 ; Simple text database parsing library for C header generation
 ; vim: sw=2
-(define copyright "// Copyright 2017, Jeffrey E. Bedard\n")
+(define copyright "// Copyright 2017, Alisa Bedard\n")
 
 ; Field separator character storage and accessor
 (define __libconvert-field-separator #\:)

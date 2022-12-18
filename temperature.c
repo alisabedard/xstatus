@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "temperature.h"
 #include <stdio.h>
 #include "XSTextWidget.h"

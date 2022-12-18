@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "clock.h"
 #include "XSTextWidget.h"
 #include "config.h"

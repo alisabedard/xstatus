@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "window.h"
 #include "config.h"
 #include "libjb/xcb.h"

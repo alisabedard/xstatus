@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef LIBJB_LOG_H
 #define LIBJB_LOG_H
 #include <stdint.h>

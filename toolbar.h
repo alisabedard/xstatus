@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef XSTATUS_TOOLBAR_H
 #define XSTATUS_TOOLBAR_H
 #include "XSXData.h"

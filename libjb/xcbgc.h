@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard <jefbed@gmail.com>
+// Copyright 2017, Alisa Bedard <jefbed@gmail.com>
 #ifndef LIBJB_XCBGC_H
 #define LIBJB_XCBGC_H
 #include <xcb/xproto.h>

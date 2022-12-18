@@ -1,4 +1,4 @@
-# Copyright 2017, Jeffrey E. Bedard
+# Copyright 2017, Alisa Bedard
 version=0.3
 libjb_cflags+=-Wall -Wextra
 libjb_cflags+=-D_XOPEN_SOURCE=700

@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef XSTATUS_WINDOW_H
 #define XSTATUS_WINDOW_H
 #include "XSXData.h"

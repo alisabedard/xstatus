@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef XSTATUS_XSWIDGET_H
 #define XSTATUS_XSWIDGET_H
 #include "XSXData.h"

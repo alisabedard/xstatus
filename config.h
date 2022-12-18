@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef XSTATUS_CONFIG_H
 #define XSTATUS_CONFIG_H
 // Note: Adjust XSTATUS_CONST_HEIGHT for the selected font:

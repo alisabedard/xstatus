@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 2017, Jeffrey E. Bedard
+# Copyright 2017, Alisa Bedard
 CFG=config.mk
 # Defaults:
 OPT_STATIC_LIBJB=true

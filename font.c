@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "font.h"
 #include <stdlib.h>
 #include "libjb/log.h"
@@ -25,8 +25,8 @@ static void finish_query(xcb_connection_t * restrict xc,
 void xstatus_open_font(struct XSXData * restrict X,
   const char * restrict fn)
 {
-  jb_open_font(X->xc, X->font, fn);
+  jb_open_font(X->xc, X->FontData.Font, fn);
   // set up font_size
-  finish_query(X->xc, xcb_query_font(X->xc, X->font));
+  finish_query(X->xc, xcb_query_font(X->xc, X->FontData.Font));
 }
 

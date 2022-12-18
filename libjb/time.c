@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #include "time.h"
 #include <time.h>
 void jb_sleep(uint32_t miliseconds)

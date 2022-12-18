@@ -1,4 +1,4 @@
-// Copyright 2017, Jeffrey E. Bedard
+// Copyright 2017, Alisa Bedard
 #ifndef XSTATUS_TEXT_WIDGET_H
 #define XSTATUS_TEXT_WIDGET_H
 struct XSTextWidget;
